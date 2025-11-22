@@ -1,0 +1,54 @@
+########################
+# Dossiers de build
+########################
+bin/
+obj/
+[Bb]uild/
+[Ll]og/
+[Tt]est[Rr]esult*/
+
+########################
+# Visual Studio
+########################
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+########################
+# Visual Studio Code
+########################
+.vscode/
+
+########################
+# Paquets NuGet
+########################
+packages/
+*.nupkg
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+########################
+# Fichiers temporaires
+########################
+*.tmp
+*.log
+*.cache
+*.bak
+*.old
+
+########################
+# ReSharper / outils d'analyse
+########################
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+########################
+# Autres fichiers à ignorer
+########################
+*.sqlite
+*.db
+*.mdb
