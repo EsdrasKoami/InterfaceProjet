@@ -8,33 +8,45 @@ namespace InterfaceProjet.Classes
 {
     internal class Assignation
     {
-        int idAssignation;
-        string MatriculeEmploye;
-         string numeroProjet;
-        decimal heureTravaillee;
-        decimal salaireApayer;
-        DateTime dateAssignation;
+        private int idAssignation;
+        private string matriculeEmploye;
+        private string numeroProjet;
+        private decimal heuresTravaillees;
+        private decimal salaireAPayer;
+        private DateTime dateAssignation;
 
-        public Assignation(int idAssignation, string matriculeEmploye, string numeroProjet, decimal heureTravaillee, decimal salaireApayer, DateTime dateAssignation)
+        // Constructeur principal
+        public Assignation(string matriculeEmploye, string numeroProjet,
+                           decimal heuresTravaillees, decimal salaireAPayer)
         {
-            this.idAssignation = idAssignation;
-            MatriculeEmploye = matriculeEmploye;
-            this.numeroProjet = numeroProjet;
-            this.heureTravaillee = heureTravaillee;
-            this.salaireApayer = salaireApayer;
-            this.dateAssignation = dateAssignation;
+            this.MatriculeEmploye = matriculeEmploye;
+            this.NumeroProjet = numeroProjet;
+            this.HeuresTravaillees = heuresTravaillees;
+            this.SalaireAPayer = salaireAPayer;
+            this.DateAssignation = DateTime.Now;
         }
 
+      
+
+        // Properties
         public int IdAssignation { get => idAssignation; set => idAssignation = value; }
-        public string MatriculeEmploye1 { get => MatriculeEmploye; set => MatriculeEmploye = value; }
+        public string MatriculeEmploye { get => matriculeEmploye; set => matriculeEmploye = value; }
         public string NumeroProjet { get => numeroProjet; set => numeroProjet = value; }
-        public decimal HeureTravaillee { get => heureTravaillee; set => heureTravaillee = value; }
-        public decimal SalaireApayer { get => salaireApayer; set => salaireApayer = value; }
+        public decimal HeuresTravaillees { get => heuresTravaillees; set => heuresTravaillees = value; }
+        public decimal SalaireAPayer { get => salaireAPayer; set => salaireAPayer = value; }
         public DateTime DateAssignation { get => dateAssignation; set => dateAssignation = value; }
 
-        public override string? ToString()
+        // Méthodes utiles
+        public decimal TauxHoraireCalcule()
         {
-            return base.ToString();
+            if (HeuresTravaillees == 0) return 0;
+            return SalaireAPayer / HeuresTravaillees;
+        }
+
+        public override string ToString()
+        {
+            return $"Assignation #{IdAssignation}: {MatriculeEmploye} -> {NumeroProjet} " +
+                   $"({HeuresTravaillees}h = {SalaireAPayer:C})";
         }
     }
 }

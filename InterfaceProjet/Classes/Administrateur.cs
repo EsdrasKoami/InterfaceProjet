@@ -8,30 +8,32 @@ namespace InterfaceProjet.Classes
 {
     internal class Administrateur
     {
-         int  idAdmin;
-            string nomUtilisateur;
-           string motDePasse;
-        DateTime dateCreation;
-        DateTime dateDerniereConnexion;
+        private int idAdmin;
+        private string nomUtilisateur;
+        private string motDePasseHash;
+        private DateTime dateCreation;
+        private DateTime? derniereConnexion;
 
-        public Administrateur(int idAdmin, string nomUtilisateur, string motDePasse, DateTime dateCreation, DateTime dateDerniereConnexion)
+        // Constructeur principal
+        public Administrateur(string nomUtilisateur, string motDePasseHash)
         {
-            this.idAdmin = idAdmin;
-            this.nomUtilisateur = nomUtilisateur;
-            this.motDePasse = motDePasse;
-            this.dateCreation = dateCreation;
-            this.dateDerniereConnexion = dateDerniereConnexion;
+            this.NomUtilisateur = nomUtilisateur;
+            this.MotDePasseHash = motDePasseHash;
+            this.DateCreation = DateTime.Now;
+            this.DerniereConnexion = null;
         }
 
+       
+        // Properties
         public int IdAdmin { get => idAdmin; set => idAdmin = value; }
         public string NomUtilisateur { get => nomUtilisateur; set => nomUtilisateur = value; }
-        public string MotDePasse { get => motDePasse; set => motDePasse = value; }
+        public string MotDePasseHash { get => motDePasseHash; set => motDePasseHash = value; }
         public DateTime DateCreation { get => dateCreation; set => dateCreation = value; }
-        public DateTime DateDerniereConnexion { get => dateDerniereConnexion; set => dateDerniereConnexion = value; }
+        public DateTime? DerniereConnexion { get => derniereConnexion; set => derniereConnexion = value; }
 
-        public override string? ToString()
+        public override string ToString()
         {
-            return base.ToString();
+            return $"Admin: {NomUtilisateur}";
         }
     }
 }
