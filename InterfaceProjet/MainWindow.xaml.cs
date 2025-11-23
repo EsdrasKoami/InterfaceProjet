@@ -27,5 +27,15 @@ namespace InterfaceProjet
         {
             InitializeComponent();
         }
+
+        private void navView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
+        {
+
+        }
+
+        private void btnAjouter_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
