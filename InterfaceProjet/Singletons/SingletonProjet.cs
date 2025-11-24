@@ -57,9 +57,10 @@ namespace InterfaceProjet.Singletons
                         r.GetInt32("nb_employes_requis"),
                         r.GetDecimal("total_salaires"),
                         0, // IdClient si non disponible dans la vue
+                        r.GetString("nom_client"),
                         r.GetString("statut"),
-                        r.GetDateTime("date_creation"),
-                        r.GetString("nom_client")
+                        r.GetDateTime("date_creation")
+                        
                     );
 
                     listeProjet.Add(projet);
