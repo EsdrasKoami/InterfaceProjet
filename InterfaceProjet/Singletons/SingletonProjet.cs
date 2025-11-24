@@ -213,10 +213,11 @@ namespace InterfaceProjet.Singletons
                         r.GetDecimal("budget"),
                         r.GetInt32("nb_employes_requis"),
                         r.GetDecimal("total_salaires"),
-                        0, // idClient si non présent dans la vue
+                        0,
+                           r.GetString("nom_client"),
                         r.GetString("statut"),
-                        r.GetDateTime("date_creation"),
-                        r.GetString("nom_client")
+                        r.GetDateTime("date_creation")
+                     
                     );
 
                     listeProjet.Add(projet);
@@ -227,6 +228,50 @@ namespace InterfaceProjet.Singletons
                 Debug.WriteLine("Erreur MySQL : " + ex.Message);
             }
         }
+
+        public void getProjetsEnCours()
+        {
+            listeProjet.Clear(); // Vide la liste avant de la recharger
+
+            try
+            {
+                using MySqlConnection con = new MySqlConnection(connectionString);
+                using MySqlCommand cmd = con.CreateCommand();
+                cmd.CommandText = "SELECT * FROM vue_projets_en_cours";
+
+                con.Open();
+                using MySqlDataReader r = cmd.ExecuteReader();
+
+                while (r.Read())
+                {
+                    // Crée l'objet avec le constructeur actuel
+                    Projet projet = new Projet(
+                        numeroProjet: r.GetString("numero_projet"),
+                        titre: r.GetString("titre"),
+                        dateDebut: r.GetDateTime("date_debut"),
+                        description: r.GetString("description"),
+                        budget: r.GetDecimal("budget"),
+                        nbEmployesRequis: r.GetInt32("nb_employes_requis"),
+                        totalSalaires: r.GetDecimal("total_salaires"),
+                        idClient: 0, 
+                        nomClient: r.GetString("nom_client"),
+                        statut: r.GetString("statut"),
+                        dateCreation: DateTime.Now 
+                    );
+
+                    // Remplissage des nouveaux champs via les propriétés
+                    projet.NbEmployesAssignes = r.GetInt32("nb_employes_assignes");
+                    projet.TelephoneClient = r.GetString("telephone_client");
+
+                    listeProjet.Add(projet);
+                }
+            }
+            catch (MySqlException ex)
+            {
+                Debug.WriteLine("Erreur MySQL : " + ex.Message);
+            }
+        }
+
 
 
 

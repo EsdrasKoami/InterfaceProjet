@@ -12,32 +12,35 @@ namespace InterfaceProjet.Classes
         private string titre;
         private DateTime dateDebut;
         private string description;
-        private decimal budget; 
-        private int nbEmployesRequis; 
+        private decimal budget;
+        private int nbEmployesRequis;
         private decimal totalSalaires;
         private int idClient;
         private string nomClient;
         private string statut;
         private DateTime dateCreation;
 
+        // Nouveaux champs ajoutés
+        private int nbEmployesAssignes;
+        private string telephoneClient;
 
-        // Constructeur complet (pour lecture depuis BD)
-        public Projet(string numeroProjet, string titre, DateTime dateDebut, string description,
-                      decimal budget, int nbEmployesRequis, decimal totalSalaires, int idClient,
-                      string statut, DateTime dateCreation, string nomClient)
+        public Projet(string numeroProjet, string titre, DateTime dateDebut, string description, decimal budget, int nbEmployesRequis, decimal totalSalaires, int idClient, string nomClient, string statut, DateTime dateCreation)
         {
-            this.NumeroProjet = numeroProjet;
-            this.Titre = titre;
-            this.DateDebut = dateDebut;
-            this.Description = description;
-            this.Budget = budget;
-            this.NbEmployesRequis = nbEmployesRequis;
-            this.TotalSalaires = totalSalaires;
-            this.IdClient = idClient;
-            this.Statut = statut;
-            this.DateCreation = dateCreation;
-            this.NomClient = nomClient;
+            this.numeroProjet = numeroProjet;
+            this.titre = titre;
+            this.dateDebut = dateDebut;
+            this.description = description;
+            this.budget = budget;
+            this.nbEmployesRequis = nbEmployesRequis;
+            this.totalSalaires = totalSalaires;
+            this.idClient = idClient;
+            this.nomClient = nomClient;
+            this.statut = statut;
+            this.dateCreation = dateCreation;
         }
+
+
+
 
         // Properties
         public string NumeroProjet { get => numeroProjet; set => numeroProjet = value; }
@@ -52,21 +55,15 @@ namespace InterfaceProjet.Classes
         public DateTime DateCreation { get => dateCreation; set => dateCreation = value; }
         public string NomClient { get => nomClient; set => nomClient = value; }
 
+        // Nouveaux champs Properties
+        public int NbEmployesAssignes { get => nbEmployesAssignes; set => nbEmployesAssignes = value; }
+        public string TelephoneClient { get => telephoneClient; set => telephoneClient = value; }
+
         // Méthodes utiles
-        public bool EstEnCours()
-        {
-            return Statut == "En cours";
-        }
+        public bool EstEnCours() => Statut == "En cours";
+        public bool EstTermine() => Statut == "Terminé";
 
-        public bool EstTermine()
-        {
-            return Statut == "Terminé";
-        }
-
-        public decimal BudgetRestant()
-        {
-            return Budget - TotalSalaires;
-        }
+        public decimal BudgetRestant() => Budget - TotalSalaires;
 
         public decimal PourcentageBudgetUtilise()
         {
@@ -74,9 +71,6 @@ namespace InterfaceProjet.Classes
             return (TotalSalaires / Budget) * 100;
         }
 
-        public override string ToString()
-        {
-            return $"{NumeroProjet} - {Titre} ({Statut})";
-        }
+        public override string ToString() => $"{NumeroProjet} - {Titre} ({Statut})";
     }
 }
