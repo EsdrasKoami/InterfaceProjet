@@ -51,7 +51,6 @@
     <PackageReference Include="MySql.Data" Version="9.5.0" />
   </ItemGroup>
   <ItemGroup>
-<<<<<<< HEAD
     <Folder Include="Singletons\" />
   </ItemGroup>
   <ItemGroup>
@@ -60,8 +59,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-=======
->>>>>>> 8240992ad345fe7fea6cbe687472311e3bf58c94
     <Page Update="Pages\PageModifierClient.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
