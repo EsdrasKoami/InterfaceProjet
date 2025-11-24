@@ -8,8 +8,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
-    <ScrollView Height="300" Width="400" IsTabStop="True"
-VerticalAlignment="Top" HorizontalAlignment="Left">
+    <ScrollView >
         <Grid>
             <Grid Padding="40">
                 <Grid.RowDefinitions>
@@ -41,7 +40,7 @@ VerticalAlignment="Top" HorizontalAlignment="Left">
                         </StackPanel>
                     </Button>
                 </StackPanel>
-                <GridView x:Name="listeProjetsEnCours" SelectionChanged="listeProjetsEnCours_SelectionChanged"  Grid.Row="2">
+                <GridView x:Name="listeProjets" SelectionChanged="listeProjets_SelectionChanged"  Grid.Row="2">
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="local1:Projet">
                             <StackPanel>
@@ -51,6 +50,11 @@ VerticalAlignment="Top" HorizontalAlignment="Left">
                                 <TextBlock Text="{x:Bind DateDebut}" />
                                 <TextBlock Text="{x:Bind Budget}" />
                                 <TextBlock Text="{x:Bind Statut}" />
+								<Button Content="Assigner"
+					   Margin="0,8,0,0"
+					   HorizontalAlignment="Right"
+					   Click="BtnAssigner_Click"/>
+							
                             </StackPanel>
                         </DataTemplate>
                     </GridView.ItemTemplate>

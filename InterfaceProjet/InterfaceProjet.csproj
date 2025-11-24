@@ -20,6 +20,7 @@
     <None Remove="Pages\PageConnexion.xaml" />
     <None Remove="Pages\PageEmployes.xaml" />
     <None Remove="Pages\PageModifierClient.xaml" />
+    <None Remove="Pages\PageParametres.xaml" />
     <None Remove="Pages\PageProjets.xaml" />
     <None Remove="Pages\ProjetDetailsDialog.xaml" />
   </ItemGroup>
@@ -49,6 +50,11 @@
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.7175" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.251106002" />
     <PackageReference Include="MySql.Data" Version="9.5.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Pages\PageParametres.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Pages\PageAssignationEmploye.xaml">

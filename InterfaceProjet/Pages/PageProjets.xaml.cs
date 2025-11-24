@@ -10,11 +10,13 @@ using Microsoft.UI.Xaml.Navigation;
 using Microsoft.UI.Xaml.Shapes;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -26,17 +28,24 @@ namespace InterfaceProjet.Pages;
 /// </summary>
 public sealed partial class PageProjets : Page
 {
-    public PageProjets()
-    {
-        InitializeComponent();
-        listeProjetsEnCours.ItemsSource = SingletonProjet.getInstance().Liste;
+    private readonly SingletonProjet _projetsSingleton;
+  
+public PageProjets()
+{
+    Debug.WriteLine(">>> CONSTRUCTEUR PageProjets APPELÉ !!!");
+
+    InitializeComponent();
+        listeProjets.ItemsSource = SingletonProjet.getInstance().Liste;
         SingletonProjet.getInstance().getAllProjets();
+
     }
 
-    private void listeProjetsEnCours_SelectionChanged(object sender, SelectionChangedEventArgs e)
+
+
+private void listeProjets_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
 
-        Projet projet = listeProjetsEnCours.SelectedItem as Projet;
+        Projet projet = listeProjets.SelectedItem as Projet;
         Frame.Navigate(typeof(ProjetDetailsDialog), projet);
 
     }
@@ -55,4 +64,13 @@ public sealed partial class PageProjets : Page
     {
 
     }
+    private void BtnAssigner_Click(object sender, RoutedEventArgs e)
+    {
+      
+            Projet projet = listeProjets.SelectedItem as Projet;
+            // Naviguer vers la page d’assignation en passant le projet sélectionné
+            Frame.Navigate(typeof(PageAssignationEmploye), projet);
+        
+    }
+
 }

@@ -64,6 +64,9 @@ namespace InterfaceProjet
                     case "connexion":
                         mainFrame.Navigate(typeof(PageConnexion));  
                         break;
+                    case "parametres":   
+                        mainFrame.Navigate(typeof(PageParametres));
+                        break;
                     default:
                         mainFrame.Navigate(typeof(PageAccueil));
                         break;

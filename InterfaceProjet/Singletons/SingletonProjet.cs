@@ -19,7 +19,7 @@ namespace InterfaceProjet.Singletons
         static SingletonProjet instance = null;
         private SingletonProjet()
         {
-            connectionString = "Server=@cours.cegep3r.info;Database=a2025_420335-345ri_greq20;Uid=6233629;Pwd=6233629;";
+            connectionString = "Server=cours.cegep3r.info;Database=a2025_420335-345ri_greq20;Uid=6233629;Pwd=6233629;";
            listeProjet = new ObservableCollection<Projet>();
         }
         //retourne l’instance du singleton
@@ -78,7 +78,7 @@ namespace InterfaceProjet.Singletons
 
         public int getNombreProjets()
         {
-            MySqlConnection con = new MySqlConnection("Server=@cours.cegep3r.info;Database=a2025_420335-345ri_greq20;Uid=6233629;Pwd=6233629;");
+            MySqlConnection con = new MySqlConnection("Server=cours.cegep3r.info;Database=a2025_420335-345ri_greq20;Uid=6233629;Pwd=6233629;");
             try
             {
                 MySqlCommand commande = new MySqlCommand();

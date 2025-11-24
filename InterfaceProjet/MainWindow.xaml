@@ -59,7 +59,7 @@
 
 
 
-            <NavigationView   PaneDisplayMode="Left" Grid.Row="1"   IsSettingsVisible="False" IsBackButtonVisible="Collapsed" x:Name="navView" ItemInvoked="navView_ItemInvoked" IsPaneToggleButtonVisible="True"   >
+        <NavigationView   PaneDisplayMode="Left" Grid.Row="1"   IsSettingsVisible="False" IsBackButtonVisible="Collapsed" x:Name="navView" ItemInvoked="navView_ItemInvoked" IsPaneToggleButtonVisible="True"   >
             <NavigationView.MenuItems>
                 <NavigationViewItem Content="Accueil" x:Name="iAccueil" Tag="accueil" Icon="Home" />
                 <NavigationViewItem Content="Employés" x:Name="iEmployés" Tag="employe" Icon="People" />
@@ -69,14 +69,14 @@
             </NavigationView.MenuItems>
             <NavigationView.FooterMenuItems>
                 <NavigationViewItem Content="Paramètres"
-                            x:Name="iParametres"
-                            Tag="parametres"
-                            Icon="Setting" />
+                    x:Name="iParametres"
+                    Tag="parametres"
+                    Icon="Setting" />
             </NavigationView.FooterMenuItems>
             <Frame x:Name="mainFrame"/>
         </NavigationView>
-       
 
-      
+
+
     </Grid>
 </Window>
