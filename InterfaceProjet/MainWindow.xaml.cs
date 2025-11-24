@@ -25,9 +25,18 @@ namespace InterfaceProjet
     /// </summary>
     public sealed partial class MainWindow : Window
     {
+  //        this.ExtendsContentIntoTitleBar = true; // Extend the content into the title bar and hide the default titlebar
+  //this.SetTitleBar(titleBar);
         public MainWindow()
         {
             InitializeComponent();
+            mainFrame.Navigate(typeof(PageAccueil));
+            var maintenant = DateTime.Now;
+
+            tbDate.Text = maintenant.ToString("dd/MM/yyyy"); // ou "yyyy-MM-dd"
+            tbHeure.Text = maintenant.ToString("HH:mm");
+            this.ExtendsContentIntoTitleBar = true; // Extend the content into the title bar and hide the default titlebar
+            this.SetTitleBar(titlebar); // Set the custom title bar
         }
 
         private void navView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)

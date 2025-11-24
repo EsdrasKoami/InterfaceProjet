@@ -7,50 +7,76 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+
     Title="InterfaceProjet">
+    
 
     <Window.SystemBackdrop>
         <MicaBackdrop />
     </Window.SystemBackdrop>
+   
 
-    <Grid Padding="20" Width="1000">
+    <Grid Padding="20" >
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="auto"/>
-
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-            <Image Source="https://i.pinimg.com/originals/18/05/ce/1805ce3d6ff5fa2a329d8052ffa90707.jpg" Width="100" Height="100"/>
-            <TextBlock Text="PROMAN - (PROJET MANAGER)" HorizontalAlignment="Center" FontSize="40" FontWeight="Bold" Margin="20"/>
-        </StackPanel>
-        <NavigationView Grid.Row="1"  PaneDisplayMode="Top" IsSettingsVisible="False" IsBackButtonVisible="Collapsed" x:Name="navView" ItemInvoked="navView_ItemInvoked" IsPaneToggleButtonVisible="False"  Margin="0,30,0,0" >
+
+        <TitleBar x:Name="titlebar"
+          Title="PROMAN - (PROJET MANAGER)"
+          IsBackButtonVisible="False"
+          IsPaneToggleButtonVisible="False">
+
+            <TitleBar.IconSource>
+                <ImageIconSource ImageSource="/Assets/1805ce3d6ff5fa2a329d8052ffa90707.jpg" />
+            </TitleBar.IconSource>
+
+            <TitleBar.Content>
+                <Grid HorizontalAlignment="Center"
+              VerticalAlignment="Center">
+                    <StackPanel Orientation="Vertical"
+                        Spacing="2"
+                        HorizontalAlignment="Center"
+                        Margin="0,2,0,0">
+                        <TextBlock x:Name="tbDate"
+                           FontSize="12"
+                           HorizontalAlignment="Center"/>
+                        <TextBlock x:Name="tbHeure"
+                           FontSize="13"
+                           FontWeight="SemiBold"
+                           HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
+            </TitleBar.Content>
+
+            <TitleBar.RightHeader>
+                <PersonPicture
+            Width="30"
+            Height="30"
+            Initials="JD" />
+            </TitleBar.RightHeader>
+            </TitleBar>
+
+
+
+            <NavigationView   PaneDisplayMode="Left" Grid.Row="1"   IsSettingsVisible="False" IsBackButtonVisible="Collapsed" x:Name="navView" ItemInvoked="navView_ItemInvoked" IsPaneToggleButtonVisible="True"   >
             <NavigationView.MenuItems>
-                <NavigationViewItem Content="Accueil" x:Name="iAccueil" Tag="accueil" Icon="Home" Margin="0,0,50,0"/>
-                <NavigationViewItem Content="Employés" x:Name="iEmployés" Tag="employe" Icon="People" Margin="0,0,50,0"/>
-                <NavigationViewItem Content="Clients" x:Name="iClients"  Tag="clients" Icon="Contact" Margin="0,0,50,0"/>
-                <NavigationViewItem Content="Projets" x:Name="iProjets"  Tag="projets" Icon="Folder" Margin="0,0,50,0"/>
-                <NavigationViewItem Content="Connexion" x:Name="iConnexion"  Tag="connexion" Icon="ContactPresence" Margin="0,0,50,0"/>
+                <NavigationViewItem Content="Accueil" x:Name="iAccueil" Tag="accueil" Icon="Home" />
+                <NavigationViewItem Content="Employés" x:Name="iEmployés" Tag="employe" Icon="People" />
+                <NavigationViewItem Content="Clients" x:Name="iClients"  Tag="clients" Icon="Contact"/>
+                <NavigationViewItem Content="Projets" x:Name="iProjets"  Tag="projets" Icon="Folder" />
+                <NavigationViewItem Content="Connexion" x:Name="iConnexion"  Tag="connexion" Icon="ContactPresence"/>
             </NavigationView.MenuItems>
-
+            <NavigationView.FooterMenuItems>
+                <NavigationViewItem Content="Paramètres"
+                            x:Name="iParametres"
+                            Tag="parametres"
+                            Icon="Setting" />
+            </NavigationView.FooterMenuItems>
+            <Frame x:Name="mainFrame"/>
         </NavigationView>
-        <Frame x:Name="mainFrame"
-      Grid.Row="2"/>
+       
 
-        <!--<Button x:Name="btnAjouter" Click="btnAjouter_Click" Grid.Row="4"  >
-            <StackPanel Orientation="Horizontal" Spacing="8">
-                <SymbolIcon Symbol="Add"/>
-                <TextBlock Text="Ajouter un projet"/>
-            </StackPanel>
-        </Button>-->
-
-    
-        <Border Grid.Row="3"
-            Padding="8"
-            BorderThickness="0,1,0,0"
-            BorderBrush="Black">
-            <TextBlock Text="© 2025 - PROMAN (Project Manager) · Développé par Esdras KOAMI et Keren BOMBO" HorizontalAlignment="Center" FontSize="20"/>
-        </Border>
+      
     </Grid>
 </Window>

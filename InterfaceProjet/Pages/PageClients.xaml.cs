@@ -27,4 +27,29 @@ public sealed partial class PageClients : Page
     {
         InitializeComponent();
     }
+
+    private void tbRechercheClient_TextChanged(object sender, TextChangedEventArgs e)
+    {
+
+    }
+
+    private void btnAjouterClient_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void btnModifierClient_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void btnSupprimerClient_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void tbRechercheProjet_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    {
+
+    }
 }

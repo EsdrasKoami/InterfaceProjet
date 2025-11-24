@@ -21,20 +21,10 @@ namespace InterfaceProjet.Pages;
 /// <summary>
 /// An empty page that can be used on its own or navigated to within a Frame.
 /// </summary>
-public sealed partial class PageAccueil : Page
+public sealed partial class PageAssignationEmploye : Page
 {
-    public PageAccueil()
+    public PageAssignationEmploye()
     {
         InitializeComponent();
-    }
-
-    private void tbRechercheProjet_TextChanged(object sender, TextChangedEventArgs e)
-    {
-
-    }
-
-    private void tbRechercheProjet_TextChanged_1(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
-    {
-
     }
 }

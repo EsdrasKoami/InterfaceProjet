@@ -3,12 +3,73 @@
     x:Class="InterfaceProjet.Pages.PageEmployes"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:InterfaceProjet.Pages"
+    xmlns:local1="using:InterfaceProjet.Classes"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
+    <ScrollView Height="300" Width="400" IsTabStop="True"
+VerticalAlignment="Top" HorizontalAlignment="Left">
+        <Grid>
+            <Grid Padding="40">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0"
+             Orientation="Horizontal"
+             Spacing="10"
+             Margin="0,0,0,20">
+                    <SymbolIcon Symbol="Contact"/>
+                    <TextBlock Text="Gestion des Employes"
+                FontSize="28"
+                FontWeight="SemiBold"/>
+                </StackPanel>
 
-    <Grid>
+                <StackPanel Grid.Row="1"
+             Orientation="Horizontal"
+             Margin="0,0,0,20">
+                    <AutoSuggestBox x:Name="tbRechercheProjet"
+                    Width="300"
+                    PlaceholderText="Rechercher un projet"
+                    QueryIcon="Find"
+                    TextChanged="tbRechercheProjet_TextChanged"/>
+                </StackPanel>
+                <!--ItemClick="lvEmployes_ItemClick"-->
+                <GridView Grid.Row="2"
+           x:Name="lvEmployes">
 
-    </Grid>
+                    <GridView.ItemTemplate>
+                        <DataTemplate x:DataType="local1:Employe" >
+                            <StackPanel Orientation="Horizontal" Margin="20" >
+
+                                <StackPanel  HorizontalAlignment="Right"  >
+                                    <Image Source="{x:Bind PhotoUrl}" Width="100" Height="200"  />
+                                </StackPanel>
+                                <StackPanel HorizontalAlignment="Left" Margin="10" Width="200" >
+                                    <TextBlock  Text="{x:Bind Nom , Mode=OneWay}" FontWeight="Bold" />
+                                    <StackPanel Orientation="Horizontal" Spacing="12">
+                                        <TextBlock Text="{x:Bind Prenom, Mode=OneWay}" FontWeight="Bold"/>
+                                        <TextBlock  Text="{x:Bind DateNaissance, Mode=OneWay}" FontWeight="Bold"/>
+                                    </StackPanel>
+                                    <TextBlock Text="{x:Bind DateEmbauche, Mode=OneWay}" FontWeight="Bold" />
+                                    <TextBlock Text="{x:Bind Statut, Mode=OneWay}" FontWeight="Bold" />
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right"  Margin="10" Padding="6">
+                                        <Button x:Name="supprimer"     Click="supprimer_Click" >
+                                            <SymbolIcon Symbol="Delete"/>
+                                        </Button>
+                                        <Button x:Name="modifier"   Click="modifier_Click"  >
+                                            <SymbolIcon Symbol="Edit"/>
+                                        </Button>
+                                    </StackPanel>
+                                </StackPanel>
+
+                            </StackPanel>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                </GridView>
+            </Grid>
+
+        </Grid>
+    </ScrollView>
 </Page>

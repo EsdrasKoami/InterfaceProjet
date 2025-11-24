@@ -7,66 +7,62 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
-
-    <Grid>
-        <Grid Padding="40">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-
-            <!-- TITRE -->
-            <StackPanel Grid.Row="0"
+    <ScrollView >
+        <Grid>
+            <Grid Padding="40">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0"
                     Orientation="Horizontal"
                     Spacing="10"
                     Margin="0,0,0,20">
-                <SymbolIcon Symbol="Contact"/>
-                <TextBlock Text="Gestion des clients"
+                    <SymbolIcon Symbol="Contact"/>
+                    <TextBlock Text="Gestion des clients"
                        FontSize="28"
                        FontWeight="SemiBold"/>
-            </StackPanel>
+                </StackPanel>
 
-            <!-- BARRE D'ACTIONS -->
-            <StackPanel Grid.Row="1"
+                <StackPanel Grid.Row="1"
                     Orientation="Horizontal"
                     Spacing="10"
                     Margin="0,0,0,20">
-                <TextBox x:Name="tbRechercheClient"
-                     Width="300"
-                     PlaceholderText="Rechercher un client..."
-                     TextChanged="tbRechercheClient_TextChanged"/>
-                <Button Content="Ajouter"
+                    <AutoSuggestBox x:Name="tbRechercheProjet"
+                    Width="300"
+                    PlaceholderText="Rechercher un projet"
+                    QueryIcon="Find"
+                    TextChanged="tbRechercheProjet_TextChanged"/>
+                    <Button Content="Ajouter"
                     x:Name="btnAjouterClient"
                     Click="btnAjouterClient_Click"/>
-                <Button Content="Modifier"
+                    <Button Content="Modifier"
                     x:Name="btnModifierClient"
                     Click="btnModifierClient_Click"/>
-                <Button Content="Supprimer"
+                    <Button Content="Supprimer"
                     x:Name="btnSupprimerClient"
                     Click="btnSupprimerClient_Click"/>
-            </StackPanel>
-
-            <!-- LISTE DES CLIENTS -->
-            <ListView Grid.Row="2"
+                </StackPanel>
+                <!--ItemClick="lvClients_ItemClick"-->
+                <ListView Grid.Row="2"
                   x:Name="lvClients"
-                  SelectionMode="Single"
-                  IsItemClickEnabled="True"
-                  ItemClick="lvClients_ItemClick">
-                <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="local1:Client">
-                        <StackPanel Orientation="Horizontal"
+                 >
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="local1:Client">
+                            <StackPanel Orientation="Horizontal"
                                 Margin="0,5,0,5"
                                 Spacing="20">
-                            <TextBlock Text="{x:Bind IdClient}" Width="50"/>
-                            <TextBlock Text="{x:Bind Nom}" Width="150"/>
-                            <TextBlock Text="{x:Bind Email}" Width="200"/>
-                            <TextBlock Text="{x:Bind Telephone}" Width="120"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </Grid>
+                                <TextBlock Text="{x:Bind IdClient}" Width="50"/>
+                                <TextBlock Text="{x:Bind Nom}" Width="150"/>
+                                <TextBlock Text="{x:Bind Email}" Width="200"/>
+                                <TextBlock Text="{x:Bind Telephone}" Width="120"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Grid>
 
-    </Grid>
+        </Grid>
+    </ScrollView>
 </Page>

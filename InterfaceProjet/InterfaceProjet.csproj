@@ -15,6 +15,7 @@
   <ItemGroup>
     <None Remove="Pages\PageAccueil.xaml" />
     <None Remove="Pages\PageAjoutPojet.xaml" />
+    <None Remove="Pages\PageAssignationEmploye.xaml" />
     <None Remove="Pages\PageClients.xaml" />
     <None Remove="Pages\PageConnexion.xaml" />
     <None Remove="Pages\PageEmployes.xaml" />
@@ -29,7 +30,6 @@
     <Content Include="Assets\Square150x150Logo.scale-200.png" />
     <Content Include="Assets\Square44x44Logo.scale-200.png" />
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
-    <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
 
@@ -51,6 +51,17 @@
     <PackageReference Include="MySql.Data" Version="9.5.0" />
   </ItemGroup>
   <ItemGroup>
+<<<<<<< HEAD
+    <Folder Include="Singletons\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Pages\PageAssignationEmploye.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+=======
+>>>>>>> 8240992ad345fe7fea6cbe687472311e3bf58c94
     <Page Update="Pages\PageModifierClient.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
