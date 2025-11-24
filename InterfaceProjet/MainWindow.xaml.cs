@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
+using InterfaceProjet.Pages;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -10,6 +6,12 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 
@@ -30,6 +32,34 @@ namespace InterfaceProjet
 
         private void navView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
+            if (args.InvokedItemContainer is NavigationViewItem item)
+            {
+                switch (item.Tag)
+                {
+ 
+                    case "accueil":
+                        mainFrame.Navigate(typeof(PageAccueil));
+                        break;
+
+                    case "employe":
+                        mainFrame.Navigate(typeof(PageEmployes));   
+                        break;
+
+                    case "clients":
+                        mainFrame.Navigate(typeof(PageClients));   
+                        break;
+                    case "projets":
+                        mainFrame.Navigate(typeof(PageProjets));    
+                        break;
+
+                    case "connexion":
+                        mainFrame.Navigate(typeof(PageConnexion));  
+                        break;
+                    default:
+                        mainFrame.Navigate(typeof(PageAccueil));
+                        break;
+                }
+            }
 
         }
 

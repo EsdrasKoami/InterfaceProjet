@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace InterfaceProjet.Classes
 {
-    internal class Employe
+    public class Employe
     {
         private string matricule;
         private string nom;
@@ -20,7 +20,8 @@ namespace InterfaceProjet.Classes
         private string statut;
         private DateTime dateCreation;
 
-        // Constructeur principal (pour création d'employé)
+
+
         public Employe(string matricule, string nom, string prenom, DateTime dateNaissance,
                        string email, string adresse, DateTime dateEmbauche, decimal tauxHoraire,
                        string photoUrl, string statut)
@@ -38,7 +39,7 @@ namespace InterfaceProjet.Classes
             this.DateCreation = DateTime.Now;
         }
 
-        
+
         // Properties
         public string Matricule { get => matricule; set => matricule = value; }
         public string Nom { get => nom; set => nom = value; }
@@ -51,6 +52,7 @@ namespace InterfaceProjet.Classes
         public string PhotoUrl { get => photoUrl; set => photoUrl = value; }
         public string Statut { get => statut; set => statut = value; }
         public DateTime DateCreation { get => dateCreation; set => dateCreation = value; }
+
 
         // Méthodes utiles
         public int CalculerAge()

@@ -3,7 +3,7 @@
     x:Class="InterfaceProjet.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:InterfaceProjet"
+    xmlns:local="using:InterfaceProjet.Classes"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -17,10 +17,9 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
+
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
             <Image Source="https://i.pinimg.com/originals/18/05/ce/1805ce3d6ff5fa2a329d8052ffa90707.jpg" Width="100" Height="100"/>
@@ -34,31 +33,20 @@
                 <NavigationViewItem Content="Projets" x:Name="iProjets"  Tag="projets" Icon="Folder" Margin="0,0,50,0"/>
                 <NavigationViewItem Content="Connexion" x:Name="iConnexion"  Tag="connexion" Icon="ContactPresence" Margin="0,0,50,0"/>
             </NavigationView.MenuItems>
-            <Frame x:Name="mainFrame" />
-        </NavigationView>
-        <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="8" Margin="0,30,0,0" HorizontalAlignment="Center">
-          
-                <TextBlock Text="Rechercher un projet"  VerticalAlignment="Center"/>
 
-            <TextBox x:Name="tbRechercheProjet" 
-         PlaceholderText="Rechercher un projet par titre, numéro ou client..." Width="500"/>
-        </StackPanel>
-        <GridView x:Name="listeProjetsEnCours" Grid.Row="3">
-            <!--<GridView.ItemTemplate>
-                <DataTemplate x:DataType="">
-                    
-                </DataTemplate> 
-            </GridView.ItemTemplate>-->
-        </GridView>
-        <Button x:Name="btnAjouter" Click="btnAjouter_Click" Grid.Row="4"  >
+        </NavigationView>
+        <Frame x:Name="mainFrame"
+      Grid.Row="2"/>
+
+        <!--<Button x:Name="btnAjouter" Click="btnAjouter_Click" Grid.Row="4"  >
             <StackPanel Orientation="Horizontal" Spacing="8">
                 <SymbolIcon Symbol="Add"/>
                 <TextBlock Text="Ajouter un projet"/>
             </StackPanel>
-        </Button>
+        </Button>-->
 
- 
-        <Border Grid.Row="5"
+    
+        <Border Grid.Row="3"
             Padding="8"
             BorderThickness="0,1,0,0"
             BorderBrush="Black">

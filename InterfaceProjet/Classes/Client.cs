@@ -8,6 +8,7 @@ namespace InterfaceProjet.Classes
 {
     internal class Client
     {
+
         private int idClient;
         private string nom;
         private string adresse;
@@ -39,5 +40,6 @@ namespace InterfaceProjet.Classes
         {
             return $"{IdClient} - {Nom}";
         }
+
     }
 }

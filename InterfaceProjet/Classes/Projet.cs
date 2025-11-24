@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace InterfaceProjet.Classes
 {
-    internal class Projet
+    public class Projet
     {
         private string numeroProjet;
         private string titre;
@@ -16,14 +16,15 @@ namespace InterfaceProjet.Classes
         private int nbEmployesRequis; 
         private decimal totalSalaires;
         private int idClient;
+        private string nomClient;
         private string statut;
         private DateTime dateCreation;
 
-      
+
         // Constructeur complet (pour lecture depuis BD)
         public Projet(string numeroProjet, string titre, DateTime dateDebut, string description,
                       decimal budget, int nbEmployesRequis, decimal totalSalaires, int idClient,
-                      string statut, DateTime dateCreation)
+                      string statut, DateTime dateCreation, string nomClient)
         {
             this.NumeroProjet = numeroProjet;
             this.Titre = titre;
@@ -35,6 +36,7 @@ namespace InterfaceProjet.Classes
             this.IdClient = idClient;
             this.Statut = statut;
             this.DateCreation = dateCreation;
+            this.NomClient = nomClient;
         }
 
         // Properties
@@ -48,6 +50,7 @@ namespace InterfaceProjet.Classes
         public int IdClient { get => idClient; set => idClient = value; }
         public string Statut { get => statut; set => statut = value; }
         public DateTime DateCreation { get => dateCreation; set => dateCreation = value; }
+        public string NomClient { get => nomClient; set => nomClient = value; }
 
         // Méthodes utiles
         public bool EstEnCours()

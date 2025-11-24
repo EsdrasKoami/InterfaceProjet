@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace InterfaceProjet.Classes
 {
-    internal class Assignation
+    public class Assignation
     {
         private int idAssignation;
         private string matriculeEmploye;
@@ -14,19 +14,21 @@ namespace InterfaceProjet.Classes
         private decimal heuresTravaillees;
         private decimal salaireAPayer;
         private DateTime dateAssignation;
+        private Employe employe;
 
         // Constructeur principal
         public Assignation(string matriculeEmploye, string numeroProjet,
-                           decimal heuresTravaillees, decimal salaireAPayer)
+                           decimal heuresTravaillees, decimal salaireAPayer, Employe employe)
         {
             this.MatriculeEmploye = matriculeEmploye;
             this.NumeroProjet = numeroProjet;
             this.HeuresTravaillees = heuresTravaillees;
             this.SalaireAPayer = salaireAPayer;
             this.DateAssignation = DateTime.Now;
+            Employe = employe;
         }
 
-      
+
 
         // Properties
         public int IdAssignation { get => idAssignation; set => idAssignation = value; }
@@ -35,6 +37,7 @@ namespace InterfaceProjet.Classes
         public decimal HeuresTravaillees { get => heuresTravaillees; set => heuresTravaillees = value; }
         public decimal SalaireAPayer { get => salaireAPayer; set => salaireAPayer = value; }
         public DateTime DateAssignation { get => dateAssignation; set => dateAssignation = value; }
+        public Employe Employe { get => employe; set => employe = value; }
 
         // Méthodes utiles
         public decimal TauxHoraireCalcule()
