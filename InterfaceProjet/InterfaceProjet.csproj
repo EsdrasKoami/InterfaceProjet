@@ -51,9 +51,6 @@
     <PackageReference Include="MySql.Data" Version="9.5.0" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Singletons\" />
-  </ItemGroup>
-  <ItemGroup>
     <Page Update="Pages\PageAssignationEmploye.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

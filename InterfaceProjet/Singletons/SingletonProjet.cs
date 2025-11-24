@@ -272,6 +272,33 @@ namespace InterfaceProjet.Singletons
                 Debug.WriteLine("Erreur MySQL : " + ex.Message);
             }
         }
+        public void TerminerProjet(string numeroProjet)
+        {
+            try
+            {
+                using MySqlConnection con = new MySqlConnection(connectionString);
+                using MySqlCommand cmd = con.CreateCommand();
+
+                // Appel de la procédure stockée
+                cmd.CommandText = "TerminerProjet";
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("p_numero_projet", numeroProjet);
+
+                con.Open();
+                cmd.ExecuteNonQuery();
+
+                // Mettre à jour la liste locale
+                var projet = listeProjet.FirstOrDefault(p => p.NumeroProjet == numeroProjet);
+                if (projet != null)
+                {
+                    projet.Statut = "Terminé";
+                }
+            }
+            catch (MySqlException ex)
+            {
+                Debug.WriteLine("Erreur MySQL : " + ex.Message);
+            }
+        }
 
 
 

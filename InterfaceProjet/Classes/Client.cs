@@ -16,18 +16,20 @@ namespace InterfaceProjet.Classes
         private string email;
         private DateTime dateCreation;
 
-        // Constructeur principal
-        public Client(int idClient, string nom, string adresse, string telephone, string email)
+        public Client(int idClient, string nom, string adresse, string telephone, string email, DateTime dateCreation)
         {
-            this.IdClient = idClient;
-            this.Nom = nom;
-            this.Adresse = adresse;
-            this.Telephone = telephone;
-            this.Email = email;
-            this.DateCreation = DateTime.Now;
+            this.idClient = idClient;
+            this.nom = nom;
+            this.adresse = adresse;
+            this.telephone = telephone;
+            this.email = email;
+            this.dateCreation = dateCreation;
         }
 
-       
+        // Constructeur principal
+
+
+
         // Properties
         public int IdClient { get => idClient; set => idClient = value; }
         public string Nom { get => nom; set => nom = value; }
