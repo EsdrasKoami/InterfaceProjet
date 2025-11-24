@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Page
-    x:Class="InterfaceProjet.Pages.PageModifierClient"
+    x:Class="InterfaceProjet.Pages.PageAssignationEmploye"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:InterfaceProjet.Pages"
@@ -10,8 +10,8 @@
     <ScrollView Height="300" Width="400" IsTabStop="True"
 VerticalAlignment="Top" HorizontalAlignment="Left">
         <Grid>
+        
 
-
-        </Grid>
-    </ScrollView>
+    </Grid>
+        </ScrollView>
 </Page>

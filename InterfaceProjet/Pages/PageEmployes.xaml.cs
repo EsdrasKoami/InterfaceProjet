@@ -27,4 +27,24 @@ public sealed partial class PageEmployes : Page
     {
         InitializeComponent();
     }
+
+    private void supprimer_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void modifier_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void tbRechercheEmploye_TextChanged(object sender, TextChangedEventArgs e)
+    {
+
+    }
+
+    private void tbRechercheProjet_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    {
+
+    }
 }

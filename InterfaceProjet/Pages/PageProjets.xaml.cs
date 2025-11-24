@@ -1,4 +1,5 @@
 using InterfaceProjet.Classes;
+using InterfaceProjet.Singletons;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -28,6 +29,8 @@ public sealed partial class PageProjets : Page
     public PageProjets()
     {
         InitializeComponent();
+        listeProjetsEnCours.ItemsSource = SingletonProjet.getInstance().Liste;
+        SingletonProjet.getInstance().getAllProjets();
     }
 
     private void listeProjetsEnCours_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -35,6 +38,21 @@ public sealed partial class PageProjets : Page
 
         Projet projet = listeProjetsEnCours.SelectedItem as Projet;
         Frame.Navigate(typeof(ProjetDetailsDialog), projet);
+
+    }
+
+    private void tbRechercheProjet_TextChanged(object sender, TextChangedEventArgs e)
+    {
+
+    }
+
+    private void btnAjouter_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void tbRechercheProjet_TextChanged_1(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    {
 
     }
 }

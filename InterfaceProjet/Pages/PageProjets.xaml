@@ -8,22 +8,55 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
-
-    <Grid>
-        <GridView x:Name="listeProjetsEnCours" SelectionChanged="listeProjetsEnCours_SelectionChanged"  >
-            <GridView.ItemTemplate>
-                <DataTemplate x:DataType="local1:Projet">
-                    <StackPanel>
-                        <TextBlock Text="{x:Bind NumeroProjet}" FontWeight="Bold"/>
-                        <TextBlock Text="{x:Bind Titre}" />
-                        <TextBlock Text="{x:Bind NomClient}" />
-                        <TextBlock Text="{x:Bind DateDebut}" />
-                        <TextBlock Text="{x:Bind Budget}" />
-                        <TextBlock Text="{x:Bind Statut}" />
+    <ScrollView Height="300" Width="400" IsTabStop="True"
+VerticalAlignment="Top" HorizontalAlignment="Left">
+        <Grid>
+            <Grid Padding="40">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0"
+         Orientation="Horizontal"
+         Spacing="10"
+         Margin="0,0,0,20">
+                    <SymbolIcon Symbol="Folder"/>
+                    <TextBlock Text="Liste des projets"
+            FontSize="28"
+            FontWeight="SemiBold"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="30" Grid.Row="1">
+                    <StackPanel  Orientation="Horizontal" Spacing="8" Margin="0,30,0,0">
+                        <AutoSuggestBox x:Name="tbRechercheProjet"
+                    Width="300"
+                    PlaceholderText="Rechercher un projet"
+                    QueryIcon="Find"
+                    TextChanged="tbRechercheProjet_TextChanged_1"/>
                     </StackPanel>
-                </DataTemplate>
-            </GridView.ItemTemplate>
-        </GridView>
+                    <Button x:Name="btnAjouter" Click="btnAjouter_Click" Grid.Row="4" HorizontalAlignment="Left" Margin="0,30,0,0" >
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <SymbolIcon Symbol="Add"/>
+                            <TextBlock Text="Ajouter un projet"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+                <GridView x:Name="listeProjetsEnCours" SelectionChanged="listeProjetsEnCours_SelectionChanged"  Grid.Row="2">
+                    <GridView.ItemTemplate>
+                        <DataTemplate x:DataType="local1:Projet">
+                            <StackPanel>
+                                <TextBlock Text="{x:Bind NumeroProjet}" FontWeight="Bold"/>
+                                <TextBlock Text="{x:Bind Titre}" />
+                                <TextBlock Text="{x:Bind NomClient}" />
+                                <TextBlock Text="{x:Bind DateDebut}" />
+                                <TextBlock Text="{x:Bind Budget}" />
+                                <TextBlock Text="{x:Bind Statut}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                </GridView>
 
-    </Grid>
+            </Grid>
+        </Grid>
+    </ScrollView>
 </Page>

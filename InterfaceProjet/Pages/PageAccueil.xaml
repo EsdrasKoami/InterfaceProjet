@@ -8,32 +8,48 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
+    <ScrollView Height="300" Width="400" IsTabStop="True"
+    VerticalAlignment="Top" HorizontalAlignment="Left">
+        <Grid>
+            <Grid Padding="40">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <StackPanel 
+    Orientation="Horizontal"
+    Spacing="10"
+    Margin="0,20,0,0">
+                    <SymbolIcon Symbol="SyncFolder"/>
+                    <TextBlock Text="Projets en cours"
+       FontSize="28"
+       FontWeight="SemiBold"/>
+                </StackPanel>
+                <StackPanel  Orientation="Horizontal"  Margin="0,30,0,0" Grid.Row="1">
+                    <AutoSuggestBox x:Name="tbRechercheProjet"
+                    Width="300"
+                    PlaceholderText="Rechercher un projet"
+                    QueryIcon="Find"
+                    TextChanged="tbRechercheProjet_TextChanged_1"/>
+                </StackPanel>
+                <GridView x:Name="listeProjetsEnCours" Grid.Row="2"    >
+                    <GridView.ItemTemplate>
+                        <DataTemplate x:DataType="local1:Projet">
+                            <StackPanel>
+                                <TextBlock Text="{x:Bind NumeroProjet}" FontWeight="Bold"/>
+                                <TextBlock Text="{x:Bind Titre}" />
+                                <TextBlock Text="{x:Bind NomClient}" />
+                                <TextBlock Text="{x:Bind DateDebut}" />
+                                <TextBlock Text="{x:Bind Budget}" />
+                                <TextBlock Text="{x:Bind Statut}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                </GridView>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <StackPanel  Orientation="Horizontal" Spacing="8" Margin="0,30,0,0" HorizontalAlignment="Center">
-            <TextBlock Text="Rechercher un projet"  VerticalAlignment="Center"/>
-            <TextBox x:Name="tbRechercheProjet" PlaceholderText="Rechercher un projet par titre, numéro ou client..." Margin="10,0,0,0" />
-        </StackPanel>
-        <TextBlock Text="Projets en cours" Grid.Row="1" FontSize="25" FontFamily="Arial Black" Margin="0,20,0,0" />
-        <GridView x:Name="listeProjetsEnCours" Grid.Row="2"   Margin="40,30,40,40" >
-            <GridView.ItemTemplate>
-                <DataTemplate x:DataType="local1:Projet">
-                    <StackPanel>
-                        <TextBlock Text="{x:Bind NumeroProjet}" FontWeight="Bold"/>
-                        <TextBlock Text="{x:Bind Titre}" />
-                        <TextBlock Text="{x:Bind NomClient}" />
-                        <TextBlock Text="{x:Bind DateDebut}" />
-                        <TextBlock Text="{x:Bind Budget}" />
-                        <TextBlock Text="{x:Bind Statut}" />
-                    </StackPanel>
-                </DataTemplate>
-            </GridView.ItemTemplate>
-        </GridView>
-
-    </Grid>
+            </Grid>
+        </Grid>
+    </ScrollView>
+    
 </Page>
