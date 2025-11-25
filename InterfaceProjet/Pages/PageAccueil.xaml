@@ -8,8 +8,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
-    <ScrollView Height="300" Width="400" IsTabStop="True"
-    VerticalAlignment="Top" HorizontalAlignment="Left">
+    <ScrollView >
         <Grid>
             <Grid Padding="40">
                 <Grid.RowDefinitions>
@@ -18,13 +17,13 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <StackPanel 
-    Orientation="Horizontal"
-    Spacing="10"
-    Margin="0,20,0,0">
+                Orientation="Horizontal"
+                Spacing="10"
+                Margin="0,20,0,0">  
                     <SymbolIcon Symbol="SyncFolder"/>
                     <TextBlock Text="Projets en cours"
-       FontSize="28"
-       FontWeight="SemiBold"/>
+               FontSize="28"
+               FontWeight="SemiBold"/>  
                 </StackPanel>
                 <StackPanel  Orientation="Horizontal"  Margin="0,30,0,0" Grid.Row="1">
                     <AutoSuggestBox x:Name="tbRechercheProjet"
@@ -33,7 +32,7 @@
                     QueryIcon="Find"
                     TextChanged="tbRechercheProjet_TextChanged_1"/>
                 </StackPanel>
-                <GridView x:Name="listeProjetsEnCours" Grid.Row="2"    >
+                <GridView x:Name="listeProjetsEnCours" Grid.Row="2" Margin="0 30 0 0"   >
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="local1:Projet">
                             <StackPanel>
