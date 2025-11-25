@@ -62,6 +62,7 @@ namespace InterfaceProjet.Classes
         // Méthodes utiles
         public bool EstEnCours() => Statut == "En cours";
         public bool EstTermine() => Statut == "Terminé";
+        public string BudgetAfficher => $"{budget}$";
 
         public decimal BudgetRestant() => Budget - TotalSalaires;
 
