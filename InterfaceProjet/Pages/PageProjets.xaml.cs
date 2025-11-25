@@ -10,6 +10,7 @@ using Microsoft.UI.Xaml.Navigation;
 using Microsoft.UI.Xaml.Shapes;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -32,7 +33,6 @@ public sealed partial class PageProjets : Page
   
 public PageProjets()
 {
-    Debug.WriteLine(">>> CONSTRUCTEUR PageProjets APPELÉ !!!");
 
     InitializeComponent();
         listeProjets.ItemsSource = SingletonProjet.getInstance().Liste;
@@ -42,11 +42,18 @@ public PageProjets()
 
 
 
-private void listeProjets_SelectionChanged(object sender, SelectionChangedEventArgs e)
+private async void listeProjets_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
 
-        Projet projet = listeProjets.SelectedItem as Projet;
-        Frame.Navigate(typeof(ProjetDetailsDialog), projet);
+        if (listeProjets.SelectedItem is Projet projet)
+        {
+            var dialog = new ProjetDetailsDialog(projet, new ObservableCollection<Assignation>(), null);
+            dialog.XamlRoot = this.Content.XamlRoot;
+
+            await dialog.ShowAsync();
+            listeProjets.SelectedItem = null;
+        }
+
 
     }
 

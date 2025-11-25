@@ -27,4 +27,14 @@ public sealed partial class PageAjoutPojet : Page
     {
         InitializeComponent();
     }
+
+    private void ButtonAnnuler_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void ButtonEnregistrer_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
 }

@@ -40,7 +40,7 @@
                         </StackPanel>
                     </Button>
                 </StackPanel>
-                <GridView x:Name="listeProjets" SelectionChanged="listeProjets_SelectionChanged"  Grid.Row="2">
+                <GridView x:Name="listeProjets" SelectionChanged="listeProjets_SelectionChanged"  Grid.Row="2" Margin="0 30 0 0" >
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="local1:Projet">
                             <StackPanel>
@@ -48,7 +48,7 @@
                                 <TextBlock Text="{x:Bind Titre}" />
                                 <TextBlock Text="{x:Bind NomClient}" />
                                 <TextBlock Text="{x:Bind DateDebut}" />
-                                <TextBlock Text="{x:Bind Budget}" />
+                                <TextBlock Text="{x:Bind BudgetAfficher}" />
                                 <TextBlock Text="{x:Bind Statut}" />
 								<Button Content="Assigner"
 					   Margin="0,8,0,0"
