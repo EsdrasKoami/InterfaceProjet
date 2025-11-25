@@ -8,8 +8,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
     <ScrollView>
-    <Grid>
-        <Grid Padding="40">
+    <Grid Width="1000">
+            <Border BorderThickness="2" BorderBrush="Black">
+                <Grid Padding="40">
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -62,7 +63,7 @@
                 </StackPanel>
             </StackPanel>
         </Grid>
-
+    </Border>
     </Grid>
     </ScrollView>
 </Page>

@@ -75,7 +75,7 @@ private async void listeProjets_SelectionChanged(object sender, SelectionChanged
     {
 
     }
-    private void BtnAssigner_Click(object sender, RoutedEventArgs e)
+    private void assigner_Click(object sender, RoutedEventArgs e)
     {
       
             Projet projet = listeProjets.SelectedItem as Projet;
@@ -84,4 +84,17 @@ private async void listeProjets_SelectionChanged(object sender, SelectionChanged
         
     }
 
+    private async void ButtonModifier_Click(object sender, RoutedEventArgs e)
+    {
+        if ((sender as FrameworkElement)?.DataContext is Projet projet)
+        {
+            var dialog = new ModifierProjetDialog(projet)
+            {
+                XamlRoot = this.Content.XamlRoot
+            };
+
+            await dialog.ShowAsync();
+            // La GridView se mettra à jour si ta liste est celle du Singleton
+        }
+    }
 }

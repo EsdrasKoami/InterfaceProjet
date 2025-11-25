@@ -5,65 +5,152 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local1="using:InterfaceProjet.Classes"
     PrimaryButtonText="Fermer"
-    DefaultButton="Primary">
+    DefaultButton="Primary"
+    Title="Détails du projet"
+    MinWidth="460"
+    MaxWidth="520">
 
-    <StackPanel Padding="20" Spacing="16">
+    <Grid Padding="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- infos projet -->
+            <RowDefinition Height="Auto"/>
+            <!-- titre employés -->
+            <RowDefinition Height="*"/>
+            <!-- liste employés -->
+            <RowDefinition Height="Auto"/>
+            <!-- total -->
+        </Grid.RowDefinitions>
 
-        <StackPanel Spacing="4">
-            <TextBlock Text="{x:Bind Projet.NumeroProjet}" FontSize="20" FontWeight="Bold"/>
-            <TextBlock Text="{x:Bind Projet.Titre}" FontSize="18"/>
+        <!-- =================== INFOS PROJET =================== -->
+        <StackPanel Grid.Row="0" Spacing="6">
+            <!-- Numéro + titre -->
+            <TextBlock Text="{x:Bind Projet.NumeroProjet}"
+                       FontSize="22"
+                       FontWeight="Bold" />
 
+            <TextBlock Text="{x:Bind Projet.Titre}"
+                       FontSize="18"
+                       FontWeight="SemiBold"
+                       TextWrapping="Wrap" />
+
+            <!-- Client -->
             <StackPanel Orientation="Horizontal" Spacing="4">
                 <TextBlock Text="Client : " FontWeight="SemiBold"/>
-                <TextBlock Text="{x:Bind Projet.NomClient}"/>
+                <TextBlock Text="{x:Bind Projet.NomClient}" />
             </StackPanel>
 
+            <!-- Date de début -->
             <StackPanel Orientation="Horizontal" Spacing="4">
                 <TextBlock Text="Date de début : " FontWeight="SemiBold"/>
-                <TextBlock Text="{x:Bind Projet.DateDebut}"/>
+                <TextBlock Text="{x:Bind Projet.DateDebut}" />
             </StackPanel>
 
+            <!-- Budget -->
             <StackPanel Orientation="Horizontal" Spacing="4">
                 <TextBlock Text="Budget : " FontWeight="SemiBold"/>
-                <TextBlock Text="{x:Bind Projet.Budget}"/>
+                <TextBlock Text="{x:Bind Projet.Budget}" />
             </StackPanel>
 
+            <!-- Statut -->
             <StackPanel Orientation="Horizontal" Spacing="4">
                 <TextBlock Text="Statut : " FontWeight="SemiBold"/>
-                <TextBlock Text="{x:Bind Projet.Statut}"/>
+                <TextBlock Text="{x:Bind Projet.Statut}" />
             </StackPanel>
         </StackPanel>
 
-        <TextBlock Text="Employés assignés" 
-                   FontWeight="SemiBold" 
-                   Margin="0,10,0,0"/>
+        <!-- =================== TITRE SECTION EMPLOYÉS =================== -->
+        <TextBlock Grid.Row="1"
+                   Text="Employés assignés"
+                   Margin="0,16,0,4"
+                   FontSize="16"
+                   FontWeight="SemiBold" />
 
+        <!-- =================== LISTE EMPLOYÉS =================== -->
+        <Border Grid.Row="2"
+                BorderThickness="1"
+                BorderBrush="#22000000"
+                CornerRadius="8"
+                Padding="8"
+                Background="#0FFFFFFF">
 
-        <ListView 
-          SelectionMode="None"
-          Height="200">
+            <ListView x:Name="lvAssignations"
+                      ItemsSource="{x:Bind Assignation}"
+                      SelectionMode="None"
+                      MaxHeight="220">
 
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="local1:Assignation">
-                    <StackPanel Orientation="Horizontal" Spacing="12">
-                        <TextBlock Text="{x:Bind Employe.Nom}" Width="100"/>
-                        <TextBlock Text="{x:Bind Employe.Prenom}" Width="120"/>
-                        <TextBlock Text="{x:Bind Employe.TauxHoraire}" Width="80"/>
-                        <TextBlock Text="{x:Bind HeuresTravaillees}" Width="80"/>
-                        <TextBlock Text="{x:Bind SalaireAPayer}" Width="100"/>
-                    </StackPanel>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+                <!-- En-tête du tableau -->
+                <ListView.Header>
+                    <Grid Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <!-- Employé -->
+                            <ColumnDefinition Width="*"/>
+                            <!-- Taux -->
+                            <ColumnDefinition Width="*"/>
+                            <!-- Heures -->
+                            <ColumnDefinition Width="*"/>
+                            <!-- Salaire -->
+                        </Grid.ColumnDefinitions>
 
+                        <TextBlock Text="Employé"
+                                   Grid.Column="0"
+                                   FontWeight="SemiBold"/>
+                        <TextBlock Text="Taux"
+                                   Grid.Column="1"
+                                   FontWeight="SemiBold"
+                                   HorizontalAlignment="Right"/>
+                        <TextBlock Text="Heures"
+                                   Grid.Column="2"
+                                   FontWeight="SemiBold"
+                                   HorizontalAlignment="Right"/>
+                        <TextBlock Text="Salaire"
+                                   Grid.Column="3"
+                                   FontWeight="SemiBold"
+                                   HorizontalAlignment="Right"/>
+                    </Grid>
+                </ListView.Header>
 
+                <!-- Lignes -->
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="local1:Assignation">
+                        <Grid Padding="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
 
-        <StackPanel Orientation="Horizontal"
+                            <TextBlock Text="{x:Bind Employe.Nom}"
+                                       Grid.Column="0" />
+
+                            <TextBlock Text="{x:Bind Employe.TauxHoraire}"
+                                       Grid.Column="1"
+                                       HorizontalAlignment="Right"/>
+
+                            <TextBlock Text="{x:Bind HeuresTravaillees}"
+                                       Grid.Column="2"
+                                       HorizontalAlignment="Right"/>
+
+                            <TextBlock Text="{x:Bind SalaireAPayer}"
+                                       Grid.Column="3"
+                                       HorizontalAlignment="Right"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Border>
+
+        <!-- =================== TOTAL =================== -->
+        <StackPanel Grid.Row="3"
+                    Orientation="Horizontal"
                     HorizontalAlignment="Right"
-                    Spacing="8">
-            <TextBlock Text="Total des salaires : " FontWeight="SemiBold"/>
-            <TextBlock Text="{x:Bind TotalSalaires}"/>
+                    Margin="0,16,0,0">
+            <TextBlock Text="Total des salaires : "
+                       FontWeight="SemiBold" />
+            <TextBlock Text="{x:Bind TotalSalaires}" />
         </StackPanel>
 
-    </StackPanel>
+    </Grid>
 </ContentDialog>

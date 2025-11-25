@@ -40,4 +40,14 @@ public sealed partial class PageAccueil : Page
     {
 
     }
+
+    private void assigner_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void listeProjetsEnCours_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+
+    }
 }

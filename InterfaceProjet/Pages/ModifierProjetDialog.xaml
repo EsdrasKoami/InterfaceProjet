@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentDialog 
+    x:Class="InterfaceProjet.Pages.ModifierProjetDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local1="using:InterfaceProjet.Classes"
+    Title="Modifier un projet"
+    PrimaryButtonText="Enregistrer"
+    CloseButtonText="Annuler"
+    DefaultButton="Primary"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    Closing="ContentDialog_Closing">
+<!--a revoir--> 
+    <ScrollViewer>
+        <StackPanel Padding="20" Spacing="12">
+
+            <!-- Numéro de projet (non modifiable) -->
+            <StackPanel Spacing="4">
+                <TextBlock Text="Numéro du projet"
+                           FontWeight="SemiBold"/>
+                <TextBox x:Name="tbNumero"
+                         IsReadOnly="True"/>
+            </StackPanel>
+
+            <!-- Titre -->
+            <StackPanel Spacing="4">
+                <TextBlock Text="Titre"
+                           FontWeight="SemiBold"/>
+                <TextBox x:Name="tbTitre"/>
+                <TextBlock x:Name="tbTitreErreur"
+                           Foreground="Red"
+                           FontSize="12"
+                           Visibility="Collapsed"/>
+            </StackPanel>
+
+            <!-- Date de début -->
+            <StackPanel Spacing="4">
+                <TextBlock Text="Date de début"
+                           FontWeight="SemiBold"/>
+                <DatePicker x:Name="dpDateDebut"/>
+                <TextBlock x:Name="tbDateErreur"
+                           Foreground="Red"
+                           FontSize="12"
+                           Visibility="Collapsed"/>
+            </StackPanel>
+
+            <!-- Budget -->
+            <StackPanel Spacing="4">
+                <TextBlock Text="Budget"
+                           FontWeight="SemiBold"/>
+                <TextBox x:Name="tbBudget"
+                         PlaceholderText="Ex : 150000"/>
+                <TextBlock x:Name="tbBudgetErreur"
+                           Foreground="Red"
+                           FontSize="12"
+                           Visibility="Collapsed"/>
+            </StackPanel>
+
+            <!-- Nombre d'employés requis -->
+            <StackPanel Spacing="4">
+                <TextBlock Text="Nombre d’employés requis (max 5)"
+                           FontWeight="SemiBold"/>
+                <TextBox x:Name="tbNbEmployes"
+                         PlaceholderText="Ex : 3"/>
+                <TextBlock x:Name="tbNbEmployesErreur"
+                           Foreground="Red"
+                           FontSize="12"
+                           Visibility="Collapsed"/>
+            </StackPanel>
+
+            <!-- Statut -->
+            <StackPanel Spacing="4">
+                <TextBlock Text="Statut"
+                           FontWeight="SemiBold"/>
+                <ComboBox x:Name="cbStatut">
+                    <ComboBoxItem Content="En cours"/>
+                    <ComboBoxItem Content="Terminé"/>
+                </ComboBox>
+                <TextBlock x:Name="tbStatutErreur"
+                           Foreground="Red"
+                           FontSize="12"
+                           Visibility="Collapsed"/>
+            </StackPanel>
+
+            <!-- Description -->
+            <StackPanel Spacing="4">
+                <TextBlock Text="Description"
+                           FontWeight="SemiBold"/>
+                <TextBox x:Name="tbDescription"
+                         AcceptsReturn="True"
+                         TextWrapping="Wrap"
+                         Height="80"/>
+                <TextBlock x:Name="tbDescriptionErreur"
+                           Foreground="Red"
+                           FontSize="12"
+                           Visibility="Collapsed"/>
+            </StackPanel>
+
+        </StackPanel>
+    </ScrollViewer>
+</ContentDialog>

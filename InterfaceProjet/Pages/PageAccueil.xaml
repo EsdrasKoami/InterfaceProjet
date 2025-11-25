@@ -32,20 +32,95 @@
                     QueryIcon="Find"
                     TextChanged="tbRechercheProjet_TextChanged_1"/>
                 </StackPanel>
-                <GridView x:Name="listeProjetsEnCours" Grid.Row="2" Margin="0 30 0 0"   >
+                <GridView x:Name="listeProjetsEnCours"
+          Grid.Row="2"
+          SelectionChanged="listeProjetsEnCours_SelectionChanged" Margin="0,30,0,0">
+
+                    <GridView.ItemContainerStyle>
+                        <Style TargetType="GridViewItem">
+                            <Setter Property="Margin" Value="0,0,16,16"/>
+                            <Setter Property="MinWidth" Value="280"/>
+                            <Setter Property="MaxWidth" Value="280"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        </Style>
+                    </GridView.ItemContainerStyle>
+
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="local1:Projet">
-                            <StackPanel>
-                                <TextBlock Text="{x:Bind NumeroProjet}" FontWeight="Bold"/>
-                                <TextBlock Text="{x:Bind Titre}" />
-                                <TextBlock Text="{x:Bind NomClient}" />
-                                <TextBlock Text="{x:Bind DateDebut}" />
-                                <TextBlock Text="{x:Bind Budget}" />
-                                <TextBlock Text="{x:Bind Statut}" />
-                            </StackPanel>
+                            <Border Padding="14"
+                            CornerRadius="14"
+                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource SystemAccentColorDark1}"
+                            BorderThickness="2">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!-- HEADER -->
+                                    <Grid Grid.Row="0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Text="{x:Bind NumeroProjet}"
+                                   FontWeight="Bold"
+                                   FontSize="16"
+                                   Grid.Column="0"/>
+
+                                        <Border Grid.Column="1"
+                                Background="#1F008000"
+                                CornerRadius="10"
+                                Padding="6,2"
+                                HorizontalAlignment="Right">
+                                            <TextBlock Text="{x:Bind Statut}"
+                                       FontSize="12"
+                                       Foreground="#FF008000"/>
+                                        </Border>
+                                    </Grid>
+
+                                    <!-- INFOS -->
+                                    <StackPanel Grid.Row="1"
+                                Margin="0,8,0,8"
+                                Spacing="2">
+                                        <TextBlock Text="{x:Bind Titre}"
+                                   FontWeight="SemiBold"
+                                   TextWrapping="Wrap"/>
+
+                                        <TextBlock Text="{x:Bind NomClient}"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                   TextWrapping="Wrap"/>
+
+                                        <!-- Date formatée -->
+                                        <TextBlock FontSize="12">
+                            <Run Text="Début : "/>
+                            <Run Text="{x:Bind DateDebut, Mode=OneWay}"/>
+                                        </TextBlock>
+
+                                        <!-- Budget formaté -->
+                                        <TextBlock FontSize="12">
+                            <Run Text="Budget : "/>
+                            <Run Text="{x:Bind Budget, Mode=OneWay}"/>
+                                        </TextBlock>
+                                    </StackPanel>
+
+                                    <!-- BOUTON -->
+                                    <Button Grid.Row="2"
+                                            x:Name="assigner"
+                            Content="Assigner"
+                            HorizontalAlignment="Right"
+                            Margin="0,4,0,0"
+                            Style="{ThemeResource AccentButtonStyle}"
+                            Click="assigner_Click"/>
+                                </Grid>
+                            </Border>
                         </DataTemplate>
                     </GridView.ItemTemplate>
                 </GridView>
+
 
             </Grid>
         </Grid>
