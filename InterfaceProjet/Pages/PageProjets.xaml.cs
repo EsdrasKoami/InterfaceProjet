@@ -65,6 +65,10 @@ private async void listeProjets_SelectionChanged(object sender, SelectionChanged
     private void btnAjouter_Click(object sender, RoutedEventArgs e)
     {
 
+        Projet projet = listeProjets.SelectedItem as Projet;
+        // Naviguer vers la page d’assignation en passant le projet sélectionné
+        Frame.Navigate(typeof(PageAjoutPojet), projet);
+
     }
 
     private void tbRechercheProjet_TextChanged_1(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
