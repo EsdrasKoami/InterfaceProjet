@@ -19,7 +19,7 @@ namespace InterfaceClient.Singletons
         static SingletonClient instance = null;
         private SingletonClient()
         {
-            connectionString = "Server=@cours.cegep3r.info;Database=a2025_420335-345ri_greq20;Uid=6233629;Pwd=6233629;";
+            connectionString = "Server=cours.cegep3r.info;Database=a2025_420335-345ri_greq20;Uid=6233629;Pwd=6233629;";
             listeClient = new ObservableCollection<Client>();
         }
         //retourne l’instance du singleton
@@ -73,28 +73,27 @@ namespace InterfaceClient.Singletons
 
         public int getNombreClients()
         {
-            MySqlConnection con = new MySqlConnection("Server=cours.cegep3r.info;Database=a2025_420335-345ri_greq20;Uid=6233629;Pwd=6233629;");
             try
             {
-                MySqlCommand commande = new MySqlCommand();
-                commande.Connection = con;
-                commande.CommandText = "select count(*) from Client";
+                using MySqlConnection con = new MySqlConnection(connectionString);
+                using MySqlCommand commande = con.CreateCommand();
+                commande.CommandText = "SELECT COUNT(*) FROM clients";
+
                 con.Open();
-                var res = commande.ExecuteScalar();
-                con.Close();
-                if (res is not null)
+                object? res = commande.ExecuteScalar();
+
+                if (res != null && res != DBNull.Value)
                     return Convert.ToInt32(res);
                 else
                     return 0;
             }
             catch (MySqlException ex)
             {
-                Debug.WriteLine(ex.Message);
-                if (con.State == System.Data.ConnectionState.Open)
-                    con.Close();
+                Debug.WriteLine("Erreur MySQL getNombreClients : " + ex.Message);
                 return 0;
             }
         }
+
         //ajoute un Client dans la liste
         public void AjouterClientAvecProcedure(string nom, string adresse, string telephone, string email)
         {

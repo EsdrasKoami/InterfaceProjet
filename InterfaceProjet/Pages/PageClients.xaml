@@ -7,7 +7,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
-    <ScrollView >
+
+    <ScrollViewer>
         <Grid>
             <Grid Padding="40">
                 <Grid.RowDefinitions>
@@ -15,54 +16,115 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
+
+                <!-- Titre -->
                 <StackPanel Grid.Row="0"
-                    Orientation="Horizontal"
-                    Spacing="10"
-                    Margin="0,0,0,20">
+                            Orientation="Horizontal"
+                            Spacing="10"
+                            Margin="0,0,0,20">
                     <SymbolIcon Symbol="Contact"/>
                     <TextBlock Text="Gestion des clients"
-                       FontSize="28"
-                       FontWeight="SemiBold"/>
+                               FontSize="28"
+                               FontWeight="SemiBold"/>
                 </StackPanel>
 
+                <!-- Barre de recherche + boutons -->
                 <StackPanel Grid.Row="1"
-                    Orientation="Horizontal"
-                    Spacing="10"
-                    Margin="0,0,0,20">
+                            Orientation="Horizontal"
+                            Spacing="10"
+                            Margin="0,0,0,20">
                     <AutoSuggestBox x:Name="tbRechercheProjet"
-                    Width="300"
-                    PlaceholderText="Rechercher un projet"
-                    QueryIcon="Find"
-                    TextChanged="tbRechercheProjet_TextChanged"/>
+                                    Width="300"
+                                    PlaceholderText="Rechercher un client"
+                                    QueryIcon="Find"
+                                    TextChanged="tbRechercheProjet_TextChanged"/>
                     <Button Content="Ajouter"
-                    x:Name="btnAjouterClient"
-                    Click="btnAjouterClient_Click"/>
+                            x:Name="btnAjouterClient"
+                            Click="btnAjouterClient_Click"/>
                     <Button Content="Modifier"
-                    x:Name="btnModifierClient"
-                    Click="btnModifierClient_Click"/>
+                            x:Name="btnModifierClient"
+                            Click="btnModifierClient_Click"/>
                     <Button Content="Supprimer"
-                    x:Name="btnSupprimerClient"
-                    Click="btnSupprimerClient_Click"/>
+                            x:Name="btnSupprimerClient"
+                            Click="btnSupprimerClient_Click"/>
                 </StackPanel>
-                <!--ItemClick="lvClients_ItemClick"-->
+
+                <!-- Liste des clients -->
                 <ListView Grid.Row="2"
-                  x:Name="lvClients"
-                 >
+                          x:Name="lvClients">
+
+                    <!-- Enlever le padding par défaut des items -->
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="Padding" Value="0"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+
+                    <!-- En-tête des colonnes -->
+                    <ListView.Header>
+                        <Grid Margin="0,0,0,5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="60"/>
+                                <!-- ID -->
+                                <ColumnDefinition Width="220"/>
+                                <!-- Nom -->
+                                <ColumnDefinition Width="320"/>
+                                <!-- Email -->
+                                <ColumnDefinition Width="150"/>
+                                <!-- Téléphone -->
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0"
+                                       Text="ID"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Stretch"
+                                       TextAlignment="Center"/>
+                            <TextBlock Grid.Column="1"
+                                       Text="Nom"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="2"
+                                       Text="Email"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="3"
+                                       Text="Téléphone"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Center"/>
+                        </Grid>
+                    </ListView.Header>
+
+                    <!-- Lignes de données -->
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="local1:Client">
-                            <StackPanel Orientation="Horizontal"
-                                Margin="0,5,0,5"
-                                Spacing="20">
-                                <TextBlock Text="{x:Bind IdClient}" Width="50"/>
-                                <TextBlock Text="{x:Bind Nom}" Width="150"/>
-                                <TextBlock Text="{x:Bind Email}" Width="200"/>
-                                <TextBlock Text="{x:Bind Telephone}" Width="120"/>
-                            </StackPanel>
+                            <Grid Margin="0,5,0,5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="60"/>
+                                    <ColumnDefinition Width="220"/>
+                                    <ColumnDefinition Width="320"/>
+                                    <ColumnDefinition Width="150"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Column="0"
+                                           Text="{x:Bind IdClient}"
+                                           HorizontalAlignment="Stretch"
+                                           TextAlignment="Center"/>
+                                <TextBlock Grid.Column="1"
+                                           Text="{x:Bind Nom}"
+                                           HorizontalAlignment="Center"/>
+                                <TextBlock Grid.Column="2"
+                                           Text="{x:Bind Email}"
+                                           HorizontalAlignment="Center"
+                                           TextTrimming="CharacterEllipsis"/>
+                                <TextBlock Grid.Column="3"
+                                           Text="{x:Bind Telephone}"
+                                           HorizontalAlignment="Center"/>
+                            </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
-            </Grid>
 
+            </Grid>
         </Grid>
-    </ScrollView>
+    </ScrollViewer>
 </Page>

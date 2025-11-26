@@ -30,6 +30,7 @@ namespace InterfaceEmploye.Singletons
             }
             //Propriété qui retourne la liste des Employes
             public ObservableCollection<Employe> Liste { get => listeEmploye; }
+
         public void getEmployesDisponibles()
         {
             listeEmploye.Clear();
@@ -53,7 +54,7 @@ namespace InterfaceEmploye.Singletons
                             DateTime.MinValue,   // date_naissance non dans la vue
                             r.GetString("email"),
                             "",                  // adresse
-                            DateTime.MinValue,   // date_embauche
+                            DateTime.MinValue,   // date_embauche3k
                             r.GetDecimal("taux_horaire"),
                             "",                  // photo_url
                             r.GetString("statut_employe")

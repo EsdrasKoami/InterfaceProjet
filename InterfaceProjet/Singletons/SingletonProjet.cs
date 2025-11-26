@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,6 +32,54 @@ namespace InterfaceProjet.Singletons
         }
         //Propriété qui retourne la liste des Projets
         public ObservableCollection<Projet> Liste { get =>listeProjet; }
+
+        // retourne  les projets en cours 
+        public void getProjetsEnCours()
+        {
+            listeProjet.Clear();
+
+            try
+            {
+                using MySqlConnection con = new MySqlConnection(connectionString);
+                using MySqlCommand cmd = con.CreateCommand();
+                cmd.CommandText = "SELECT * FROM vue_projets_en_cours";
+
+                con.Open();
+                using MySqlDataReader r = cmd.ExecuteReader();
+
+                while (r.Read())
+                {
+                    Projet projet = new Projet(
+                        numeroProjet: r.GetString("numero_projet"),
+                        titre: r.GetString("titre"),
+                        dateDebut: r.GetDateTime("date_debut"),
+                        description: r.GetString("description"),
+                        budget: r.GetDecimal("budget"),
+                        nbEmployesRequis: r.GetInt32("nb_employes_requis"),
+                        totalSalaires: r.GetDecimal("total_salaires"),
+                        idClient: r.GetInt32("id_client"),
+                        nomClient: r.GetString("nom_client"),
+                        statut: r.GetString("statut"),
+                        dateCreation: r.GetDateTime("date_creation")
+                    );
+
+                    // remplissage des champs ajoutés dans ton modèle
+                    projet.NbEmployesAssignes = r.GetInt32("nb_employes_assignes");
+                    projet.TelephoneClient = r.GetString("telephone_client");
+
+
+                 
+
+                    listeProjet.Add(projet);
+                }
+            }
+            catch (MySqlException ex)
+            {
+                Debug.WriteLine("Erreur MySQL getProjetsEnCours : " + ex.Message);
+            }
+        }
+
+
 
         public void getAllProjets() // Charge la liste avec tous les projets
         {
@@ -230,22 +279,46 @@ namespace InterfaceProjet.Singletons
             }
         }
 
-        public void getProjetsEnCours()
+
+        public void TerminerProjet(string numeroProjet)
         {
-            listeProjet.Clear(); // Vide la liste avant de la recharger
+            try
+            {
+                using MySqlConnection con = new MySqlConnection(connectionString);
+                using MySqlCommand cmd = con.CreateCommand();
+
+                cmd.CommandText = "TerminerProjet";
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("p_numero_projet", numeroProjet);
+
+                con.Open();
+                cmd.ExecuteNonQuery();
+            }
+            catch (MySqlException ex)
+            {
+                Debug.WriteLine("Erreur MySQL : " + ex.Message);
+            }
+            finally
+            {
+                
+                getProjetsEnCours(); 
+            }
+        }
+        public void getProjetsTermines()
+        {
+            listeProjet.Clear();
 
             try
             {
                 using MySqlConnection con = new MySqlConnection(connectionString);
                 using MySqlCommand cmd = con.CreateCommand();
-                cmd.CommandText = "SELECT * FROM vue_projets_en_cours";
+                cmd.CommandText = "SELECT * FROM vue_projets_termines";
 
                 con.Open();
                 using MySqlDataReader r = cmd.ExecuteReader();
 
                 while (r.Read())
                 {
-                    // Crée l'objet avec le constructeur actuel
                     Projet projet = new Projet(
                         numeroProjet: r.GetString("numero_projet"),
                         titre: r.GetString("titre"),
@@ -254,13 +327,12 @@ namespace InterfaceProjet.Singletons
                         budget: r.GetDecimal("budget"),
                         nbEmployesRequis: r.GetInt32("nb_employes_requis"),
                         totalSalaires: r.GetDecimal("total_salaires"),
-                        idClient: 0, 
+                        idClient: r.GetInt32("id_client"),
                         nomClient: r.GetString("nom_client"),
                         statut: r.GetString("statut"),
-                        dateCreation: DateTime.Now 
+                        dateCreation: r.GetDateTime("date_creation")
                     );
 
-                    // Remplissage des nouveaux champs via les propriétés
                     projet.NbEmployesAssignes = r.GetInt32("nb_employes_assignes");
                     projet.TelephoneClient = r.GetString("telephone_client");
 
@@ -269,34 +341,87 @@ namespace InterfaceProjet.Singletons
             }
             catch (MySqlException ex)
             {
-                Debug.WriteLine("Erreur MySQL : " + ex.Message);
+                Debug.WriteLine("Erreur MySQL getProjetsTermines : " + ex.Message);
             }
         }
-        public void TerminerProjet(string numeroProjet)
+
+        public void ExporterProjetsCsv(string cheminFichier)
         {
             try
             {
                 using MySqlConnection con = new MySqlConnection(connectionString);
                 using MySqlCommand cmd = con.CreateCommand();
 
-                // Appel de la procédure stockée
-                cmd.CommandText = "TerminerProjet";
-                cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("p_numero_projet", numeroProjet);
+              
+                cmd.CommandText = @"
+            SELECT 
+                numero_projet,
+                titre,
+                nom_client,
+                date_debut,
+                budget,
+                total_salaires,
+                statut
+            FROM vue_tous_projets
+            ORDER BY date_debut;";
 
                 con.Open();
-                cmd.ExecuteNonQuery();
+                using MySqlDataReader r = cmd.ExecuteReader();
+                using StreamWriter writer = new StreamWriter(cheminFichier, false, Encoding.UTF8);
 
-                // Mettre à jour la liste locale
-                var projet = listeProjet.FirstOrDefault(p => p.NumeroProjet == numeroProjet);
-                if (projet != null)
+                // En-tête CSV
+                writer.WriteLine("NumeroProjet;Titre;NomClient;DateDebut;Budget;TotalSalaires;BudgetRestant;Statut");
+
+                while (r.Read())
                 {
-                    projet.Statut = "Terminé";
+                    string numero = r.GetString("numero_projet");
+                    string titre = r.GetString("titre");
+                    string nomClient = r.GetString("nom_client");
+                    DateTime dateDebut = r.GetDateTime("date_debut");
+                    decimal budget = r.GetDecimal("budget");
+                    decimal totalSalaires = r.GetDecimal("total_salaires");
+                    string statut = r.GetString("statut");
+
+                    // Calcul du budget restant
+                    decimal budgetRestant = budget - totalSalaires;
+
+                    
+                    string safeTitre = titre.Replace(";", ",");
+                    string safeNomClient = nomClient.Replace(";", ",");
+
+                    writer.WriteLine(
+                        $"{numero};{safeTitre};{safeNomClient};{dateDebut:yyyy-MM-dd};{budget};{totalSalaires};{budgetRestant};{statut}"
+                    );
                 }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Erreur export CSV : " + ex.Message);
+            }
+        }
+
+        public decimal GetBudgetRestant(string numeroProjet)
+        {
+            try
+            {
+                using MySqlConnection con = new MySqlConnection(connectionString);
+                using MySqlCommand cmd = con.CreateCommand();
+
+                cmd.CommandText = "SELECT BudgetRestant(@num)";
+                cmd.Parameters.AddWithValue("@num", numeroProjet);
+
+                con.Open();
+                object? res = cmd.ExecuteScalar();
+
+                if (res != null && res != DBNull.Value)
+                    return Convert.ToDecimal(res);
+                else
+                    return 0m;
             }
             catch (MySqlException ex)
             {
-                Debug.WriteLine("Erreur MySQL : " + ex.Message);
+                Debug.WriteLine("Erreur MySQL GetBudgetRestant : " + ex.Message);
+                return 0m;
             }
         }
 
