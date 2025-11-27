@@ -75,13 +75,71 @@ private async void listeProjets_SelectionChanged(object sender, SelectionChanged
     {
 
     }
-    private void assigner_Click(object sender, RoutedEventArgs e)
+    private async void assigner_Click(object sender, RoutedEventArgs e)
     {
-      
-            Projet projet = listeProjets.SelectedItem as Projet;
-            // Naviguer vers la page d’assignation en passant le projet sélectionné
-            Frame.Navigate(typeof(PageAssignationEmploye), projet);
-        
+        // Récupérer le projet sélectionné à partir du DataContext du bouton
+        var recupere  = sender as FrameworkElement;
+        Projet projetSelectionne = recupere?.DataContext as Projet;
+
+        if (projetSelectionne == null)
+        {
+            var dlg = new ContentDialog
+            {
+                Title = "Erreur",
+                Content = "Impossible de récupérer le projet sélectionné.",
+                CloseButtonText = "OK",
+                XamlRoot = this.Content.XamlRoot
+            };
+
+            await dlg.ShowAsync();
+            return;
+        }
+
+       
+        var dialog = new ContentDialog
+        {
+            Title = $"Projet {projetSelectionne.NumeroProjet}",
+            Content = "Que souhaitez-vous faire ?",
+            PrimaryButtonText = "Assigner client",
+            SecondaryButtonText = "Assigner employé",
+            CloseButtonText = "Annuler",
+            DefaultButton = ContentDialogButton.Primary,
+            XamlRoot = this.Content.XamlRoot
+        };
+
+        var result = await dialog.ShowAsync();
+
+        switch (result)
+        {
+            case ContentDialogResult.Primary:
+               
+                if (this.Frame != null)
+                {
+                    Frame.Navigate(typeof(PageAssignationClient), projetSelectionne);
+                }
+                else
+                {
+                    Debug.WriteLine("Frame est null, navigation vers PageAssignationClient impossible.");
+                }
+                break;
+
+            case ContentDialogResult.Secondary:
+               
+                if (this.Frame != null)
+                {
+                    Frame.Navigate(typeof(PageAssignationEmploye), projetSelectionne);
+                }
+                else
+                {
+                    Debug.WriteLine("Frame est null, navigation vers PageAssignationEmploye impossible.");
+                }
+                break;
+
+            case ContentDialogResult.None:
+            default:
+                
+                break;
+        }
     }
 
     private async void ButtonModifier_Click(object sender, RoutedEventArgs e)

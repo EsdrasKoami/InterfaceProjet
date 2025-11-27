@@ -47,13 +47,20 @@
                     <Button Content="Supprimer"
                             x:Name="btnSupprimerClient"
                             Click="btnSupprimerClient_Click"/>
+
+                    <!-- 👇 Nouveau bouton : Ajouter un projet -->
+                    <Button Content="Ajouter un projet"
+                            x:Name="btnAjouterProjet"
+                            Background="#0078D7"
+                            Foreground="White"
+                            Click="btnAjouterProjet_Click"/>
                 </StackPanel>
 
                 <!-- Liste des clients -->
                 <ListView Grid.Row="2"
                           x:Name="lvClients">
 
-                    <!-- Enlever le padding par défaut des items -->
+                  
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
                             <Setter Property="Padding" Value="0"/>

@@ -1,4 +1,5 @@
 using InterfaceClient.Singletons;
+using InterfaceProjet.Classes;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -33,12 +34,12 @@ public sealed partial class PageClients : Page
 
     private void tbRechercheClient_TextChanged(object sender, TextChangedEventArgs e)
     {
-
+       
     }
 
     private void btnAjouterClient_Click(object sender, RoutedEventArgs e)
     {
-
+        Frame.Navigate(typeof(PageAjoutClient));
     }
 
     private void btnModifierClient_Click(object sender, RoutedEventArgs e)
@@ -55,4 +56,29 @@ public sealed partial class PageClients : Page
     {
 
     }
+    private void btnAjouterProjet_Click(object sender, RoutedEventArgs e)
+    {
+        if (lvClients.SelectedItem is Client clientSelectionne)
+        {
+            // Ouvrir une page ou un dialogue pour ajouter un projet à ce client
+            // Exemple :
+            // Frame.Navigate(typeof(PageProjets), clientSelectionne);
+        }
+        else
+        {
+            var dialog = new ContentDialog
+            {
+                Title = "Aucun client sélectionné",
+                Content = "Veuillez d’abord sélectionner un client avant d’ajouter un projet.",
+                CloseButtonText = "OK"
+            };
+            _ = dialog.ShowAsync();
+        }
+    }
+
+
+    
+
+    
+
 }

@@ -16,6 +16,7 @@
     <None Remove="Pages\ModifierProjetDialog.xaml" />
     <None Remove="Pages\PageAjoutClient.xaml" />
     <None Remove="Pages\PageAjoutEmploye.xaml" />
+    <None Remove="Pages\PageAssignationClient.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,6 +44,11 @@
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.7175" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.251106002" />
     <PackageReference Include="MySql.Data" Version="9.5.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Pages\PageAssignationClient.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Pages\ModifierProjetDialog.xaml">

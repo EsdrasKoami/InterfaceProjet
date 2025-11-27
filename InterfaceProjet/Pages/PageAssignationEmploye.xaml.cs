@@ -24,7 +24,7 @@ namespace InterfaceProjet.Pages;
 /// </summary>
 public sealed partial class PageAssignationEmploye : Page
 {
-    public Projet ProjetCourant { get; set; }
+    Projet ProjetCourant;
 
     public PageAssignationEmploye()
 
@@ -36,6 +36,21 @@ public sealed partial class PageAssignationEmploye : Page
         base.OnNavigatedTo(e);
         ProjetCourant = e.Parameter as Projet;
 
-        // TODO : utiliser ProjetCourant pour afficher titre, numéro, etc.
+        
+    }
+
+    private void btnAnnuler_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void btnChoisirEmploye_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void tbRechercheEmploye_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    {
+
     }
 }
