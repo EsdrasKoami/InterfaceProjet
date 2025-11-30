@@ -3,12 +3,10 @@
     x:Class="InterfaceProjet.Pages.Employe"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:InterfaceProjet.Pages"
     xmlns:local1="using:InterfaceProjet.Classes"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    mc:Ignorable="d">
 
     <Grid Padding="40">
         <Grid.RowDefinitions>
@@ -17,21 +15,17 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Titre -->
-        <StackPanel Grid.Row="0"
-                    Orientation="Horizontal"
-                    Spacing="10"
-                    Margin="0,0,0,20">
-            <FontIcon Glyph="&#xE77B;" FontSize="28"/>
-            <TextBlock Text="Gestion des employés"
-                       FontSize="28"
-                       FontWeight="SemiBold"/>
-        </StackPanel>
+        <!-- TITRE -->
+        <TextBlock Grid.Row="0"
+                   Text="Gestion des employés"
+                   FontSize="28"
+                   FontWeight="SemiBold"
+                   Margin="0,0,0,20"/>
 
-        <!-- Recherche -->
+        <!-- RECHERCHE + BOUTON AJOUTER -->
         <StackPanel Grid.Row="1"
                     Orientation="Horizontal"
-                    Spacing="12"
+                    Spacing="10"
                     Margin="0,0,0,20">
             <AutoSuggestBox x:Name="tbRechercheEmploye"
                             Width="350"
@@ -39,121 +33,107 @@
                             QueryIcon="Find"
                             TextChanged="tbRechercheEmploye_TextChanged"/>
 
-            <TextBlock VerticalAlignment="Center"
-                       Foreground="Gray">
-                <Run Text="Total : "/>
-                <Run Text="{x:Bind lvEmployes.Items.Count, Mode=OneWay}"
-                     FontWeight="Bold"/>
-                <Run Text=" employé(s)"/>
-            </TextBlock>
+            <Button x:Name="btnAjouter"
+                    Content="Ajouter un employé"
+                    Click="btnAjouter_Click"/>
         </StackPanel>
 
-        <!-- Liste des employés -->
-        <ScrollViewer Grid.Row="2">
-            <GridView x:Name="lvEmployes"
-                      IsItemClickEnabled="False"
-                      SelectionMode="None"
-                      Padding="0,0,0,20">
+        <!-- LISTE DES EMPLOYÉS (EN CARTES) -->
+        <GridView Grid.Row="2"
+                  x:Name="lvEmployes"
+                  SelectionMode="Single"
+                  IsItemClickEnabled="False">
 
-                <GridView.ItemTemplate>
-                    <DataTemplate x:DataType="local1:Employe">
-                        <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                BorderThickness="1"
-                                CornerRadius="8"
-                                Padding="20"
-                                Margin="8"
-                                Width="380"
-                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
+            <!-- style des items : largeur / marges des cartes -->
+            <GridView.ItemContainerStyle>
+                <Style TargetType="GridViewItem">
+                    <Setter Property="Margin" Value="0,0,16,16"/>
+                    <Setter Property="MinWidth" Value="260"/>
+                    <Setter Property="MaxWidth" Value="260"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                </Style>
+            </GridView.ItemContainerStyle>
 
-                                <!-- En-tête -->
-                                <StackPanel Grid.Row="0"
-                                            Orientation="Horizontal"
-                                            Spacing="12"
-                                            Margin="0,0,0,12">
-                                    <Border Width="64"
-                                            Height="64"
-                                            CornerRadius="32"
-                                            BorderBrush="{ThemeResource AccentFillColorDefaultBrush}"
-                                            BorderThickness="2">
-                                        <Image Source="{x:Bind PhotoUrl}"
-                                               Stretch="UniformToFill"/>
-                                    </Border>
+            <!-- TEMPLATE D'UNE CARTE EMPLOYÉ -->
+            <GridView.ItemTemplate>
+                <DataTemplate x:DataType="local1:Employe">
+                    <Border Padding="14"
+                            CornerRadius="12"
+                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                            BorderThickness="1">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <!-- header -->
+                                <RowDefinition Height="*"/>
+                                <!-- infos -->
+                            </Grid.RowDefinitions>
 
-                                    <StackPanel>
-                                        <!-- Si tu as ajouté NomComplet dans ton modèle, tu peux utiliser NomComplet ici -->
-                                        <TextBlock Text="{x:Bind Prenom}"
-                                                   FontSize="18"
-                                                   FontWeight="SemiBold"/>
-                                        <TextBlock Text="{x:Bind Nom}"
-                                                   FontSize="18"
-                                                   FontWeight="SemiBold"/>
-                                        <TextBlock Text="{x:Bind Matricule}"
-                                                   FontSize="12"
-                                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                                    </StackPanel>
+                            <!-- HEADER : nom + boutons icônes -->
+                            <Grid Grid.Row="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Nom complet + matricule -->
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="{x:Bind Prenom}"
+                                               FontSize="16"
+                                               FontWeight="SemiBold"/>
+                                    <TextBlock Text="{x:Bind Nom}"
+                                               FontSize="16"/>
+                                    <TextBlock Text="{x:Bind Matricule}"
+                                               FontSize="12"
+                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                                 </StackPanel>
 
-                                <!-- Infos -->
-                                <StackPanel Grid.Row="1" Spacing="4">
-                                    <TextBlock>
-                                        <Run Text="Date de naissance : "/>
-                                        <Run Text="{x:Bind DateNaissance, Mode=OneWay}"/>
-                                    </TextBlock>
-
-                                    <TextBlock>
-                                        <Run Text="Date d'embauche : "/>
-                                        <Run Text="{x:Bind DateEmbauche, Mode=OneWay}"/>
-                                    </TextBlock>
-
-                                    <TextBlock>
-                                        <Run Text="Email : "/>
-                                        <Run Text="{x:Bind Email, Mode=OneWay}"/>
-                                    </TextBlock>
-
-                                    <TextBlock>
-                                        <Run Text="Taux horaire : "/>
-                                        <Run Text="{x:Bind TauxHoraire, Mode=OneWay}"/>
-                                    </TextBlock>
-
-                                    <TextBlock>
-                                        <Run Text="Statut : "/>
-                                        <Run Text="{x:Bind Statut, Mode=OneWay}"/>
-                                    </TextBlock>
-                                </StackPanel>
-
-                                <!-- Boutons -->
-                                <StackPanel Grid.Row="2"
+                                <!-- Icônes Modifier / Supprimer -->
+                                <StackPanel Grid.Column="1"
                                             Orientation="Horizontal"
-                                            HorizontalAlignment="Right"
-                                            Spacing="8"
-                                            Margin="0,12,0,0">
-                                    <Button x:Name="modifier"
-                                            Click="modifier_Click">
-                                        <StackPanel Orientation="Horizontal" Spacing="6">
-                                            <FontIcon Glyph="&#xE70F;"/>
-                                            <TextBlock Text="Modifier"/>
-                                        </StackPanel>
+                                            Spacing="4"
+                                            HorizontalAlignment="Right">
+                                    <Button Click="modifier_Click"
+                                             Background="Transparent"
+                                             BorderThickness="0"
+                                             VerticalAlignment="Center">        
+                                        <SymbolIcon Symbol="Edit"/>
                                     </Button>
 
-                                    <Button x:Name="supprimer"
-                                            Click="supprimer_Click">
-                                        <StackPanel Orientation="Horizontal" Spacing="6">
-                                            <FontIcon Glyph="&#xE74D;"/>
-                                            <TextBlock Text="Supprimer"/>
-                                        </StackPanel>
+                                    <Button Click="supprimer_Click"
+                                            Background="Transparent"
+                                             BorderThickness="0"           
+                                             VerticalAlignment="Center">        
+                                        <SymbolIcon Symbol="Delete"/>
                                     </Button>
                                 </StackPanel>
                             </Grid>
-                        </Border>
-                    </DataTemplate>
-                </GridView.ItemTemplate>
-            </GridView>
-        </ScrollViewer>
+
+                            <!-- INFOS SUPPLÉMENTAIRES -->
+                            <StackPanel Grid.Row="1"
+                                        Margin="0,8,0,0"
+                                        Spacing="2">
+                                <TextBlock FontSize="12">
+                                    <Run Text="Email : "/>
+                                    <Run Text="{x:Bind Email, Mode=OneWay}"/>
+                                </TextBlock>
+
+                                <TextBlock FontSize="12">
+                                    <Run Text="Taux horaire : "/>
+                                    <Run Text="{x:Bind TauxHoraire, Mode=OneWay}"/>
+                                </TextBlock>
+
+                                <TextBlock FontSize="12">
+                                    <Run Text="Statut : "/>
+                                    <Run Text="{x:Bind Statut, Mode=OneWay}"/>
+                                </TextBlock>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </GridView.ItemTemplate>
+        </GridView>
+
     </Grid>
 </Page>

@@ -10,19 +10,10 @@
     DefaultButton="Primary"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
     Closing="ContentDialog_Closing">
-<!--a revoir--> 
+
     <ScrollViewer>
         <StackPanel Padding="20" Spacing="12">
 
-            <!-- Numéro de projet (non modifiable) -->
-            <StackPanel Spacing="4">
-                <TextBlock Text="Numéro du projet"
-                           FontWeight="SemiBold"/>
-                <TextBox x:Name="tbNumero"
-                         IsReadOnly="True"/>
-            </StackPanel>
-
-            <!-- Titre -->
             <StackPanel Spacing="4">
                 <TextBlock Text="Titre"
                            FontWeight="SemiBold"/>
@@ -32,8 +23,7 @@
                            FontSize="12"
                            Visibility="Collapsed"/>
             </StackPanel>
-
-            <!-- Date de début -->
+            
             <StackPanel Spacing="4">
                 <TextBlock Text="Date de début"
                            FontWeight="SemiBold"/>
@@ -44,35 +34,31 @@
                            Visibility="Collapsed"/>
             </StackPanel>
 
-            <!-- Budget -->
             <StackPanel Spacing="4">
                 <TextBlock Text="Budget"
                            FontWeight="SemiBold"/>
-                <TextBox x:Name="tbBudget"
-                         PlaceholderText="Ex : 150000"/>
+                <NumberBox x:Name="NbBudget"
+                         />
                 <TextBlock x:Name="tbBudgetErreur"
                            Foreground="Red"
                            FontSize="12"
                            Visibility="Collapsed"/>
             </StackPanel>
 
-            <!-- Nombre d'employés requis -->
             <StackPanel Spacing="4">
                 <TextBlock Text="Nombre d’employés requis (max 5)"
                            FontWeight="SemiBold"/>
-                <TextBox x:Name="tbNbEmployes"
-                         PlaceholderText="Ex : 3"/>
+                <NumberBox x:Name="NbEmployes"/>
                 <TextBlock x:Name="tbNbEmployesErreur"
                            Foreground="Red"
                            FontSize="12"
                            Visibility="Collapsed"/>
             </StackPanel>
 
-            <!-- Statut -->
             <StackPanel Spacing="4">
                 <TextBlock Text="Statut"
                            FontWeight="SemiBold"/>
-                <ComboBox x:Name="cbStatut">
+                <ComboBox x:Name="cbStatut" SelectedItem="0">
                     <ComboBoxItem Content="En cours"/>
                     <ComboBoxItem Content="Terminé"/>
                 </ComboBox>
@@ -82,7 +68,7 @@
                            Visibility="Collapsed"/>
             </StackPanel>
 
-            <!-- Description -->
+
             <StackPanel Spacing="4">
                 <TextBlock Text="Description"
                            FontWeight="SemiBold"/>

@@ -58,4 +58,9 @@ public sealed partial class Employe : Page
 
         lvEmployes.ItemsSource = singleton.Liste;
     }
+
+    private void btnAjouter_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
 }

@@ -3,132 +3,121 @@ using InterfaceProjet.Singletons;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
-using System.Globalization;
-//a revoir
+
 namespace InterfaceProjet.Pages
 {
     public sealed partial class ModifierProjetDialog : ContentDialog
     {
-        private readonly Projet _projetOriginal;
+        private Projet projetModifier;
 
         public ModifierProjetDialog(Projet projet)
         {
             this.InitializeComponent();
 
-            _projetOriginal = projet ?? throw new ArgumentNullException(nameof(projet));
+            projetModifier = projet;
 
-            // Pré-remplir les champs
-            tbNumero.Text = _projetOriginal.NumeroProjet;
-            tbTitre.Text = _projetOriginal.Titre;
-            tbDescription.Text = _projetOriginal.Description;
-            tbBudget.Text = _projetOriginal.Budget.ToString(CultureInfo.InvariantCulture);
-            tbNbEmployes.Text = _projetOriginal.NbEmployesRequis.ToString();
+            if (projetModifier != null)
+            {
+                tbTitre.Text = projetModifier.Titre;
+                tbDescription.Text = projetModifier.Description;
+                NbBudget.Text = projetModifier.Budget.ToString();
+                NbEmployes.Text = projetModifier.NbEmployesRequis.ToString();
 
-            // Date début
-            dpDateDebut.Date = _projetOriginal.DateDebut;
+                dpDateDebut.Date = new DateTimeOffset(projetModifier.DateDebut);
 
-            // Statut
-            if (_projetOriginal.Statut?.ToLower().Contains("termin") == true)
-                cbStatut.SelectedIndex = 1;
-            else
-                cbStatut.SelectedIndex = 0;
+                cbStatut.SelectedItem = projetModifier.Statut;
+            }
         }
+
 
         private void ResetErreurs()
         {
-            tbTitreErreur.Visibility = Visibility.Collapsed;
-            tbDateErreur.Visibility = Visibility.Collapsed;
-            tbBudgetErreur.Visibility = Visibility.Collapsed;
-            tbNbEmployesErreur.Visibility = Visibility.Collapsed;
-            tbStatutErreur.Visibility = Visibility.Collapsed;
-            tbDescriptionErreur.Visibility = Visibility.Collapsed;
-
             tbTitreErreur.Text = "";
+            tbTitreErreur.Visibility = Visibility.Collapsed;
+
             tbDateErreur.Text = "";
+            tbDateErreur.Visibility = Visibility.Collapsed;
+
             tbBudgetErreur.Text = "";
+            tbBudgetErreur.Visibility = Visibility.Collapsed;
+
             tbNbEmployesErreur.Text = "";
+            tbNbEmployesErreur.Visibility = Visibility.Collapsed;
+
             tbStatutErreur.Text = "";
+            tbStatutErreur.Visibility = Visibility.Collapsed;
+
             tbDescriptionErreur.Text = "";
+            tbDescriptionErreur.Visibility = Visibility.Collapsed;
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             ResetErreurs();
-            bool ok = true;
+            bool valide = true;
 
             string titre = tbTitre.Text.Trim();
             string description = tbDescription.Text.Trim();
-            string statut = (cbStatut.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "";
+            string statut = cbStatut.SelectedItem.ToString();
 
-            // Titre
+            DateTime dateDebut = dpDateDebut.Date.DateTime;
+
+            decimal budget = (decimal)NbBudget.Value;
+            int nbEmployes = (int)NbEmployes.Value;
+
+
             if (string.IsNullOrWhiteSpace(titre))
             {
                 tbTitreErreur.Text = "Le titre est obligatoire.";
                 tbTitreErreur.Visibility = Visibility.Visible;
-                ok = false;
+                valide = false;
             }
 
-            // Date
-            DateTime dateDebut;
-            if (dpDateDebut.Date == null)
+            if (dateDebut.Year < 2000)
             {
-                tbDateErreur.Text = "Veuillez choisir une date.";
+                tbDateErreur.Text = "Choisissez une date valide.";
                 tbDateErreur.Visibility = Visibility.Visible;
-                ok = false;
-                dateDebut = DateTime.Now;
-            }
-            else
-            {
-                dateDebut = dpDateDebut.Date.DateTime;
+                valide = false;
             }
 
-            // Budget
-            decimal budget;
-            if (!decimal.TryParse(tbBudget.Text.Replace(',', '.'), NumberStyles.Number, CultureInfo.InvariantCulture, out budget) || budget <= 0)
+            if (budget <= 0)
             {
-                tbBudgetErreur.Text = "Budget invalide.";
+                tbBudgetErreur.Text = "Entrez un budget positif.";
                 tbBudgetErreur.Visibility = Visibility.Visible;
-                ok = false;
+                valide = false;
             }
 
-            // Nb employés
-            int nbEmployes;
-            if (!int.TryParse(tbNbEmployes.Text, out nbEmployes) || nbEmployes <= 0 || nbEmployes > 5)
+            if (nbEmployes < 1 || nbEmployes > 5)
             {
-                tbNbEmployesErreur.Text = "Entrez un nombre entre 1 et 5.";
+                tbNbEmployesErreur.Text = "Le nombre d'employés doit être entre 1 et 5.";
                 tbNbEmployesErreur.Visibility = Visibility.Visible;
-                ok = false;
+                valide = false;
             }
 
-            // Statut
-            if (string.IsNullOrWhiteSpace(statut))
-            {
-                tbStatutErreur.Text = "Veuillez choisir un statut.";
-                tbStatutErreur.Visibility = Visibility.Visible;
-                ok = false;
-            }
 
-            // Description
             if (string.IsNullOrWhiteSpace(description))
             {
                 tbDescriptionErreur.Text = "La description est obligatoire.";
                 tbDescriptionErreur.Visibility = Visibility.Visible;
-                ok = false;
+                valide = false;
             }
 
-            if (!ok)
+
+            if (!valide)
             {
-                args.Cancel = true; // ne pas fermer si invalide
+                args.Cancel = true;
                 return;
             }
 
-            // Appel au singleton pour mettre à jour en BD
-            var singleton = SingletonProjet.getInstance();
+            projetModifier.Titre = titre;
+            projetModifier.Description = description;
+            projetModifier.Budget = budget;
+            projetModifier.NbEmployesRequis = nbEmployes;
+            projetModifier.Statut = statut;
+            projetModifier.DateDebut = dateDebut;
 
-            // On réutilise IdClient du projet original (ta vue de BD doit le fournir)
-            // Ne touche PAS au client lors de la modification
-            singleton.modifierProjetSansClient(
-                numeroProjet: _projetOriginal.NumeroProjet,
+            SingletonProjet.getInstance().modifierProjetSansClient(
+                numeroProjet: projetModifier.NumeroProjet,
                 titre: titre,
                 dateDebut: dateDebut,
                 description: description,
@@ -136,20 +125,11 @@ namespace InterfaceProjet.Pages
                 nbEmployesRequis: nbEmployes,
                 statut: statut
             );
-
-            // Mise à jour de l'objet local
-            _projetOriginal.Titre = titre;
-            _projetOriginal.Description = description;
-            _projetOriginal.Budget = budget;
-            _projetOriginal.NbEmployesRequis = nbEmployes;
-            _projetOriginal.Statut = statut;
-            _projetOriginal.DateDebut = dateDebut;
         }
-// ?? Ne touche PAS à IdClient !
+
         private void ContentDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
-            // Si l’utilisateur clique sur Enregistrer mais que la validation a échoué
-            // (ok == false), on laisse ContentDialog_PrimaryButtonClick gérer args.Cancel.
+
         }
     }
 }
