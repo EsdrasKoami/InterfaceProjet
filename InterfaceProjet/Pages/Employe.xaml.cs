@@ -61,6 +61,6 @@ public sealed partial class Employe : Page
 
     private void btnAjouter_Click(object sender, RoutedEventArgs e)
     {
-
+        Frame.Navigate(typeof(PageAjoutEmploye));
     }
 }

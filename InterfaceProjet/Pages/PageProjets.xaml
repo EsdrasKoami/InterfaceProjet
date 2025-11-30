@@ -41,8 +41,8 @@
                     </Button>
                 </StackPanel>
                 <GridView x:Name="listeProjets"
-Grid.Row="2"
-SelectionChanged="listeProjets_SelectionChanged" Margin="0,30,0,0">
+                    Grid.Row="2"
+                    SelectionChanged="listeProjets_SelectionChanged" Margin="0,30,0,0">
 
                     <GridView.ItemContainerStyle>
                         <Style TargetType="GridViewItem">
@@ -98,14 +98,26 @@ SelectionChanged="listeProjets_SelectionChanged" Margin="0,30,0,0">
                                         </Border>
 
                                         <!-- Bouton édition -->
-                                        <Button Grid.Column="2"
-                                        Click="ButtonModifier_Click"
-                                        Background="Transparent"
-                                        BorderThickness="0"
+                                        <StackPanel Grid.Column="2"
+                                        Orientation="Horizontal"
                                         HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"> 
-                                            <SymbolIcon Symbol="Edit"/>
-                                        </Button>
+                                        VerticalAlignment="Center"
+                                        Spacing="4">
+
+                                            <Button Click="ButtonModifier_Click"
+                                        Background="Transparent"
+                                        BorderThickness="0">            
+                                                <SymbolIcon Symbol="Edit"/>
+                                            </Button>
+
+                                            <Button Click="ButtonSupprimer_Click"
+                                        Background="Transparent"
+                                        BorderThickness="0">    
+                                                <SymbolIcon Symbol="Delete"/>
+                                            </Button>
+
+                                        </StackPanel>
+
                                     </Grid>
 
 
