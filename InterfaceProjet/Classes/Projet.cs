@@ -15,7 +15,7 @@ namespace InterfaceProjet.Classes
         private decimal budget;
         private int nbEmployesRequis;
         private decimal totalSalaires;
-        private int idClient;
+        private int? idClient; // ✅ NULLABLE maintenant
         private string nomClient;
         private string statut;
         private DateTime dateCreation;
@@ -24,7 +24,10 @@ namespace InterfaceProjet.Classes
         private int nbEmployesAssignes;
         private string telephoneClient;
 
-        public Projet(string numeroProjet, string titre, DateTime dateDebut, string description, decimal budget, int nbEmployesRequis, decimal totalSalaires, int idClient, string nomClient, string statut, DateTime dateCreation)
+        // Constructeur avec idClient nullable
+        public Projet(string numeroProjet, string titre, DateTime dateDebut, string description,
+                      decimal budget, int nbEmployesRequis, decimal totalSalaires,
+                      int? idClient, string nomClient, string statut, DateTime dateCreation)
         {
             this.numeroProjet = numeroProjet;
             this.titre = titre;
@@ -34,13 +37,10 @@ namespace InterfaceProjet.Classes
             this.nbEmployesRequis = nbEmployesRequis;
             this.totalSalaires = totalSalaires;
             this.idClient = idClient;
-            this.nomClient = nomClient;
+            this.nomClient = nomClient ?? "Aucun client"; // Valeur par défaut
             this.statut = statut;
             this.dateCreation = dateCreation;
         }
-
-
-
 
         // Properties
         public string NumeroProjet { get => numeroProjet; set => numeroProjet = value; }
@@ -50,7 +50,7 @@ namespace InterfaceProjet.Classes
         public decimal Budget { get => budget; set => budget = value; }
         public int NbEmployesRequis { get => nbEmployesRequis; set => nbEmployesRequis = value; }
         public decimal TotalSalaires { get => totalSalaires; set => totalSalaires = value; }
-        public int IdClient { get => idClient; set => idClient = value; }
+        public int? IdClient { get => idClient; set => idClient = value; } // ✅ NULLABLE
         public string Statut { get => statut; set => statut = value; }
         public DateTime DateCreation { get => dateCreation; set => dateCreation = value; }
         public string NomClient { get => nomClient; set => nomClient = value; }
@@ -63,7 +63,6 @@ namespace InterfaceProjet.Classes
         public bool EstEnCours() => Statut == "En cours";
         public bool EstTermine() => Statut == "Terminé";
         public string BudgetAfficher => $"{budget}$";
-
         public decimal BudgetRestant() => Budget - TotalSalaires;
 
         public decimal PourcentageBudgetUtilise()
@@ -71,6 +70,9 @@ namespace InterfaceProjet.Classes
             if (Budget == 0) return 0;
             return (TotalSalaires / Budget) * 100;
         }
+
+        // ✅ NOUVELLE MÉTHODE: Vérifier si le projet a un client
+        public bool AUnClient() => IdClient.HasValue && IdClient.Value > 0;
 
         public override string ToString() => $"{NumeroProjet} - {Titre} ({Statut})";
     }

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace InterfaceProjet.Classes
 {
@@ -20,8 +16,7 @@ namespace InterfaceProjet.Classes
         private string statut;
         private DateTime dateCreation;
 
-
-
+        // Constructeur
         public Employe(string matricule, string nom, string prenom, DateTime dateNaissance,
                        string email, string adresse, DateTime dateEmbauche, decimal tauxHoraire,
                        string photoUrl, string statut)
@@ -34,13 +29,12 @@ namespace InterfaceProjet.Classes
             this.Adresse = adresse;
             this.DateEmbauche = dateEmbauche;
             this.TauxHoraire = tauxHoraire;
-            this.PhotoUrl = photoUrl;
+            this.PhotoUrl = photoUrl ?? ""; // ✅ Gérer les null
             this.Statut = statut;
             this.DateCreation = DateTime.Now;
         }
 
-
-        // Properties
+        // Properties de base
         public string Matricule { get => matricule; set => matricule = value; }
         public string Nom { get => nom; set => nom = value; }
         public string Prenom { get => prenom; set => prenom = value; }
@@ -53,19 +47,32 @@ namespace InterfaceProjet.Classes
         public string Statut { get => statut; set => statut = value; }
         public DateTime DateCreation { get => dateCreation; set => dateCreation = value; }
 
+        // ✅ PROPRIÉTÉS FORMATÉES pour le XAML (pas des méthodes!)
+        public string DateNaissanceFormatee => DateNaissance != DateTime.MinValue
+            ? DateNaissance.ToString("dd/MM/yyyy")
+            : "N/A";
 
-        // Méthodes utiles
+        public string DateEmbaucheFormatee => DateEmbauche != DateTime.MinValue
+            ? DateEmbauche.ToString("dd/MM/yyyy")
+            : "N/A";
+
+        public string TauxHoraireFormate => $"{TauxHoraire:F2} $/h";
+
+        public string NomComplet => $"{Prenom} {Nom}"; // ✅ PROPRIÉTÉ, pas méthode!
+
+        public string AgeTexte => DateNaissance != DateTime.MinValue
+            ? $"{CalculerAge()} ans"
+            : "N/A";
+
+        // Méthode utile pour calculer l'âge
         public int CalculerAge()
         {
+            if (DateNaissance == DateTime.MinValue) return 0;
+
             var today = DateTime.Today;
             var age = today.Year - DateNaissance.Year;
             if (DateNaissance.Date > today.AddYears(-age)) age--;
             return age;
-        }
-
-        public string NomComplet()
-        {
-            return $"{Prenom} {Nom}";
         }
 
         public override string ToString()

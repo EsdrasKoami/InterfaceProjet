@@ -126,16 +126,18 @@ namespace InterfaceProjet.Pages
             var singleton = SingletonProjet.getInstance();
 
             // On réutilise IdClient du projet original (ta vue de BD doit le fournir)
-            singleton.modifierProjet(
+            // Ne touche PAS au client lors de la modification
+            singleton.modifierProjetSansClient(
                 numeroProjet: _projetOriginal.NumeroProjet,
                 titre: titre,
                 dateDebut: dateDebut,
                 description: description,
                 budget: budget,
                 nbEmployesRequis: nbEmployes,
-                idClient: _projetOriginal.IdClient,
                 statut: statut
             );
+
+            // Mise à jour de l'objet local
             _projetOriginal.Titre = titre;
             _projetOriginal.Description = description;
             _projetOriginal.Budget = budget;
@@ -143,7 +145,7 @@ namespace InterfaceProjet.Pages
             _projetOriginal.Statut = statut;
             _projetOriginal.DateDebut = dateDebut;
         }
-
+// ?? Ne touche PAS à IdClient !
         private void ContentDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
             // Si l’utilisateur clique sur Enregistrer mais que la validation a échoué

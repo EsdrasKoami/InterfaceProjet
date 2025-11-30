@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="InterfaceProjet.Pages.Employe"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:InterfaceProjet.Pages"
+    xmlns:local1="using:InterfaceProjet.Classes"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid Padding="40">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Titre -->
+        <StackPanel Grid.Row="0"
+                    Orientation="Horizontal"
+                    Spacing="10"
+                    Margin="0,0,0,20">
+            <FontIcon Glyph="&#xE77B;" FontSize="28"/>
+            <TextBlock Text="Gestion des employés"
+                       FontSize="28"
+                       FontWeight="SemiBold"/>
+        </StackPanel>
+
+        <!-- Recherche -->
+        <StackPanel Grid.Row="1"
+                    Orientation="Horizontal"
+                    Spacing="12"
+                    Margin="0,0,0,20">
+            <AutoSuggestBox x:Name="tbRechercheEmploye"
+                            Width="350"
+                            PlaceholderText="Rechercher un employé (nom, prénom, matricule...)"
+                            QueryIcon="Find"
+                            TextChanged="tbRechercheEmploye_TextChanged"/>
+
+            <TextBlock VerticalAlignment="Center"
+                       Foreground="Gray">
+                <Run Text="Total : "/>
+                <Run Text="{x:Bind lvEmployes.Items.Count, Mode=OneWay}"
+                     FontWeight="Bold"/>
+                <Run Text=" employé(s)"/>
+            </TextBlock>
+        </StackPanel>
+
+        <!-- Liste des employés -->
+        <ScrollViewer Grid.Row="2">
+            <GridView x:Name="lvEmployes"
+                      IsItemClickEnabled="False"
+                      SelectionMode="None"
+                      Padding="0,0,0,20">
+
+                <GridView.ItemTemplate>
+                    <DataTemplate x:DataType="local1:Employe">
+                        <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="20"
+                                Margin="8"
+                                Width="380"
+                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <!-- En-tête -->
+                                <StackPanel Grid.Row="0"
+                                            Orientation="Horizontal"
+                                            Spacing="12"
+                                            Margin="0,0,0,12">
+                                    <Border Width="64"
+                                            Height="64"
+                                            CornerRadius="32"
+                                            BorderBrush="{ThemeResource AccentFillColorDefaultBrush}"
+                                            BorderThickness="2">
+                                        <Image Source="{x:Bind PhotoUrl}"
+                                               Stretch="UniformToFill"/>
+                                    </Border>
+
+                                    <StackPanel>
+                                        <!-- Si tu as ajouté NomComplet dans ton modèle, tu peux utiliser NomComplet ici -->
+                                        <TextBlock Text="{x:Bind Prenom}"
+                                                   FontSize="18"
+                                                   FontWeight="SemiBold"/>
+                                        <TextBlock Text="{x:Bind Nom}"
+                                                   FontSize="18"
+                                                   FontWeight="SemiBold"/>
+                                        <TextBlock Text="{x:Bind Matricule}"
+                                                   FontSize="12"
+                                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <!-- Infos -->
+                                <StackPanel Grid.Row="1" Spacing="4">
+                                    <TextBlock>
+                                        <Run Text="Date de naissance : "/>
+                                        <Run Text="{x:Bind DateNaissance, Mode=OneWay}"/>
+                                    </TextBlock>
+
+                                    <TextBlock>
+                                        <Run Text="Date d'embauche : "/>
+                                        <Run Text="{x:Bind DateEmbauche, Mode=OneWay}"/>
+                                    </TextBlock>
+
+                                    <TextBlock>
+                                        <Run Text="Email : "/>
+                                        <Run Text="{x:Bind Email, Mode=OneWay}"/>
+                                    </TextBlock>
+
+                                    <TextBlock>
+                                        <Run Text="Taux horaire : "/>
+                                        <Run Text="{x:Bind TauxHoraire, Mode=OneWay}"/>
+                                    </TextBlock>
+
+                                    <TextBlock>
+                                        <Run Text="Statut : "/>
+                                        <Run Text="{x:Bind Statut, Mode=OneWay}"/>
+                                    </TextBlock>
+                                </StackPanel>
+
+                                <!-- Boutons -->
+                                <StackPanel Grid.Row="2"
+                                            Orientation="Horizontal"
+                                            HorizontalAlignment="Right"
+                                            Spacing="8"
+                                            Margin="0,12,0,0">
+                                    <Button x:Name="modifier"
+                                            Click="modifier_Click">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <FontIcon Glyph="&#xE70F;"/>
+                                            <TextBlock Text="Modifier"/>
+                                        </StackPanel>
+                                    </Button>
+
+                                    <Button x:Name="supprimer"
+                                            Click="supprimer_Click">
+                                        <StackPanel Orientation="Horizontal" Spacing="6">
+                                            <FontIcon Glyph="&#xE74D;"/>
+                                            <TextBlock Text="Supprimer"/>
+                                        </StackPanel>
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+            </GridView>
+        </ScrollViewer>
+    </Grid>
+</Page>

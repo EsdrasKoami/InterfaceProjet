@@ -68,36 +68,7 @@ namespace InterfaceProjet.Singletons
             }
         }
 
-        public void AssocierClientAuProjet(string numeroProjet, int idClient)
-        {
-            try
-            {
-                using MySqlConnection con = new MySqlConnection(connectionString);
-                using MySqlCommand cmd = new MySqlCommand("AssocierClientAuProjet", con);
-                cmd.CommandType = System.Data.CommandType.StoredProcedure;
-
-                
-                cmd.Parameters.AddWithValue("p_numero_projet", numeroProjet);
-                cmd.Parameters.AddWithValue("p_id_client", idClient);
-
-                con.Open();
-                cmd.ExecuteNonQuery();
-
-                Debug.WriteLine($"Client {idClient} associé au projet {numeroProjet} avec succès.");
-
-                SingletonProjet.getInstance().getAllProjets();
-            }
-            catch (MySqlException ex)
-            {
-                Debug.WriteLine("Erreur MySQL (AssocierClientAuProjet) : " + ex.Message);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("Erreur (AssocierClientAuProjet) : " + ex.Message);
-            }
-        }
-
-
+       
 
       
         public void ajouterAssignationAvecProcedure(string numeroAssignation, string titre, DateTime dateDebut,
