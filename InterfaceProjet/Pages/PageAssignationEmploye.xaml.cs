@@ -175,7 +175,7 @@ namespace InterfaceProjet.Pages
             var motCle = sender.Text.Trim();
             var singleton = SingletonEmploye.getInstance();
 
-<<<<<<< Updated upstream
+
             if (string.IsNullOrWhiteSpace(motCle))
             {
                 singleton.getEmployesDisponibles();
@@ -201,23 +201,7 @@ namespace InterfaceProjet.Pages
 
             await dlg.ShowAsync();
         }
-=======
-    private void tbRechercheEmploye_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
-    {
-        var motCle = sender.Text.Trim();
-        var singleton = SingletonEmploye.getInstance();
 
-        if (string.IsNullOrWhiteSpace(motCle))
-        {
-            singleton.getEmployesDisponibles();
+}
 
-        }
-        else
-        {
-            singleton.RechercherEmployesTout(motCle);
-        }
-
-        lvEmployes.ItemsSource = singleton.Liste;
->>>>>>> Stashed changes
-    }
 }

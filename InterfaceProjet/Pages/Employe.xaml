@@ -44,7 +44,6 @@
                   SelectionMode="Single"
                   IsItemClickEnabled="False">
 
-<<<<<<< Updated upstream
             <!-- style des items : largeur / marges des cartes -->
             <GridView.ItemContainerStyle>
                 <Style TargetType="GridViewItem">
@@ -88,44 +87,6 @@
                                     <TextBlock Text="{x:Bind Matricule}"
                                                FontSize="12"
                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-=======
-                <GridView.ItemTemplate>
-                    <DataTemplate x:DataType="local1:Employe">
-             
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-
-                                <!-- En-tête -->
-                                <StackPanel Grid.Row="0"
-                                            Orientation="Horizontal"
-                                            Spacing="12"
-                                            Margin="0,0,0,12">
-                                    <Border Width="64"
-                                            Height="64"
-                                            CornerRadius="32"
-                                          
-                                            BorderThickness="2">
-                                        <Image Source="{x:Bind PhotoUrl}"
-                                               Stretch="UniformToFill"/>
-                                    </Border>
-
-                                    <StackPanel>
-                                        <!-- Si tu as ajouté NomComplet dans ton modèle, tu peux utiliser NomComplet ici -->
-                                        <TextBlock Text="{x:Bind Prenom}"
-                                                   FontSize="18"
-                                                   FontWeight="SemiBold"/>
-                                        <TextBlock Text="{x:Bind Nom}"
-                                                   FontSize="18"
-                                                   FontWeight="SemiBold"/>
-                                        <TextBlock Text="{x:Bind Matricule}"
-                                                   FontSize="12"
-                                                 />
-                                    </StackPanel>
->>>>>>> Stashed changes
                                 </StackPanel>
 
                                 <!-- Icônes Modifier / Supprimer -->
@@ -148,7 +109,6 @@
                                     </Button>
                                 </StackPanel>
                             </Grid>
-<<<<<<< Updated upstream
 
                             <!-- INFOS SUPPLÉMENTAIRES -->
                             <StackPanel Grid.Row="1"
@@ -175,12 +135,5 @@
             </GridView.ItemTemplate>
         </GridView>
 
-=======
-                     
-                    </DataTemplate>
-                </GridView.ItemTemplate>
-            </GridView>
-        </ScrollViewer>
->>>>>>> Stashed changes
     </Grid>
 </Page>
