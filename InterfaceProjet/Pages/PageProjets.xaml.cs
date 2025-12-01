@@ -17,7 +17,7 @@ namespace InterfaceProjet.Pages
     public sealed partial class PageProjets : Page
     {
         private readonly SingletonProjet _projetsSingleton;
-        private bool _isDialogOpen = false; // ?? verrou pour ContentDialog
+        private bool _isDialogOpen = false; 
 
         public PageProjets()
         {
@@ -37,7 +37,6 @@ namespace InterfaceProjet.Pages
         {
             if (_isDialogOpen)
             {
-                // Un autre dialog est déjà ouvert ? on ne fait rien
                 return ContentDialogResult.None;
             }
 
@@ -180,6 +179,11 @@ namespace InterfaceProjet.Pages
                 await ShowSingleDialogAsync(dialog);
                 // La GridView se mettra à jour automatiquement si Liste est ObservableCollection
             }
+        }
+
+        private void ButtonSupprimer_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
