@@ -2,12 +2,7 @@ using InterfaceProjet.Classes;
 using InterfaceProjet.Singletons;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
-using Microsoft.UI.Xaml.Shapes;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -17,7 +12,6 @@ namespace InterfaceProjet.Pages
     public sealed partial class PageProjets : Page
     {
         private readonly SingletonProjet _projetsSingleton;
-        private bool _isDialogOpen = false; 
 
         public PageProjets()
         {
@@ -30,143 +24,79 @@ namespace InterfaceProjet.Pages
             _projetsSingleton.getAllProjets();
         }
 
-        /// <summary>
-        /// Helper pour s'assurer qu'un seul ContentDialog est ouvert à la fois.
-        /// </summary>
-        private async System.Threading.Tasks.Task<ContentDialogResult> ShowSingleDialogAsync(ContentDialog dialog)
-        {
-            if (_isDialogOpen)
-            {
-                return ContentDialogResult.None;
-            }
-
-            _isDialogOpen = true;
-
-            try
-            {
-                return await dialog.ShowAsync();
-            }
-            finally
-            {
-                _isDialogOpen = false;
-            }
-        }
-
-        // Quand on clique sur une carte de projet dans la GridView
+        // Quand on clique sur une carte de projet
         private async void listeProjets_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (listeProjets.SelectedItem is Projet projet)
             {
+                // 1) récupérer les assignations en BD
+                var assignations = SingletonAssignation
+                                       .getInstance()
+                                       .getAssignationsParProjet(projet.NumeroProjet);
+
+                var listeAssignations = new ObservableCollection<Assignation>(assignations);
+
+                // 2) ouvrir le dialog
                 var dialog = new ProjetDetailsDialog(
                     projet,
-                    new ObservableCollection<Assignation>(),
-                    null
+                    listeAssignations,
+                    null      // si tu n'utilises pas le dernier paramètre, mets null
                 )
                 {
                     XamlRoot = this.Content.XamlRoot
                 };
 
-                await ShowSingleDialogAsync(dialog);
+                await dialog.ShowAsync();
 
-                // On désélectionne l'item après fermeture du dialog
                 listeProjets.SelectedItem = null;
             }
         }
 
-        // Recherche de projets (tu pourras compléter la logique plus tard)
-        private void tbRechercheProjet_TextChanged(object sender, TextChangedEventArgs e)
+
+
+        private void tbRechercheProjet_TextChanged_1(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
-            // Exemple de logique (à adapter si tu veux l’AutoSuggestBox)
-            // string motCle = (sender as TextBox)?.Text.Trim() ?? "";
-            // _projetsSingleton.rechercherProjets(motCle);
-            // listeProjets.ItemsSource = _projetsSingleton.Liste;
+            string motCle = sender.Text.Trim();
+
+            if (string.IsNullOrWhiteSpace(motCle))
+                _projetsSingleton.getAllProjets();
+            else
+                _projetsSingleton.rechercherProjets(motCle);
+
+            listeProjets.ItemsSource = _projetsSingleton.Liste;
         }
 
         // Bouton "Ajouter un projet"
         private void btnAjouter_Click(object sender, RoutedEventArgs e)
         {
-            // Ici on ne dépend pas de la sélection
-            // On navigue simplement vers la page d’ajout de projet
             Frame.Navigate(typeof(PageAjoutPojet));
         }
 
-        // AutoSuggestBox pour recherche (si tu veux l’utiliser au lieu de TextBox)
-        private void tbRechercheProjet_TextChanged_1(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        // Bouton "Assigner" (désormais seulement assignation employé)
+        private void assigner_Click(object sender, RoutedEventArgs e)
         {
-            // Exemple :
-            // string motCle = sender.Text.Trim();
-            // _projetsSingleton.rechercherProjets(motCle);
-            // listeProjets.ItemsSource = _projetsSingleton.Liste;
-        }
-
-        // Bouton "Assigner" dans chaque carte de projet
-        private async void assigner_Click(object sender, RoutedEventArgs e)
-        {
-            // Récupérer le projet à partir du DataContext du bouton
-            var recupere = sender as FrameworkElement;
-            Projet projetSelectionne = recupere?.DataContext as Projet;
+            var element = sender as FrameworkElement;
+            Projet projetSelectionne = element?.DataContext as Projet;
 
             if (projetSelectionne == null)
             {
-                var dlgErreur = new ContentDialog
+                _ = new ContentDialog
                 {
                     Title = "Erreur",
                     Content = "Impossible de récupérer le projet sélectionné.",
                     CloseButtonText = "OK",
                     XamlRoot = this.Content.XamlRoot
-                };
-
-                await ShowSingleDialogAsync(dlgErreur);
+                }.ShowAsync();
                 return;
             }
 
-            var dialogChoix = new ContentDialog
+            if (Frame != null)
             {
-                Title = $"Projet {projetSelectionne.NumeroProjet}",
-                Content = "Que souhaitez-vous faire ?",
-                PrimaryButtonText = "Assigner client",
-                SecondaryButtonText = "Assigner employé",
-                CloseButtonText = "Annuler",
-                DefaultButton = ContentDialogButton.Primary,
-                XamlRoot = this.Content.XamlRoot
-            };
-
-            var result = await ShowSingleDialogAsync(dialogChoix);
-
-            switch (result)
-            {
-                case ContentDialogResult.Primary:
-                    // Assigner client
-                    if (Frame != null)
-                    {
-                        Frame.Navigate(typeof(PageAssignationClient), projetSelectionne);
-                    }
-                    else
-                    {
-                        Debug.WriteLine("Frame est null, navigation vers PageAssignationClient impossible.");
-                    }
-                    break;
-
-                case ContentDialogResult.Secondary:
-                    // Assigner employé
-                    if (Frame != null)
-                    {
-                        Frame.Navigate(typeof(PageAssignationEmploye), projetSelectionne);
-                    }
-                    else
-                    {
-                        Debug.WriteLine("Frame est null, navigation vers PageAssignationEmploye impossible.");
-                    }
-                    break;
-
-                case ContentDialogResult.None:
-                default:
-                    // Annuler / rien faire
-                    break;
+                Frame.Navigate(typeof(PageAssignationEmploye), projetSelectionne);
             }
         }
 
-        // Bouton crayon "Modifier" dans la carte de projet
+        // Bouton "Modifier"
         private async void ButtonModifier_Click(object sender, RoutedEventArgs e)
         {
             if ((sender as FrameworkElement)?.DataContext is Projet projet)
@@ -176,14 +106,44 @@ namespace InterfaceProjet.Pages
                     XamlRoot = this.Content.XamlRoot
                 };
 
-                await ShowSingleDialogAsync(dialog);
-                // La GridView se mettra à jour automatiquement si Liste est ObservableCollection
+                // On attend que la boîte de dialogue se ferme
+                await dialog.ShowAsync();
+
+                // Si dans le dialog l’utilisateur a cliqué sur "Changer client"
+                if (dialog.VeutChangerClient)
+                {
+                    // Ici la navigation fonctionne, car on est dans une Page
+                    Frame.Navigate(typeof(PageAssignationClient), projet);
+                }
             }
         }
 
-        private void ButtonSupprimer_Click(object sender, RoutedEventArgs e)
+        // Bouton "Supprimer"
+        private async void ButtonSupprimer_Click(object sender, RoutedEventArgs e)
         {
+            var element = sender as FrameworkElement;
+            Projet projet = element?.DataContext as Projet;
 
+            if (projet == null)
+                return;
+
+            var confirm = new ContentDialog
+            {
+                Title = "Confirmation",
+                Content = $"Voulez-vous vraiment supprimer le projet {projet.NumeroProjet} ?",
+                PrimaryButtonText = "Supprimer",
+                CloseButtonText = "Annuler",
+                DefaultButton = ContentDialogButton.Close,
+                XamlRoot = this.Content.XamlRoot
+            };
+
+            var result = await confirm.ShowAsync();
+
+            if (result == ContentDialogResult.Primary)
+            {
+                _projetsSingleton.supprimerProjet(projet.NumeroProjet);
+                // Ta liste est rechargée dans supprimerProjet()
+            }
         }
     }
 }

@@ -13,6 +13,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using InterfaceProjet.Singletons;
+using InterfaceProjet.Classes;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -20,10 +21,22 @@ namespace InterfaceProjet.Pages
 {
     public sealed partial class PageAjoutPojet : Page
     {
+        private Client clientSelectionne;
         public PageAjoutPojet()
         {
             InitializeComponent();
         }
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+
+            // Si on revient de PageAssignationClient avec un client sélectionné
+            if (e.Parameter is Client client)
+            {
+                idClient.Text = client.IdClient.ToString();
+            }
+        }
+
 
         private void ButtonAnnuler_Click(object sender, RoutedEventArgs e)
         {
@@ -32,9 +45,9 @@ namespace InterfaceProjet.Pages
                 this.Frame.GoBack();
         }
 
-        private void ButtonEnregistrer_Click(object sender, RoutedEventArgs e)
+        private async void ButtonEnregistrer_Click(object sender, RoutedEventArgs e)
         {
-            // On réinitialise les messages d’erreur
+            // Réinitialiser messages d’erreur
             tblErrTitre.Text = "";
             tblErrDateDebut.Text = "";
             tblErrDescription.Text = "";
@@ -45,43 +58,21 @@ namespace InterfaceProjet.Pages
 
             bool valide = true;
 
-            // 1) RÉCUPÉRATION DES VALEURS
             string titre = tbxtitre.Text.Trim();
             string description = tbxDescription.Text.Trim();
-
-            // Date
-            DateTime dateDebut = DateTime.Now;
-            if (dpDateDebut.Date != null)
-            {
-                dateDebut = dpDateDebut.Date.DateTime;
-            }
-
-            // Budget
-            double budgetValeur = nbxBudget.Value;
-
-            // Nombre d’employés
-            double nbEmployeValeur = nbrEmploye.Value;
-
-            // Total salaires (facultatif : souvent 0 au début)
-            double totalSalaireValeur = totalSalaire.Value;
-
-            // Id client
-            string idClientTexte = idClient.Text.Trim();
-            int idClientInt = 0;
-
-            // 2) VALIDATIONS
 
             // Titre
             if (string.IsNullOrWhiteSpace(titre))
             {
-                tblErrTitre.Text = "Entrez un titre valide.";
+                tblErrTitre.Text = "Le titre est obligatoire.";
                 valide = false;
             }
 
-            // Date
-            if (dpDateDebut.Date == null)
+            // Date début
+            DateTime dateDebut = dpDateDebut.Date.DateTime;
+            if (dateDebut > DateTime.Now.Date.AddYears(1))
             {
-                tblErrDateDebut.Text = "Choisissez une date de début.";
+                tblErrDateDebut.Text = "Date de début invalide.";
                 valide = false;
             }
 
@@ -93,58 +84,98 @@ namespace InterfaceProjet.Pages
             }
 
             // Budget
-            if (budgetValeur <= 0)
+            double budgetDouble = nbxBudget.Value;
+            if (budgetDouble <= 0)
             {
                 tblErrBudget.Text = "Entrez un budget positif.";
                 valide = false;
             }
+            decimal budget = (decimal)budgetDouble;
 
-            // Nb employés (1 à 5 selon l’énoncé)
-            if (nbEmployeValeur <= 0 || nbEmployeValeur > 5)
+
+            // Nombre d'employés
+            int nbEmployes = (int)nbrEmploye.Value;
+            if (nbEmployes <= 0 || nbEmployes > 5)
             {
-                tblErrNbrEmploye.Text = "Le nombre d’employés doit être entre 1 et 5.";
+                tblErrNbrEmploye.Text = "Entrez un nombre entre 1 et 5.";
                 valide = false;
             }
 
-            // Total salaires (optionnel, mais on peut vérifier qu’il n’est pas négatif)
-            if (totalSalaireValeur < 0)
+            // Total des salaires
+            decimal totalSalaires = (decimal)totalSalaire.Value;
+            if (totalSalaires < 0)
             {
                 tblErrTotalsalaire.Text = "Le total des salaires ne peut pas être négatif.";
                 valide = false;
             }
 
-            // Id client (doit être un entier)
-            if (!int.TryParse(idClientTexte, out idClientInt))
+            // Client
+            if (clientSelectionne == null)
             {
-                tblErrIdClient.Text = "Entrez un identifiant client valide (nombre).";
+                tblErrIdClient.Text = "Vous devez choisir un client.";
                 valide = false;
             }
 
-            // Si une erreur → on arrête là
             if (!valide)
+            {
+                var dlg = new ContentDialog
+                {
+                    Title = "Formulaire invalide",
+                    Content = "Veuillez corriger les erreurs indiquées en rouge.",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.Content.XamlRoot
+                };
+                await dlg.ShowAsync();
                 return;
+            }
 
-            // 3) GÉNÉRER LE NUMÉRO DE PROJET
-            // Format: idClient-XX-année (comme dans l’énoncé)
-            Random rnd = new Random();
-            int sequence = rnd.Next(1, 100); // 01 à 99
-            string numeroProjet = $"{idClientInt}-{sequence:D2}-{dateDebut.Year}";
+            try
+            {
+                // Génération d’un numéro de projet simple (exemple)
+                // IdClient-01-Année
+                string numeroProjet = $"{clientSelectionne.IdClient}-01-{dateDebut.Year}";
 
-            // 4) APPEL AU SINGLETON POUR ENREGISTRER EN BD
-            SingletonProjet.getInstance().ajouterProjetAvecProcedure(
-                numeroProjet,
-                titre,
-                dateDebut,
-                description,
-                (decimal)budgetValeur,
-                (int)nbEmployeValeur,
-                idClientInt
-            );
+                SingletonProjet
+                    .getInstance()
+                    .ajouterProjetAvecProcedure(
+                        numeroProjet,
+                        titre,
+                        dateDebut,
+                        description,
+                        budget,
+                        nbEmployes,
+                        clientSelectionne.IdClient
+                    );
 
-            // 5) RETOUR À LA PAGE PRÉCÉDENTE OU CLEAR LES CHAMPS
-            if (this.Frame != null && this.Frame.CanGoBack)
-                this.Frame.GoBack();
-           
+                var dlgOK = new ContentDialog
+                {
+                    Title = "Succès",
+                    Content = "Le projet a été ajouté avec succès.",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.Content.XamlRoot
+                };
+                await dlgOK.ShowAsync();
+
+                if (Frame.CanGoBack)
+                    Frame.GoBack();
+            }
+            catch (Exception)
+            {
+                var dlgErr = new ContentDialog
+                {
+                    Title = "Erreur",
+                    Content = "Une erreur est survenue lors de l'ajout du projet.",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.Content.XamlRoot
+                };
+                await dlgErr.ShowAsync();
+            }
+        }
+
+
+        private void ButtonAssigner_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(PageAssignationClient));
         }
     }
 }

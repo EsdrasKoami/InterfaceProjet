@@ -92,11 +92,18 @@
 
                     <StackPanel>
                         <TextBox x:Name="idClient"
-                                 Header="Identifiant du client"/>
+                     Header="Identifiant du client"
+                     IsReadOnly="True"/>
                         <TextBlock x:Name="tblErrIdClient"
-                                   Foreground="Red"
-                                   FontSize="12"/>
+                   Foreground="Red"
+                   FontSize="12"/>
+
+                        <Button Content="Choisir un client"
+                Margin="0,4,0,0"
+                Click="ButtonAssigner_Click"/> 
                     </StackPanel>
+
+
 
                     <StackPanel Orientation="Horizontal"
                                 HorizontalAlignment="Right"

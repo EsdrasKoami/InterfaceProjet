@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Page
     x:Class="InterfaceProjet.Pages.PageClients"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -28,39 +27,26 @@
                                FontWeight="SemiBold"/>
                 </StackPanel>
 
-                <!-- Barre de recherche + boutons -->
+                <!-- Barre de recherche + bouton Ajouter -->
                 <StackPanel Grid.Row="1"
                             Orientation="Horizontal"
                             Spacing="10"
                             Margin="0,0,0,20">
-                    <AutoSuggestBox x:Name="tbRechercheProjet"
+                    <AutoSuggestBox x:Name="tbRechercheClient"
                                     Width="300"
                                     PlaceholderText="Rechercher un client"
                                     QueryIcon="Find"
-                                    TextChanged="tbRechercheProjet_TextChanged"/>
+                                    TextChanged="tbRechercheClient_TextChanged"/>
                     <Button Content="Ajouter"
                             x:Name="btnAjouterClient"
                             Click="btnAjouterClient_Click"/>
-                    <Button Content="Modifier"
-                            x:Name="btnModifierClient"
-                            Click="btnModifierClient_Click"/>
-                    <Button Content="Supprimer"
-                            x:Name="btnSupprimerClient"
-                            Click="btnSupprimerClient_Click"/>
-
-                    <!--  Nouveau bouton : Ajouter un projet -->
-                    <Button Content="Ajouter un projet"
-                            x:Name="btnAjouterProjet"
-                            Background="#0078D7"
-                            Foreground="White"
-                            Click="btnAjouterProjet_Click"/>
                 </StackPanel>
 
                 <!-- Liste des clients -->
                 <ListView Grid.Row="2"
-                          x:Name="lvClients">
+                          x:Name="lvClients"
+                          SelectionMode="Single">
 
-                  
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
                             <Setter Property="Padding" Value="0"/>
@@ -79,6 +65,8 @@
                                 <!-- Email -->
                                 <ColumnDefinition Width="150"/>
                                 <!-- Téléphone -->
+                                <ColumnDefinition Width="120"/>
+                                <!-- Actions -->
                             </Grid.ColumnDefinitions>
 
                             <TextBlock Grid.Column="0"
@@ -98,6 +86,10 @@
                                        Text="Téléphone"
                                        FontWeight="Bold"
                                        HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="4"
+                                       Text="Actions"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Center"/>
                         </Grid>
                     </ListView.Header>
 
@@ -110,22 +102,45 @@
                                     <ColumnDefinition Width="220"/>
                                     <ColumnDefinition Width="320"/>
                                     <ColumnDefinition Width="150"/>
+                                    <ColumnDefinition Width="120"/>
                                 </Grid.ColumnDefinitions>
 
                                 <TextBlock Grid.Column="0"
                                            Text="{x:Bind IdClient}"
                                            HorizontalAlignment="Stretch"
                                            TextAlignment="Center"/>
+
                                 <TextBlock Grid.Column="1"
                                            Text="{x:Bind Nom}"
                                            HorizontalAlignment="Center"/>
+
                                 <TextBlock Grid.Column="2"
                                            Text="{x:Bind Email}"
                                            HorizontalAlignment="Center"
                                            TextTrimming="CharacterEllipsis"/>
+
                                 <TextBlock Grid.Column="3"
                                            Text="{x:Bind Telephone}"
                                            HorizontalAlignment="Center"/>
+
+                                <!-- Actions (Modifier / Supprimer) -->
+                                <StackPanel Grid.Column="4"
+                                            Orientation="Horizontal"
+                                            HorizontalAlignment="Center"
+                                            Spacing="8">
+
+                                    <Button Click="ButtonModifier_Click"
+                                            Background="Transparent"
+                                            BorderThickness="0">
+                                        <SymbolIcon Symbol="Edit"/>
+                                    </Button>
+
+                                    <Button Click="ButtonSupprimer_Click"
+                                            Background="Transparent"
+                                            BorderThickness="0">
+                                        <SymbolIcon Symbol="Delete"/>
+                                    </Button>
+                                </StackPanel>
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>

@@ -58,7 +58,7 @@
             <StackPanel Spacing="4">
                 <TextBlock Text="Statut"
                            FontWeight="SemiBold"/>
-                <ComboBox x:Name="cbStatut" SelectedItem="0">
+                <ComboBox x:Name="cbStatut" SelectedIndex="0">
                     <ComboBoxItem Content="En cours"/>
                     <ComboBoxItem Content="Terminé"/>
                 </ComboBox>
@@ -67,6 +67,18 @@
                            FontSize="12"
                            Visibility="Collapsed"/>
             </StackPanel>
+            <!-- Client actuel + bouton changer -->
+            <StackPanel Margin="0,8,0,0">
+                <TextBlock Text="Client actuel :" FontWeight="SemiBold"/>
+                <TextBlock x:Name="tbClient"
+               Margin="0,2,0,6"
+               Foreground="Gray"/>
+
+                <Button Content="Changer de client"
+            Click="BtnChangerClient_Click"
+            HorizontalAlignment="Left"/>
+            </StackPanel>
+
 
 
             <StackPanel Spacing="4">

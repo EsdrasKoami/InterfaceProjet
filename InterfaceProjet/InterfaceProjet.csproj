@@ -13,7 +13,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="Pages\Employe.xaml" />
+    <None Remove="Pages\ModifierClientDialog.xaml" />
+    <None Remove="Pages\ModifierEmployeDialog.xaml" />
     <None Remove="Pages\ModifierProjetDialog.xaml" />
     <None Remove="Pages\PageAjoutClient.xaml" />
     <None Remove="Pages\PageAjoutEmploye.xaml" />
@@ -47,7 +48,17 @@
     <PackageReference Include="MySql.Data" Version="9.5.0" />
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Pages\Employe.xaml">
+    <Page Update="Pages\ModifierEmployeDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Pages\ModifierClientDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Pages\PageEmployes.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

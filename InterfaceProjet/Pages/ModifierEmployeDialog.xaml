@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentDialog
+    x:Class="InterfaceProjet.Pages.ModifierEmployeDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Modifier un employé"
+    PrimaryButtonText="Enregistrer"
+    CloseButtonText="Annuler"
+    DefaultButton="Primary"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick">
+
+    <StackPanel Padding="20" Spacing="8">
+
+        <!-- Matricule en lecture seule -->
+        <TextBlock Text="{x:Bind Emp.Matricule, Mode=OneWay}"
+                   FontWeight="SemiBold"
+                   FontSize="16"/>
+
+        <TextBox x:Name="tbNom" Header="Nom"/>
+        <TextBlock x:Name="tblErrNom" Foreground="Red" FontSize="12"/>
+
+        <TextBox x:Name="tbPrenom" Header="Prénom"/>
+        <TextBlock x:Name="tblErrPrenom" Foreground="Red" FontSize="12"/>
+
+        <TextBox x:Name="tbEmail" Header="Email"/>
+        <TextBlock x:Name="tblErrEmail" Foreground="Red" FontSize="12"/>
+
+        <TextBox x:Name="tbAdresse" Header="Adresse" TextWrapping="Wrap"/>
+        <TextBlock x:Name="tblErrAdresse" Foreground="Red" FontSize="12"/>
+
+        <NumberBox x:Name="nbTauxHoraire" Header="Taux horaire"/>
+        <TextBlock x:Name="tblErrTaux" Foreground="Red" FontSize="12"/>
+
+        <ToggleSwitch x:Name="tglStatut"
+                      Header="Statut"
+                      OnContent="Permanent"
+                      OffContent="Journalier"/>
+
+    </StackPanel>
+</ContentDialog>

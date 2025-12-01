@@ -94,6 +94,7 @@ namespace InterfaceProjet.Pages
                 };
 
                 await dlgErreurBD.ShowAsync();
+            
             }
         }
 

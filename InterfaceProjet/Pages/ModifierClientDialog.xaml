@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentDialog
+    x:Class="InterfaceProjet.Pages.ModifierClientDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Modification du client"
+    PrimaryButtonText="Enregistrer"
+    CloseButtonText="Annuler"
+    DefaultButton="Primary"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick">
+
+    <StackPanel Padding="20" Spacing="12" Width="400">
+
+        <!-- Nom -->
+        <StackPanel>
+            <TextBox x:Name="tbNom" Header="Nom" />
+            <TextBlock x:Name="tblErrNom"
+                       Foreground="Red"
+                       FontSize="12"
+                       Visibility="Collapsed"/>
+        </StackPanel>
+
+        <!-- Adresse -->
+        <StackPanel>
+            <TextBox x:Name="tbAdresse" Header="Adresse" TextWrapping="Wrap"/>
+            <TextBlock x:Name="tblErrAdresse"
+                       Foreground="Red"
+                       FontSize="12"
+                       Visibility="Collapsed"/>
+        </StackPanel>
+
+        <!-- Téléphone -->
+        <StackPanel>
+            <TextBox x:Name="tbTelephone" Header="Téléphone" PlaceholderText="819-555-0101"/>
+            <TextBlock x:Name="tblErrTelephone"
+                       Foreground="Red"
+                       FontSize="12"
+                       Visibility="Collapsed"/>
+        </StackPanel>
+
+        <!-- Email -->
+        <StackPanel>
+            <TextBox x:Name="tbEmail" Header="Email" PlaceholderText="exemple@mail.com"/>
+            <TextBlock x:Name="tblErrEmail"
+                       Foreground="Red"
+                       FontSize="12"
+                       Visibility="Collapsed"/>
+        </StackPanel>
+
+    </StackPanel>
+</ContentDialog>

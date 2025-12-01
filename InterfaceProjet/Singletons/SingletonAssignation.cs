@@ -56,9 +56,9 @@ namespace InterfaceProjet.Singletons
             }
         }
 
-        
-      // Obtenir les assignations d'un projet
-        public void getAssignationsParProjet(string numeroProjet)
+
+        // Obtenir les assignations d'un projet
+        public ObservableCollection<Assignation> getAssignationsParProjet(string numeroProjet)
         {
             listeAssignation.Clear();
 
@@ -68,22 +68,22 @@ namespace InterfaceProjet.Singletons
                 using MySqlCommand cmd = con.CreateCommand();
 
                 cmd.CommandText = @"
-                    SELECT 
-                        a.id_assignation,
-                        a.matricule_employe,
-                        a.numero_projet,
-                        a.heures_travaillees,
-                        a.salaire_a_payer,
-                        a.date_assignation,
-                        e.nom,
-                        e.prenom,
-                        e.taux_horaire,
-                        e.email,
-                        e.statut
-                    FROM assignations a
-                    JOIN employes e ON a.matricule_employe = e.matricule
-                    WHERE a.numero_projet = @numeroProjet
-                    ORDER BY a.date_assignation DESC";
+            SELECT 
+                a.id_assignation,
+                a.matricule_employe,
+                a.numero_projet,
+                a.heures_travaillees,
+                a.salaire_a_payer,
+                a.date_assignation,
+                e.nom,
+                e.prenom,
+                e.taux_horaire,
+                e.email,
+                e.statut
+            FROM assignations a
+            JOIN employes e ON a.matricule_employe = e.matricule
+            WHERE a.numero_projet = @numeroProjet
+            ORDER BY a.date_assignation DESC";
 
                 cmd.Parameters.AddWithValue("@numeroProjet", numeroProjet);
 
@@ -92,15 +92,14 @@ namespace InterfaceProjet.Singletons
 
                 while (r.Read())
                 {
-                
                     Employe employe = new Employe(
                         r.GetString("matricule_employe"),
                         r.GetString("nom"),
                         r.GetString("prenom"),
                         DateTime.MinValue,
                         r.GetString("email"),
-                        "", 
-                        DateTime.MinValue, 
+                        "",
+                        DateTime.MinValue,
                         r.GetDecimal("taux_horaire"),
                         "",
                         r.GetString("statut")
@@ -119,18 +118,19 @@ namespace InterfaceProjet.Singletons
 
                     listeAssignation.Add(assignation);
                 }
-
-        
             }
             catch (MySqlException ex)
             {
-                Debug.WriteLine($" Erreur MySQL getAssignationsParProjet: {ex.Message}");
+                Debug.WriteLine($"Erreur MySQL GetAssignationsParProjet: {ex.Message}");
             }
+
+            return listeAssignation;
         }
 
-       
+
+
         // MÉTHODE: Modifier les heures d'une assignation
-        
+
         public void ModifierHeuresAssignation(int idAssignation, decimal nouvellesHeures)
         {
             try
@@ -154,9 +154,9 @@ namespace InterfaceProjet.Singletons
             }
         }
 
- 
-       // Supprimer une assignation
-      
+
+        // Supprimer une assignation
+
         public void SupprimerAssignation(int idAssignation)
         {
             try
@@ -168,20 +168,19 @@ namespace InterfaceProjet.Singletons
                 cmd.Parameters.AddWithValue("@id", idAssignation);
 
                 con.Open();
-                
-
-               
+                cmd.ExecuteNonQuery();   
             }
             catch (MySqlException ex)
             {
-                Debug.WriteLine($" Erreur MySQL SupprimerAssignation: {ex.Message}");
+                Debug.WriteLine($"Erreur MySQL SupprimerAssignation: {ex.Message}");
                 throw;
             }
         }
 
-      
+
+
         // Obtenir le nombre d'assignations d'un projet
-      
+
         public int getNombreAssignationsProjet(string numeroProjet)
         {
             try

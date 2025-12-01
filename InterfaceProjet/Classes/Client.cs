@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace InterfaceProjet.Classes
 {
-    internal class Client
+    public class Client
     {
 
         private int idClient;

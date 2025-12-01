@@ -29,7 +29,7 @@ namespace InterfaceProjet.Classes
             this.Adresse = adresse;
             this.DateEmbauche = dateEmbauche;
             this.TauxHoraire = tauxHoraire;
-            this.PhotoUrl = photoUrl ?? ""; // ✅ Gérer les null
+            this.PhotoUrl = photoUrl ?? ""; 
             this.Statut = statut;
             this.DateCreation = DateTime.Now;
         }
@@ -58,8 +58,7 @@ namespace InterfaceProjet.Classes
 
         public string TauxHoraireFormate => $"{TauxHoraire:F2} $/h";
 
-        public string NomComplet => $"{Prenom} {Nom}"; // ✅ PROPRIÉTÉ, pas méthode!
-
+        public string NomComplet => $"{Prenom} {Nom}"; 
         public string AgeTexte => DateNaissance != DateTime.MinValue
             ? $"{CalculerAge()} ans"
             : "N/A";

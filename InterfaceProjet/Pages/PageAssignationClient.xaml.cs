@@ -5,13 +5,13 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using System;
+using System.Text.RegularExpressions;
 
 namespace InterfaceProjet.Pages
 {
     public sealed partial class PageAssignationClient : Page
     {
-        Projet projetCourant;
-
+        private Projet projetCourant;
         public PageAssignationClient()
         {
             InitializeComponent();
@@ -20,64 +20,45 @@ namespace InterfaceProjet.Pages
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-
             if (e.Parameter is Projet p)
             {
                 projetCourant = p;
 
-                //  Charger les clients disponibles
-                SingletonClient.getInstance().getAllClients();
-                lvClients.ItemsSource = SingletonClient.getInstance().Liste;
+                // On charge toujours les clients
+                var s = SingletonClient.getInstance();
+                s.getAllClients();
+                lvClients.ItemsSource = s.Liste;
             }
         }
 
         private void tbRechercheClient_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
             string motCle = sender.Text.Trim();
+            var s = SingletonClient.getInstance();
 
             if (string.IsNullOrWhiteSpace(motCle))
-            {
-                SingletonClient.getInstance().getAllClients();
-            }
+                s.getAllClients();
             else
-            {
-                SingletonClient.getInstance().RechercherClients(motCle);
-            }
+                s.RechercherClients(motCle);
 
-            lvClients.ItemsSource = SingletonClient.getInstance().Liste;
+            lvClients.ItemsSource = s.Liste;
         }
 
         private void btnAnnuler_Click(object sender, RoutedEventArgs e)
         {
-            // Retour à la page précédente
-            Frame.GoBack();
+            if (Frame.CanGoBack)
+                Frame.GoBack();
         }
 
         private async void btnChoisir_Click(object sender, RoutedEventArgs e)
         {
-            // ? Sécurité 1: Vérifier qu'on a bien un projet courant
+            // Sécurité : projet bien reçu ?
             if (projetCourant == null)
-            {
-                var dlgProjet = new ContentDialog
-                {
-                    Title = "Aucun projet en contexte",
-                    Content = "Aucun projet n'a été reçu pour l'assignation.",
-                    CloseButtonText = "OK",
-                    XamlRoot = this.Content.XamlRoot
-                };
-                await dlgProjet.ShowAsync();
-                return;
-            }
-
-            //  Sécurité 2: Vérifier qu'un client est sélectionné
-            Client clientSelectionne = lvClients.SelectedItem as Client;
-
-            if (clientSelectionne == null)
             {
                 var dlg = new ContentDialog
                 {
-                    Title = "Aucun client sélectionné",
-                    Content = "Veuillez d'abord sélectionner un client dans la liste.",
+                    Title = "Aucun projet",
+                    Content = "Aucun projet n'a été reçu pour l'assignation.",
                     CloseButtonText = "OK",
                     XamlRoot = this.Content.XamlRoot
                 };
@@ -85,38 +66,41 @@ namespace InterfaceProjet.Pages
                 return;
             }
 
-            //  Vérifier si le projet a déjà un client
-            if (projetCourant.AUnClient())
+            // Client sélectionné dans la liste
+            Client clientSelectionne = lvClients.SelectedItem as Client;
+
+            if (clientSelectionne == null)
             {
-                var dlgExiste = new ContentDialog
+                var dlg = new ContentDialog
                 {
-                    Title = "Assignation impossible",
-                    Content = $"Ce projet a déjà un client associé ({projetCourant.NomClient}).\n" +
-                              $"Vous ne pouvez pas lui assigner un autre client.",
+                    Title = "Aucun client sélectionné",
+                    Content = "Veuillez sélectionner un client dans la liste.",
                     CloseButtonText = "OK",
                     XamlRoot = this.Content.XamlRoot
                 };
-                await dlgExiste.ShowAsync();
+                await dlg.ShowAsync();
                 return;
             }
 
-            //  Tentative d'assignation
             try
             {
-                // Appel à la procédure stockée
-                SingletonProjet
-                    .getInstance()
-                    .AssocierClientAuProjet(projetCourant.NumeroProjet, clientSelectionne.IdClient);
+                // Appel à ta procédure stockée
+                SingletonProjet.getInstance()
+                               .AssocierClientAuProjet(projetCourant.NumeroProjet,
+                                                       clientSelectionne.IdClient);
 
-                // Mise à jour locale de l'objet
+                // Mise à jour locale
                 projetCourant.IdClient = clientSelectionne.IdClient;
                 projetCourant.NomClient = clientSelectionne.Nom;
 
                 // Message de confirmation
+                string message = "Le client " + clientSelectionne.Nom +
+                                 " a été associé au projet " + projetCourant.NumeroProjet + ".";
+
                 var confirm = new ContentDialog
                 {
                     Title = "Assignation réussie",
-                    Content = $"Le client {clientSelectionne.Nom} a été associé au projet {projetCourant.NumeroProjet}.",
+                    Content = message,
                     CloseButtonText = "OK",
                     XamlRoot = this.Content.XamlRoot
                 };
@@ -125,24 +109,11 @@ namespace InterfaceProjet.Pages
                 // Retour à la liste des projets
                 Frame.Navigate(typeof(PageProjets));
             }
-            catch (MySql.Data.MySqlClient.MySqlException ex)
+            catch (Exception ex)
             {
-                // Erreur SQL (trigger ou procédure)
                 var dlgErr = new ContentDialog
                 {
                     Title = "Erreur d'assignation",
-                    Content = $"Impossible d'associer le client au projet.\n\nDétail : {ex.Message}",
-                    CloseButtonText = "OK",
-                    XamlRoot = this.Content.XamlRoot
-                };
-                await dlgErr.ShowAsync();
-            }
-            catch (Exception ex)
-            {
-                // Autres erreurs
-                var dlgErr = new ContentDialog
-                {
-                    Title = "Erreur inattendue",
                     Content = ex.Message,
                     CloseButtonText = "OK",
                     XamlRoot = this.Content.XamlRoot
@@ -150,5 +121,6 @@ namespace InterfaceProjet.Pages
                 await dlgErr.ShowAsync();
             }
         }
+
     }
 }

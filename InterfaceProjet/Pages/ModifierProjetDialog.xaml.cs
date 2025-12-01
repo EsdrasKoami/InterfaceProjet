@@ -9,6 +9,7 @@ namespace InterfaceProjet.Pages
     public sealed partial class ModifierProjetDialog : ContentDialog
     {
         private Projet projetModifier;
+        public bool VeutChangerClient  = false;
 
         public ModifierProjetDialog(Projet projet)
         {
@@ -26,6 +27,12 @@ namespace InterfaceProjet.Pages
                 dpDateDebut.Date = new DateTimeOffset(projetModifier.DateDebut);
 
                 cbStatut.SelectedItem = projetModifier.Statut;
+
+                // client actuel
+                if (projetModifier.IdClient > 0)
+                    tbClient.Text = $"{projetModifier.IdClient} - {projetModifier.NomClient}";
+                else
+                    tbClient.Text = "Aucun client assigné";
             }
         }
 
@@ -131,5 +138,13 @@ namespace InterfaceProjet.Pages
         {
 
         }
+        private void BtnChangerClient_Click(object sender, RoutedEventArgs e)
+        {
+            VeutChangerClient = true;
+
+            // On ferme la boîte de dialogue
+            this.Hide();
+        }
+
     }
 }

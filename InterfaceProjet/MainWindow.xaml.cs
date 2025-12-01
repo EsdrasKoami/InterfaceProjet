@@ -51,7 +51,7 @@ namespace InterfaceProjet
                         break;
 
                     case "employe":
-                        mainFrame.Navigate(typeof(Employe));   
+                        mainFrame.Navigate(typeof(PageEmployes));   
                         break;
 
                     case "clients":

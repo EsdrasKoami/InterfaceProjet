@@ -72,11 +72,8 @@
                                     <Grid Grid.Row="0">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*"/>
-                                            <!-- Numéro -->
                                             <ColumnDefinition Width="Auto"/>
-                                            <!-- Statut -->
                                             <ColumnDefinition Width="Auto"/>
-                                            <!-- Bouton edit -->
                                         </Grid.ColumnDefinitions>
 
                                         <!-- Numéro du projet -->
@@ -126,34 +123,34 @@
                                           Margin="0,8,0,8"
                                           Spacing="2">      
                                         <TextBlock Text="{x:Bind Titre}"
-                         FontWeight="SemiBold"
-                         TextWrapping="Wrap"/>
+                                         FontWeight="SemiBold"
+                                         TextWrapping="Wrap"/>
 
                                         <TextBlock Text="{x:Bind NomClient}"
-                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                         TextWrapping="Wrap"/>
+                                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                         TextWrapping="Wrap"/>
 
                                         <!-- Date formatée -->
                                         <TextBlock FontSize="12">
-                  <Run Text="Début : "/>
-                  <Run Text="{x:Bind DateDebut, Mode=OneWay}"/>
+                          <Run Text="Début : "/>
+                          <Run Text="{x:Bind DateDebut, Mode=OneWay}"/>
                                         </TextBlock>
 
                                         <!-- Budget formaté -->
                                         <TextBlock FontSize="12">
-                  <Run Text="Budget : "/>
-                  <Run Text="{x:Bind Budget, Mode=OneWay}"/>
+                      <Run Text="Budget : "/>
+                      <Run Text="{x:Bind Budget, Mode=OneWay}"/>    
                                         </TextBlock>
                                     </StackPanel>
 
                                     <!-- BOUTON -->
                                     <Button Grid.Row="2"
                                   x:Name="assigner"
-                  Content="Assigner"
-                  HorizontalAlignment="Right"
-                  Margin="0,4,0,0"
-                  Style="{ThemeResource AccentButtonStyle}"
-                  Click="assigner_Click"/>
+                          Content="Assigner"
+                          HorizontalAlignment="Right"
+                          Margin="0,4,0,0"
+                          Style="{ThemeResource AccentButtonStyle}"
+                          Click="assigner_Click"/>  
                                 </Grid>
                             </Border>
                         </DataTemplate>
