@@ -69,6 +69,7 @@
                                   SelectionMode="Single"
                                   IsItemClickEnabled="True">
 
+<<<<<<< Updated upstream
                             <!-- Pas de padding autour des items -->
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
@@ -126,6 +127,88 @@
                                             <ColumnDefinition Width="260"/>
                                             <ColumnDefinition Width="120"/>
                                         </Grid.ColumnDefinitions>
+=======
+                
+                <ListView.Header>
+                    <Grid Margin="0,0,0,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="120"/>
+                            
+                            <ColumnDefinition Width="160"/>
+                           
+                            <ColumnDefinition Width="160"/>
+                            
+                            <ColumnDefinition Width="260"/>
+                           
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="120"/>
+
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0"
+                                   Text="Matricule"
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Column="1"
+                                   Text="Nom"
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Column="2"
+                                   Text="Prénom"
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Column="3"
+                                   Text="Email"
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Column="4"
+                                   Text="Statut"
+                                   FontWeight="Bold"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Column="5"
+             Text="Taux Horaire "
+             FontWeight="Bold"
+             HorizontalAlignment="Center"/>
+                    </Grid>
+                </ListView.Header>
+
+               
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="0,4,0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="160"/>
+                                <ColumnDefinition Width="160"/>
+                                <ColumnDefinition Width="260"/>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="120"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0"
+                                       Text="{Binding Matricule}"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="1"
+                                       Text="{Binding Nom}"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="2"
+                                       Text="{Binding Prenom}"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="3"
+                                       Text="{Binding Email}"
+                                       HorizontalAlignment="Center"
+                                       TextTrimming="CharacterEllipsis"/>
+                            <TextBlock Grid.Column="4"
+                                       Text="{Binding Statut}"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="5"
+           Text="{Binding  TauxHoraireFormate}"
+           HorizontalAlignment="Center"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+>>>>>>> Stashed changes
 
                                         <TextBlock Grid.Column="0"
                                                    Text="{x:Bind Matricule}"
