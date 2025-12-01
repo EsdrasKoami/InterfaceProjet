@@ -11,7 +11,7 @@
     CloseButtonText="Annuler"
     DefaultButton="Primary"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick">
-
+    <ScrollViewer>
     <StackPanel Padding="20" Spacing="8">
 
         <!-- Matricule en lecture seule -->
@@ -40,4 +40,5 @@
                       OffContent="Journalier"/>
 
     </StackPanel>
+        </ScrollViewer>
 </ContentDialog>

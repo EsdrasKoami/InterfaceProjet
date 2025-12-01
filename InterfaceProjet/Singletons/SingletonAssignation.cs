@@ -4,6 +4,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Diagnostics;
+using System.Linq;
 
 namespace InterfaceProjet.Singletons
 {
@@ -206,9 +207,25 @@ namespace InterfaceProjet.Singletons
             }
         }
 
-        
+        public void LibererEmployesProjet(string numeroProjet)
+        {
+            // On recharge les assignations de ce projet
+            getAssignationsParProjet(numeroProjet);
+
+            // On copie la liste pour éviter les problèmes de modification pendant l’itération
+            var copie = listeAssignation.ToList();
+
+            foreach (var a in copie)
+            {
+                SupprimerAssignation(a.IdAssignation);
+                listeAssignation.Remove(a);
+            }
+        }
+
+
+
         //  Vérifier si un employé est déjà assigné à un projet en cours
-        
+
         public bool EmployeDejaAssigne(string matricule)
         {
             try

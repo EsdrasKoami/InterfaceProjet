@@ -72,27 +72,25 @@ namespace InterfaceProjet.Pages
             Frame.Navigate(typeof(PageAjoutPojet));
         }
 
-        // Bouton "Assigner" (désormais seulement assignation employé)
-        private void assigner_Click(object sender, RoutedEventArgs e)
+        private async void assigner_Click(object sender, RoutedEventArgs e)
         {
-            var element = sender as FrameworkElement;
-            Projet projetSelectionne = element?.DataContext as Projet;
+            var fe = sender as FrameworkElement;
+            Projet projetSelectionne = fe?.DataContext as Projet;
 
             if (projetSelectionne == null)
+                return;
+
+            if (projetSelectionne.Statut == "Terminé")
             {
-                _ = new ContentDialog
+                var dlg = new ContentDialog
                 {
-                    Title = "Erreur",
-                    Content = "Impossible de récupérer le projet sélectionné.",
+                    Title = "Assignation impossible",
+                    Content = "Vous ne pouvez pas assigner un employé à un projet terminé.",
                     CloseButtonText = "OK",
                     XamlRoot = this.Content.XamlRoot
-                }.ShowAsync();
+                };
+                await dlg.ShowAsync();
                 return;
-            }
-
-            if (Frame != null)
-            {
-                Frame.Navigate(typeof(PageAssignationEmploye), projetSelectionne);
             }
         }
 
@@ -117,9 +115,56 @@ namespace InterfaceProjet.Pages
                 }
             }
         }
+       
+private async void Terminer_Click(object sender, RoutedEventArgs e)
+    {
+        var fe = sender as FrameworkElement;
+        Projet projet = fe?.DataContext as Projet;
 
-        // Bouton "Supprimer"
-        private async void ButtonSupprimer_Click(object sender, RoutedEventArgs e)
+        if (projet == null)
+            return;
+
+        if (projet.EstTermine())
+            {
+            var deja = new ContentDialog
+            {
+                Title = "Projet déjà terminé",
+                Content = $"Le projet {projet.NumeroProjet} est déjà terminé.",
+                CloseButtonText = "OK",
+                XamlRoot = this.Content.XamlRoot
+            };
+            await deja.ShowAsync();
+            return;
+        }
+
+        var confirm = new ContentDialog
+        {
+            Title = "Terminer le projet",
+            Content = $"Voulez-vous vraiment marquer le projet {projet.NumeroProjet} comme terminé ?\n" +
+                      "Les employés assignés seront libérés.",
+            PrimaryButtonText = "Terminer",
+            CloseButtonText = "Annuler",
+            DefaultButton = ContentDialogButton.Close,
+            XamlRoot = this.Content.XamlRoot
+        };
+
+        var result = await confirm.ShowAsync();
+        if (result != ContentDialogResult.Primary)
+            return;
+
+        // 1) Appel à ta procédure stockée
+        SingletonProjet.getInstance().TerminerProjet(projet.NumeroProjet);
+
+        // 2) Libérer les employés de ce projet
+        SingletonAssignation.getInstance().LibererEmployesProjet(projet.NumeroProjet);
+
+        // 3) Recharger la liste (moi je conseille getAllProjets pour garder les terminés visibles)
+        SingletonProjet.getInstance().getAllProjets();
+    }
+
+
+    // Bouton "Supprimer"
+    private async void ButtonSupprimer_Click(object sender, RoutedEventArgs e)
         {
             var element = sender as FrameworkElement;
             Projet projet = element?.DataContext as Projet;

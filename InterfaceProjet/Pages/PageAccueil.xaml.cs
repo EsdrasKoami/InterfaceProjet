@@ -24,26 +24,29 @@ namespace InterfaceProjet.Pages;
 /// </summary>
 public sealed partial class PageAccueil : Page
 {
+    private readonly SingletonProjet _projetsSingleton;
+
     public PageAccueil()
     {
         InitializeComponent();
-        listeProjetsEnCours.ItemsSource = SingletonProjet.getInstance().Liste;
-        SingletonProjet.getInstance().getAllProjets();
-    }
 
-    private void tbRechercheProjet_TextChanged(object sender, TextChangedEventArgs e)
-    {
+        _projetsSingleton = SingletonProjet.getInstance();
 
+        // Chargement initial
+        _projetsSingleton.getProjetsEnCours();
+        listeProjetsEnCours.ItemsSource = _projetsSingleton.Liste;
     }
 
     private void tbRechercheProjet_TextChanged_1(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
     {
+        string motCle = sender.Text.Trim();
 
-    }
+        if (string.IsNullOrWhiteSpace(motCle))
+            _projetsSingleton.getProjetsEnCours();
+        else
+            _projetsSingleton.rechercherProjets(motCle);
 
-    private void assigner_Click(object sender, RoutedEventArgs e)
-    {
-
+        listeProjetsEnCours.ItemsSource = _projetsSingleton.Liste;
     }
 
     private void listeProjetsEnCours_SelectionChanged(object sender, SelectionChangedEventArgs e)

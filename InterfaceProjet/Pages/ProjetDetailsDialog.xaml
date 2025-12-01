@@ -125,7 +125,7 @@
                             <TextBlock Text="{x:Bind Employe.Nom}"
                                        Grid.Column="0" />
 
-                            <TextBlock Text="{x:Bind Employe.TauxHoraire}"
+                            <TextBlock Text="{x:Bind Employe.TauxHoraireFormate}"
                                        Grid.Column="1"
                                        HorizontalAlignment="Right"/>
 

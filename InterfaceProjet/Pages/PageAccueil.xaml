@@ -56,7 +56,6 @@
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="*"/>
-                                        <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
 
                                     <!-- HEADER -->
@@ -103,18 +102,11 @@
                                         <!-- Budget formaté -->
                                         <TextBlock FontSize="12">
                             <Run Text="Budget : "/>
-                            <Run Text="{x:Bind Budget, Mode=OneWay}"/>
+                            <Run Text="{x:Bind BudgetAfficher, Mode=OneWay}"/>
                                         </TextBlock>
                                     </StackPanel>
 
-                                    <!-- BOUTON -->
-                                    <Button Grid.Row="2"
-                                            x:Name="assigner"
-                            Content="Assigner"
-                            HorizontalAlignment="Right"
-                            Margin="0,4,0,0"
-                            Style="{ThemeResource AccentButtonStyle}"
-                            Click="assigner_Click"/>
+                         
                                 </Grid>
                             </Border>
                         </DataTemplate>

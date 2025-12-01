@@ -23,40 +23,15 @@
         <!-- Contenu -->
         <StackPanel Grid.Row="1" Spacing="24">
 
-            <!-- Sécurité -->
+
+            <!-- Exportation des données -->
             <StackPanel Spacing="8">
-                <TextBlock Text="Sécurité"
+                <TextBlock Text="Exportation des données"
                            FontSize="20"
                            FontWeight="SemiBold"/>
-                <Button Content="Changer le mot de passe"
+                <Button Content="Exporter les projets en CSV"
                         Width="250"
-                        Click="BtnChangerMotDePasse_Click"/>
-            </StackPanel>
-
-            <!-- Langue -->
-            <StackPanel Spacing="8">
-                <TextBlock Text="Langue de l'application"
-                           FontSize="20"
-                           FontWeight="SemiBold"/>
-                <ComboBox x:Name="cbLangue"
-                          Width="250"
-                          SelectionChanged="cbLangue_SelectionChanged">
-                    <ComboBoxItem Content="Français" Tag="fr" IsSelected="True"/>
-                    <ComboBoxItem Content="Anglais"  Tag="en"/>
-                </ComboBox>
-            </StackPanel>
-
-            <!-- Date et heure -->
-            <StackPanel Spacing="8">
-                <TextBlock Text="Format de date et heure"
-                           FontSize="20"
-                           FontWeight="SemiBold"/>
-                <ComboBox x:Name="cbFormatDateHeure"
-                          Width="250"
-                          SelectionChanged="cbFormatDateHeure_SelectionChanged">
-                    <ComboBoxItem Content="JJ/MM/AAAA - 24h" Tag="fr-24"/>
-                    <ComboBoxItem Content="MM/DD/YYYY - 12h" Tag="en-12"/>
-                </ComboBox>
+                        Click="BtnExporterProjetsCsv_Click"/>
             </StackPanel>
 
         </StackPanel>

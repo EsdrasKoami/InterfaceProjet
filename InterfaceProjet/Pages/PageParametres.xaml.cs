@@ -1,47 +1,71 @@
+using InterfaceProjet.Singletons;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+using Windows.Storage.Pickers;
+using WinRT.Interop;
 
 namespace InterfaceProjet.Pages
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class PageParametres : Page
     {
         public PageParametres()
         {
             InitializeComponent();
         }
-        private void BtnChangerMotDePasse_Click(object sender, RoutedEventArgs e)
-        {
-            // TODO : ouvrir une ContentDialog pour changer le mot de passe
-            // (ancien mot de passe, nouveau, confirmation, etc.)
-        }
 
-        private void cbLangue_SelectionChanged(object sender, SelectionChangedEventArgs e)
+      
+        // === Exporter les projets en CSV ===
+        private async void BtnExporterProjetsCsv_Click(object sender, RoutedEventArgs e)
         {
-            // TODO : sauvegarder le choix de langue dans ta config
-            // (pour l'instant tu peux juste afficher un message ou log)
-        }
+            try
+            {
+                // 1) Création du FileSavePicker (comme dans le PDF)
+                var picker = new FileSavePicker();
 
-        private void cbFormatDateHeure_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            // TODO : sauvegarder le format choisi (affichage des dates dans l'app)
+                // IMPORTANT : utiliser la fenêtre principale App.fenetrePrincipale
+                var hWnd = WindowNative.GetWindowHandle(App.fenetrePrincipale);
+                InitializeWithWindow.Initialize(picker, hWnd);
+
+                picker.SuggestedFileName = "projets";
+                picker.FileTypeChoices.Add("Fichier CSV", new List<string>() { ".csv" });
+
+                // 2) L'utilisateur choisit l'emplacement
+                var fichier = await picker.PickSaveFileAsync();
+
+                if (fichier == null)
+                    return; // l'utilisateur a annulé
+
+                // 3) Appel du singleton pour écrire les projets dans le fichier
+                //    On lui passe simplement le chemin complet
+                SingletonProjet
+                    .getInstance()
+                    .ExporterProjetsCsv(fichier.Path);
+
+                // 4) Petit message de confirmation
+                var dlg = new ContentDialog
+                {
+                    Title = "Exportation réussie",
+                    Content = $"Les projets ont été exportés dans :\n{fichier.Path}",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.Content.XamlRoot
+                };
+
+                await dlg.ShowAsync();
+            }
+            catch (Exception ex)
+            {
+                var dlgErr = new ContentDialog
+                {
+                    Title = "Erreur d'exportation",
+                    Content = "Une erreur est survenue lors de l'exportation des projets :\n" + ex.Message,
+                    CloseButtonText = "OK",
+                    XamlRoot = this.Content.XamlRoot
+                };
+
+                await dlgErr.ShowAsync();
+            }
         }
     }
 }

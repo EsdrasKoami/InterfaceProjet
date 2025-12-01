@@ -125,7 +125,7 @@
 
                                 <TextBlock FontSize="12">
                                     <Run Text="Taux horaire : "/>
-                                    <Run Text="{x:Bind TauxHoraire, Mode=OneWay}"/>
+                                    <Run Text="{x:Bind TauxHoraireFormate, Mode=OneWay}"/>
                                 </TextBlock>
 
                                 <TextBlock FontSize="12">
