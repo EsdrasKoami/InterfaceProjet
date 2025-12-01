@@ -1,50 +1,46 @@
-﻿
-using InterfaceProjet.Classes;
+﻿using InterfaceProjet.Classes;
 using MySql.Data.MySqlClient;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace InterfaceProjet.Singletons
 {
     internal class SingletonAssignation
     {
+        private string connectionString;
+        private ObservableCollection<Assignation> listeAssignation;
+        private static SingletonAssignation instance = null;
 
-        string connectionString;
-        ObservableCollection<Assignation> listeAssignation;
-        static SingletonAssignation instance = null;
+       
         private SingletonAssignation()
         {
             connectionString = "Server=cours.cegep3r.info;Database=a2025_420335-345ri_greq20;Uid=6233629;Pwd=6233629;";
             listeAssignation = new ObservableCollection<Assignation>();
         }
-        //retourne l’instance du singleton
+
         public static SingletonAssignation getInstance()
         {
             if (instance == null)
                 instance = new SingletonAssignation();
             return instance;
         }
-        //Propriété qui retourne la liste des Assignations
+
+       
         public ObservableCollection<Assignation> Liste { get => listeAssignation; }
 
-
-
+   
         public void AjouterAssignationEmploye(string matriculeEmploye,
-                                  string numeroProjet,
-                                  decimal heuresTravaillees)
+                                              string numeroProjet,
+                                              decimal heuresTravaillees)
         {
             try
             {
                 using MySqlConnection con = new MySqlConnection(connectionString);
                 using MySqlCommand cmd = new MySqlCommand("AjouterAssignation", con);
-                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                cmd.CommandType = CommandType.StoredProcedure;
 
-                
                 cmd.Parameters.AddWithValue("p_matricule_employe", matriculeEmploye);
                 cmd.Parameters.AddWithValue("p_numero_projet", numeroProjet);
                 cmd.Parameters.AddWithValue("p_heures_travaillees", heuresTravaillees);
@@ -52,43 +48,99 @@ namespace InterfaceProjet.Singletons
                 con.Open();
                 cmd.ExecuteNonQuery();
 
-                Debug.WriteLine("Assignation ajoutée avec succès !");
-
-                // Si tu veux mettre à jour la liste locale :
-                // ex : Recharger les assignations du projet
-                // getAssignationsParProjet(numeroProjet);   (à écrire plus tard)
             }
             catch (MySqlException ex)
             {
-                Debug.WriteLine("Erreur MySQL : " + ex.Message);
+                Debug.WriteLine($" Erreur MySQL AjouterAssignationEmploye: {ex.Message}");
+                throw; 
             }
-            catch (Exception ex)
+        }
+
+        
+      // Obtenir les assignations d'un projet
+        public void getAssignationsParProjet(string numeroProjet)
+        {
+            listeAssignation.Clear();
+
+            try
             {
-                Debug.WriteLine("Erreur : " + ex.Message);
+                using MySqlConnection con = new MySqlConnection(connectionString);
+                using MySqlCommand cmd = con.CreateCommand();
+
+                cmd.CommandText = @"
+                    SELECT 
+                        a.id_assignation,
+                        a.matricule_employe,
+                        a.numero_projet,
+                        a.heures_travaillees,
+                        a.salaire_a_payer,
+                        a.date_assignation,
+                        e.nom,
+                        e.prenom,
+                        e.taux_horaire,
+                        e.email,
+                        e.statut
+                    FROM assignations a
+                    JOIN employes e ON a.matricule_employe = e.matricule
+                    WHERE a.numero_projet = @numeroProjet
+                    ORDER BY a.date_assignation DESC";
+
+                cmd.Parameters.AddWithValue("@numeroProjet", numeroProjet);
+
+                con.Open();
+                using MySqlDataReader r = cmd.ExecuteReader();
+
+                while (r.Read())
+                {
+                
+                    Employe employe = new Employe(
+                        r.GetString("matricule_employe"),
+                        r.GetString("nom"),
+                        r.GetString("prenom"),
+                        DateTime.MinValue,
+                        r.GetString("email"),
+                        "", 
+                        DateTime.MinValue, 
+                        r.GetDecimal("taux_horaire"),
+                        "",
+                        r.GetString("statut")
+                    );
+
+                    Assignation assignation = new Assignation(
+                        r.GetString("matricule_employe"),
+                        r.GetString("numero_projet"),
+                        r.GetDecimal("heures_travaillees"),
+                        r.GetDecimal("salaire_a_payer"),
+                        employe
+                    );
+
+                    assignation.IdAssignation = r.GetInt32("id_assignation");
+                    assignation.DateAssignation = r.GetDateTime("date_assignation");
+
+                    listeAssignation.Add(assignation);
+                }
+
+        
+            }
+            catch (MySqlException ex)
+            {
+                Debug.WriteLine($" Erreur MySQL getAssignationsParProjet: {ex.Message}");
             }
         }
 
        
-
-      
-        public void ajouterAssignationAvecProcedure(string numeroAssignation, string titre, DateTime dateDebut,
-                                        string description, decimal budget, int nbAssignationsRequis,
-                                        int idClient)
+        // MÉTHODE: Modifier les heures d'une assignation
+        
+        public void ModifierHeuresAssignation(int idAssignation, decimal nouvellesHeures)
         {
             try
             {
                 using MySqlConnection con = new MySqlConnection(connectionString);
-                using MySqlCommand cmd = new MySqlCommand("AjouterAssignation", con);
-                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                using MySqlCommand cmd = new MySqlCommand("MajHeuresAssignation", con);
+                cmd.CommandType = CommandType.StoredProcedure;
 
-                // Paramètres de la procédure
-                cmd.Parameters.AddWithValue("@p_numero_Assignation", numeroAssignation);
-                cmd.Parameters.AddWithValue("@p_titre", titre);
-                cmd.Parameters.AddWithValue("@p_date_debut", dateDebut);
-                cmd.Parameters.AddWithValue("@p_description", description);
-                cmd.Parameters.AddWithValue("@p_budget", budget);
-                cmd.Parameters.AddWithValue("@p_nb_Assignations_requis", nbAssignationsRequis);
-                cmd.Parameters.AddWithValue("@p_id_client", idClient);
+                cmd.Parameters.AddWithValue("p_id_assignation", idAssignation);
+                cmd.Parameters.AddWithValue("p_nouvelles_heures", nouvellesHeures);
 
                 con.Open();
                 cmd.ExecuteNonQuery();
@@ -97,13 +149,93 @@ namespace InterfaceProjet.Singletons
             }
             catch (MySqlException ex)
             {
-                Debug.WriteLine("Erreur MySQL : " + ex.Message);
+                Debug.WriteLine($" Erreur MySQL ModifierHeuresAssignation: {ex.Message}");
+                throw;
             }
         }
-       
 
+ 
+       // Supprimer une assignation
+      
+        public void SupprimerAssignation(int idAssignation)
+        {
+            try
+            {
+                using MySqlConnection con = new MySqlConnection(connectionString);
+                using MySqlCommand cmd = con.CreateCommand();
 
-  
-       
+                cmd.CommandText = "DELETE FROM assignations WHERE id_assignation = @id";
+                cmd.Parameters.AddWithValue("@id", idAssignation);
+
+                con.Open();
+                
+
+               
+            }
+            catch (MySqlException ex)
+            {
+                Debug.WriteLine($" Erreur MySQL SupprimerAssignation: {ex.Message}");
+                throw;
+            }
+        }
+
+      
+        // Obtenir le nombre d'assignations d'un projet
+      
+        public int getNombreAssignationsProjet(string numeroProjet)
+        {
+            try
+            {
+                using MySqlConnection con = new MySqlConnection(connectionString);
+                using MySqlCommand cmd = con.CreateCommand();
+
+                cmd.CommandText = "SELECT COUNT(*) FROM assignations WHERE numero_projet = @numeroProjet";
+                cmd.Parameters.AddWithValue("@numeroProjet", numeroProjet);
+
+                con.Open();
+                object res = cmd.ExecuteScalar();
+
+                if (res != null && res != DBNull.Value)
+                    return Convert.ToInt32(res);
+                else
+                    return 0;
+            }
+            catch (MySqlException ex)
+            {
+                Debug.WriteLine($" Erreur MySQL getNombreAssignationsProjet: {ex.Message}");
+                return 0;
+            }
+        }
+
+        
+        //  Vérifier si un employé est déjà assigné à un projet en cours
+        
+        public bool EmployeDejaAssigne(string matricule)
+        {
+            try
+            {
+                using MySqlConnection con = new MySqlConnection(connectionString);
+                using MySqlCommand cmd = con.CreateCommand();
+
+                cmd.CommandText = @"
+                    SELECT COUNT(*) 
+                    FROM assignations a
+                    JOIN projets p ON a.numero_projet = p.numero_projet
+                    WHERE a.matricule_employe = @matricule
+                      AND p.statut = 'En cours'";
+
+                cmd.Parameters.AddWithValue("@matricule", matricule);
+
+                con.Open();
+                object res = cmd.ExecuteScalar();
+
+                return res != null && Convert.ToInt32(res) > 0;
+            }
+            catch (MySqlException ex)
+            {
+                Debug.WriteLine($" Erreur MySQL EmployeDejaAssigne: {ex.Message}");
+                return false;
+            }
+        }
     }
 }

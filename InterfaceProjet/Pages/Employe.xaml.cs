@@ -24,6 +24,8 @@ namespace InterfaceProjet.Pages;
 /// </summary>
 public sealed partial class Employe : Page
 {
+
+
     public Employe()
     {
         InitializeComponent();

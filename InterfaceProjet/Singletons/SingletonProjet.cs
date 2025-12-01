@@ -123,7 +123,7 @@ namespace InterfaceProjet.Singletons
                 while (r.Read())
                 {
                     // ✅ Gestion sécurisée: vérifier si la colonne existe d'abord
-                    int? idClient = null;
+                    int? idClient = null; 
                     try
                     {
                         int ordinal = r.GetOrdinal("id_client");

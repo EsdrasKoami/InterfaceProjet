@@ -48,7 +48,7 @@
                             x:Name="btnSupprimerClient"
                             Click="btnSupprimerClient_Click"/>
 
-                    <!-- 👇 Nouveau bouton : Ajouter un projet -->
+                    <!--  Nouveau bouton : Ajouter un projet -->
                     <Button Content="Ajouter un projet"
                             x:Name="btnAjouterProjet"
                             Background="#0078D7"

@@ -288,9 +288,9 @@ namespace InterfaceEmploye.Singletons
             }
         }
 
-        // ============================================
+        
         // MÉTHODE: getNombreEmployes
-        // ============================================
+      
         public int getNombreEmployes()
         {
             try
