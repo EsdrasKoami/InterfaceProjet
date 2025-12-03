@@ -65,13 +65,17 @@ namespace InterfaceProjet.Classes
         public string BudgetAfficher => $"{budget}$";
         public decimal BudgetRestant() => Budget - TotalSalaires;
 
+        public string DateDebutFormater => DateDebut != DateTime.MinValue
+           ? DateDebut.ToString("dd/MM/yyyy")
+           : "N/A";
+
         public decimal PourcentageBudgetUtilise()
         {
             if (Budget == 0) return 0;
             return (TotalSalaires / Budget) * 100;
         }
 
-        // ✅ NOUVELLE MÉTHODE: Vérifier si le projet a un client
+        
         public bool AUnClient() => IdClient.HasValue && IdClient.Value > 0;
 
         public override string ToString() => $"{NumeroProjet} - {Titre} ({Statut})";

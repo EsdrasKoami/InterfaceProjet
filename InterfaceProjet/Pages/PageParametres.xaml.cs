@@ -19,53 +19,53 @@ namespace InterfaceProjet.Pages
         // === Exporter les projets en CSV ===
         private async void BtnExporterProjetsCsv_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                // 1) Création du FileSavePicker (comme dans le PDF)
-                var picker = new FileSavePicker();
+            //try
+            //{
+            //    // 1) Création du FileSavePicker (comme dans le PDF)
+            //    var picker = new FileSavePicker();
 
-                // IMPORTANT : utiliser la fenêtre principale App.fenetrePrincipale
-                var hWnd = WindowNative.GetWindowHandle(App.fenetrePrincipale);
-                InitializeWithWindow.Initialize(picker, hWnd);
+            //    // IMPORTANT : utiliser la fenêtre principale App.fenetrePrincipale
+            //    var hWnd = WindowNative.GetWindowHandle(App.fenetrePrincipale);
+            //    InitializeWithWindow.Initialize(picker, hWnd);
 
-                picker.SuggestedFileName = "projets";
-                picker.FileTypeChoices.Add("Fichier CSV", new List<string>() { ".csv" });
+            //    picker.SuggestedFileName = "projets";
+            //    picker.FileTypeChoices.Add("Fichier CSV", new List<string>() { ".csv" });
 
-                // 2) L'utilisateur choisit l'emplacement
-                var fichier = await picker.PickSaveFileAsync();
+            //    // 2) L'utilisateur choisit l'emplacement
+            //    var fichier = await picker.PickSaveFileAsync();
 
-                if (fichier == null)
-                    return; // l'utilisateur a annulé
+            //    if (fichier == null)
+            //        return; // l'utilisateur a annulé
 
-                // 3) Appel du singleton pour écrire les projets dans le fichier
-                //    On lui passe simplement le chemin complet
-                SingletonProjet
-                    .getInstance()
-                    .ExporterProjetsCsv(fichier.Path);
+            //    // 3) Appel du singleton pour écrire les projets dans le fichier
+            //    //    On lui passe simplement le chemin complet
+            //    SingletonProjet
+            //        .getInstance()
+            //        .ExporterProjetsCsv(fichier.Path);
 
-                // 4) Petit message de confirmation
-                var dlg = new ContentDialog
-                {
-                    Title = "Exportation réussie",
-                    Content = $"Les projets ont été exportés dans :\n{fichier.Path}",
-                    CloseButtonText = "OK",
-                    XamlRoot = this.Content.XamlRoot
-                };
+            //    // 4) Petit message de confirmation
+            //    var dlg = new ContentDialog
+            //    {
+            //        Title = "Exportation réussie",
+            //        Content = $"Les projets ont été exportés dans :\n{fichier.Path}",
+            //        CloseButtonText = "OK",
+            //        XamlRoot = this.Content.XamlRoot
+            //    };
 
-                await dlg.ShowAsync();
-            }
-            catch (Exception ex)
-            {
-                var dlgErr = new ContentDialog
-                {
-                    Title = "Erreur d'exportation",
-                    Content = "Une erreur est survenue lors de l'exportation des projets :\n" + ex.Message,
-                    CloseButtonText = "OK",
-                    XamlRoot = this.Content.XamlRoot
-                };
+            //    await dlg.ShowAsync();
+            //}
+            //catch (Exception ex)
+            //{
+            //    var dlgErr = new ContentDialog
+            //    {
+            //        Title = "Erreur d'exportation",
+            //        Content = "Une erreur est survenue lors de l'exportation des projets :\n" + ex.Message,
+            //        CloseButtonText = "OK",
+            //        XamlRoot = this.Content.XamlRoot
+            //    };
 
-                await dlgErr.ShowAsync();
-            }
+            //    await dlgErr.ShowAsync();
+            //}
         }
     }
 }

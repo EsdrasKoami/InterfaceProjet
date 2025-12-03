@@ -146,7 +146,7 @@
 
                                         <TextBlock FontSize="12">
                                             <Run Text="Début : "/>
-                                            <Run Text="{x:Bind DateDebut, Mode=OneWay}"/>
+                                            <Run Text="{x:Bind DateDebutFormater, Mode=OneWay}"/>
                                         </TextBlock>
 
                                         <TextBlock FontSize="12">

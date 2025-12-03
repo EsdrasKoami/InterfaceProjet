@@ -40,7 +40,7 @@ namespace InterfaceProjet.Pages
                 var dialog = new ProjetDetailsDialog(
                     projet,
                     listeAssignations,
-                    null      // si tu n'utilises pas le dernier paramètre, mets null
+                    null    
                 )
                 {
                     XamlRoot = this.Content.XamlRoot

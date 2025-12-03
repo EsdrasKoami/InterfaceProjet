@@ -1,4 +1,6 @@
+using InterfaceProjet.Classes;
 using InterfaceProjet.Pages;
+using InterfaceProjet.Singletons;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -25,8 +27,8 @@ namespace InterfaceProjet
     /// </summary>
     public sealed partial class MainWindow : Window
     {
-  //        this.ExtendsContentIntoTitleBar = true; // Extend the content into the title bar and hide the default titlebar
-  //this.SetTitleBar(titleBar);
+        //        this.ExtendsContentIntoTitleBar = true; // Extend the content into the title bar and hide the default titlebar
+        //this.SetTitleBar(titleBar);
         public MainWindow()
         {
             InitializeComponent();
@@ -45,26 +47,26 @@ namespace InterfaceProjet
             {
                 switch (item.Tag)
                 {
- 
+
                     case "accueil":
                         mainFrame.Navigate(typeof(PageAccueil));
                         break;
 
                     case "employe":
-                        mainFrame.Navigate(typeof(PageEmployes));   
+                        mainFrame.Navigate(typeof(PageEmployes));
                         break;
 
                     case "clients":
-                        mainFrame.Navigate(typeof(PageClients));   
+                        mainFrame.Navigate(typeof(PageClients));
                         break;
                     case "projets":
-                        mainFrame.Navigate(typeof(PageProjets));    
+                        mainFrame.Navigate(typeof(PageProjets));
                         break;
 
                     case "connexion":
-                        mainFrame.Navigate(typeof(PageConnexion));  
+                        mainFrame.Navigate(typeof(PageConnexion));
                         break;
-                    case "parametres":   
+                    case "parametres":
                         mainFrame.Navigate(typeof(PageParametres));
                         break;
                     default:
@@ -78,6 +80,34 @@ namespace InterfaceProjet
         private void btnAjouter_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private async void MenuExporter_Click(object sender, RoutedEventArgs e)
+        {
+            var item = sender as MenuFlyoutItem;
+            if (item.Tag.ToString() == "exporter")
+            {
+                var picker = new Windows.Storage.Pickers.FileSavePicker();
+                var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+                WinRT.Interop.InitializeWithWindow.Initialize(picker, hWnd);
+                picker.SuggestedFileName = "projets";
+                picker.FileTypeChoices.Add("Fichier CSV", new List<string>() { ".csv" });
+                //crée le fichier
+                Windows.Storage.StorageFile monFichier = await picker.PickSaveFileAsync();
+                
+                List<Projet> listProjet = SingletonProjet.getInstance().ExporterProjetsCsv(monFichier);
+
+                if (monFichier != null)
+                    await Windows.Storage.FileIO.WriteLinesAsync(monFichier, listProjet.ConvertAll(x => x.ToString()), Windows.Storage.Streams.UnicodeEncoding.Utf8);
+
+                ContentDialog dialog = new ContentDialog();
+                dialog.XamlRoot = navView.XamlRoot;
+                dialog.Title = "Exportation reussie";
+                dialog.CloseButtonText = "OK";
+                dialog.DefaultButton = ContentDialogButton.Primary;
+                dialog.Content = $"les projets ont bien été exporter dans : \n{monFichier.Path}  ";
+                
+            }  
         }
     }
 }

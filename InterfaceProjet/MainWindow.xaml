@@ -18,7 +18,8 @@
 
     <Grid Padding="20" >
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
@@ -58,8 +59,12 @@
             </TitleBar>
 
 
-
-        <NavigationView   PaneDisplayMode="Left" Grid.Row="1"   IsSettingsVisible="False" IsBackButtonVisible="Collapsed" x:Name="navView" ItemInvoked="navView_ItemInvoked" IsPaneToggleButtonVisible="True"   >
+        <MenuBar Grid.Row="1" >
+            <MenuBarItem Title="Fichier" >
+                <MenuFlyoutItem Text="Exporter les projets" Tag="exporter" Click="MenuExporter_Click"/>
+                </MenuBarItem>
+            </MenuBar>
+                <NavigationView   PaneDisplayMode="Left" Grid.Row="2"   IsSettingsVisible="False" IsBackButtonVisible="Collapsed" x:Name="navView" ItemInvoked="navView_ItemInvoked" IsPaneToggleButtonVisible="True"   >
             <NavigationView.MenuItems>
                 <NavigationViewItem Content="Accueil" x:Name="iAccueil" Tag="accueil" Icon="Home" />
                 <NavigationViewItem Content="Employés" x:Name="iEmployés" Tag="employe" Icon="People" />

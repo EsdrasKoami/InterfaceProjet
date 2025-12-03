@@ -1,11 +1,13 @@
 ﻿using InterfaceProjet.Classes;
 using MySql.Data.MySqlClient;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using Windows.Storage;
 
 namespace InterfaceProjet.Singletons
 {
@@ -495,14 +497,14 @@ namespace InterfaceProjet.Singletons
             catch (MySqlException ex)
             {
                 Debug.WriteLine("Erreur MySQL AssocierClientAuProjet : " + ex.Message);
-                throw; // Relancer pour afficher dans l'UI
+                throw; 
             }
         }
 
         // ============================================
         // MÉTHODE: Exporter les projets en CSV
         // ============================================
-        public void ExporterProjetsCsv(string cheminFichier)
+        public List<Projet> ExporterProjetsCsv(StorageFile cheminFichier)
         {
             try
             {
@@ -523,10 +525,7 @@ namespace InterfaceProjet.Singletons
 
                 con.Open();
                 using MySqlDataReader r = cmd.ExecuteReader();
-                using StreamWriter writer = new StreamWriter(cheminFichier, false, Encoding.UTF8);
-
-                // En-tête CSV
-                writer.WriteLine("NumeroProjet;Titre;NomClient;DateDebut;Budget;TotalSalaires;BudgetRestant;Statut");
+          
 
                 while (r.Read())
                 {
@@ -540,16 +539,12 @@ namespace InterfaceProjet.Singletons
 
                     decimal budgetRestant = budget - totalSalaires;
 
-                    // Échapper les points-virgules
-                    string safeTitre = titre.Replace(";", ",");
-                    string safeNomClient = nomClient.Replace(";", ",");
 
-                    writer.WriteLine(
-                        $"{numero};{safeTitre};{safeNomClient};{dateDebut:yyyy-MM-dd};{budget};{totalSalaires};{budgetRestant};{statut}"
-                    );
+                 
                 }
 
-                Debug.WriteLine($"Export CSV réussi : {cheminFichier}");
+                return new List<Projet>(listeProjet);
+
             }
             catch (Exception ex)
             {
@@ -557,6 +552,8 @@ namespace InterfaceProjet.Singletons
                 throw;
             }
         }
+
+        
 
         // ============================================
         // MÉTHODE: Obtenir le budget restant d'un projet
