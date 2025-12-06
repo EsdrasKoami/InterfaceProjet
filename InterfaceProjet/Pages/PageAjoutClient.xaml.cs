@@ -1,3 +1,4 @@
+using InterfaceAdmin.Singletons;
 using InterfaceClient.Singletons;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -15,8 +16,7 @@ using System.Text.RegularExpressions;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+
 
 namespace InterfaceProjet.Pages
 {
@@ -28,6 +28,13 @@ namespace InterfaceProjet.Pages
         public PageAjoutClient()
         {
             InitializeComponent();
+            if (!SingletonAdmin.getInstance().EstConnecte())
+            {
+                btnEnregister.IsEnabled = false;
+                btnEnregister.Opacity = 0.5;
+
+
+            }
         }
         private void ButtonAnnuler_Click(object sender, RoutedEventArgs e)
         {

@@ -1,3 +1,4 @@
+using InterfaceAdmin.Singletons;
 using InterfaceProjet.Classes;
 using InterfaceProjet.Singletons;
 using Microsoft.UI.Xaml;
@@ -18,29 +19,40 @@ namespace InterfaceProjet.Pages
             this.InitializeComponent();
 
             _projetsSingleton = SingletonProjet.getInstance();
+            bool estAdmin = SingletonAdmin.getInstance().EstConnecte();
 
-            // Lier la GridView à la liste des projets du singleton
+            //  CHOISIR LE BON TEMPLATE selon si Admin ou non
+            if (estAdmin)
+            {
+                listeProjets.ItemTemplate = (DataTemplate)this.Resources["ProjetTemplateAdmin"];
+            }
+            else
+            {
+                listeProjets.ItemTemplate = (DataTemplate)this.Resources["ProjetTemplateUser"];
+                btnAjouter.Visibility = Visibility.Collapsed;
+            }
+
+            
             listeProjets.ItemsSource = _projetsSingleton.Liste;
             _projetsSingleton.getAllProjets();
         }
 
-        // Quand on clique sur une carte de projet
+    
         private async void listeProjets_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (listeProjets.SelectedItem is Projet projet)
             {
-                // 1) récupérer les assignations en BD
+                
                 var assignations = SingletonAssignation
                                        .getInstance()
                                        .getAssignationsParProjet(projet.NumeroProjet);
 
                 var listeAssignations = new ObservableCollection<Assignation>(assignations);
 
-                // 2) ouvrir le dialog
                 var dialog = new ProjetDetailsDialog(
                     projet,
                     listeAssignations,
-                    null    
+                    null
                 )
                 {
                     XamlRoot = this.Content.XamlRoot
@@ -51,8 +63,6 @@ namespace InterfaceProjet.Pages
                 listeProjets.SelectedItem = null;
             }
         }
-
-
 
         private void tbRechercheProjet_TextChanged_1(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
@@ -66,7 +76,7 @@ namespace InterfaceProjet.Pages
             listeProjets.ItemsSource = _projetsSingleton.Liste;
         }
 
-        // Bouton "Ajouter un projet"
+       
         private void btnAjouter_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(PageAjoutPojet));
@@ -94,7 +104,7 @@ namespace InterfaceProjet.Pages
             }
         }
 
-        // Bouton "Modifier"
+       
         private async void ButtonModifier_Click(object sender, RoutedEventArgs e)
         {
             if ((sender as FrameworkElement)?.DataContext is Projet projet)
@@ -104,67 +114,66 @@ namespace InterfaceProjet.Pages
                     XamlRoot = this.Content.XamlRoot
                 };
 
-                // On attend que la boîte de dialogue se ferme
+                
                 await dialog.ShowAsync();
 
-                // Si dans le dialog l’utilisateur a cliqué sur "Changer client"
+               
                 if (dialog.VeutChangerClient)
                 {
-                    // Ici la navigation fonctionne, car on est dans une Page
+                   
                     Frame.Navigate(typeof(PageAssignationClient), projet);
                 }
             }
         }
-       
-private async void Terminer_Click(object sender, RoutedEventArgs e)
-    {
-        var fe = sender as FrameworkElement;
-        Projet projet = fe?.DataContext as Projet;
 
-        if (projet == null)
-            return;
+        private async void Terminer_Click(object sender, RoutedEventArgs e)
+        {
+            var fe = sender as FrameworkElement;
+            Projet projet = fe?.DataContext as Projet;
 
-        if (projet.EstTermine())
+            if (projet == null)
+                return;
+
+            if (projet.EstTermine())
             {
-            var deja = new ContentDialog
+                var deja = new ContentDialog
+                {
+                    Title = "Projet déjà terminé",
+                    Content = $"Le projet {projet.NumeroProjet} est déjà terminé.",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.Content.XamlRoot
+                };
+                await deja.ShowAsync();
+                return;
+            }
+
+            var confirm = new ContentDialog
             {
-                Title = "Projet déjà terminé",
-                Content = $"Le projet {projet.NumeroProjet} est déjà terminé.",
-                CloseButtonText = "OK",
+                Title = "Terminer le projet",
+                Content = $"Voulez-vous vraiment marquer le projet {projet.NumeroProjet} comme terminé ?\n" +
+                          "Les employés assignés seront libérés.",
+                PrimaryButtonText = "Terminer",
+                CloseButtonText = "Annuler",
+                DefaultButton = ContentDialogButton.Close,
                 XamlRoot = this.Content.XamlRoot
             };
-            await deja.ShowAsync();
-            return;
+
+            var result = await confirm.ShowAsync();
+            if (result != ContentDialogResult.Primary)
+                return;
+
+          
+            SingletonProjet.getInstance().TerminerProjet(projet.NumeroProjet);
+
+            
+            SingletonAssignation.getInstance().LibererEmployesProjet(projet.NumeroProjet);
+
+            
+            SingletonProjet.getInstance().getAllProjets();
         }
 
-        var confirm = new ContentDialog
-        {
-            Title = "Terminer le projet",
-            Content = $"Voulez-vous vraiment marquer le projet {projet.NumeroProjet} comme terminé ?\n" +
-                      "Les employés assignés seront libérés.",
-            PrimaryButtonText = "Terminer",
-            CloseButtonText = "Annuler",
-            DefaultButton = ContentDialogButton.Close,
-            XamlRoot = this.Content.XamlRoot
-        };
-
-        var result = await confirm.ShowAsync();
-        if (result != ContentDialogResult.Primary)
-            return;
-
-        // 1) Appel à ta procédure stockée
-        SingletonProjet.getInstance().TerminerProjet(projet.NumeroProjet);
-
-        // 2) Libérer les employés de ce projet
-        SingletonAssignation.getInstance().LibererEmployesProjet(projet.NumeroProjet);
-
-        // 3) Recharger la liste (moi je conseille getAllProjets pour garder les terminés visibles)
-        SingletonProjet.getInstance().getAllProjets();
-    }
-
-
-    // Bouton "Supprimer"
-    private async void ButtonSupprimer_Click(object sender, RoutedEventArgs e)
+     
+        private async void ButtonSupprimer_Click(object sender, RoutedEventArgs e)
         {
             var element = sender as FrameworkElement;
             Projet projet = element?.DataContext as Projet;
@@ -187,7 +196,7 @@ private async void Terminer_Click(object sender, RoutedEventArgs e)
             if (result == ContentDialogResult.Primary)
             {
                 _projetsSingleton.supprimerProjet(projet.NumeroProjet);
-                // Ta liste est rechargée dans supprimerProjet()
+                // La liste est rechargée dans supprimerProjet
             }
         }
     }

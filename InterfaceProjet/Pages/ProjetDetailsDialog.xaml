@@ -13,13 +13,13 @@
     <Grid Padding="24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <!-- infos projet -->
+           
             <RowDefinition Height="Auto"/>
-            <!-- titre employés -->
+           
             <RowDefinition Height="*"/>
-            <!-- liste employés -->
+            
             <RowDefinition Height="Auto"/>
-            <!-- total -->
+
         </Grid.RowDefinitions>
 
         <!-- =================== INFOS PROJET =================== -->
@@ -111,7 +111,6 @@
                     </Grid>
                 </ListView.Header>
 
-                <!-- Lignes -->
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="local1:Assignation">
                         <Grid Padding="2">
@@ -142,7 +141,6 @@
             </ListView>
         </Border>
 
-        <!-- =================== TOTAL =================== -->
         <StackPanel Grid.Row="3"
                     Orientation="Horizontal"
                     HorizontalAlignment="Right"

@@ -7,7 +7,6 @@ using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Threading.Tasks;
 
-// Alias pour éviter toute confusion si tu as une page qui s'appelle Employe
 using EmployeModel = InterfaceProjet.Classes.Employe;
 
 namespace InterfaceProjet.Pages

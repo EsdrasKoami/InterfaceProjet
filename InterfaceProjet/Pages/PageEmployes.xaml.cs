@@ -1,10 +1,9 @@
-
+using InterfaceAdmin.Singletons;
+using InterfaceEmploye.Singletons;
 using InterfaceProjet.Classes;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Navigation;
 using System;
-using InterfaceEmploye.Singletons;
 
 namespace InterfaceProjet.Pages
 {
@@ -15,15 +14,28 @@ namespace InterfaceProjet.Pages
             InitializeComponent();
 
             var singleton = SingletonEmploye.getInstance();
+            bool estAdmin = SingletonAdmin.getInstance().EstConnecte();
+
+            //  CHOISIR LE BON TEMPLATE selon si Admin ou non
+            if (estAdmin)
+            {
+                lvEmployes.ItemTemplate = (DataTemplate)this.Resources["EmployeTemplateAdmin"];
+            }
+            else
+            {
+                lvEmployes.ItemTemplate = (DataTemplate)this.Resources["EmployeTemplateUser"];
+                btnAjouter.Visibility = Visibility.Collapsed;
+            }
+
+          
             lvEmployes.ItemsSource = singleton.Liste;
-            singleton.getEmployesDisponibles();   // charge la liste
+            singleton.getEmployesDisponibles();
         }
 
-        // SUPPRIMER
         private async void supprimer_Click(object sender, RoutedEventArgs e)
         {
             var fe = sender as FrameworkElement;
-            var emp = fe?.DataContext as InterfaceProjet.Classes.Employe;
+            var emp = fe?.DataContext as Employe;
             if (emp == null) return;
 
             var dlg = new ContentDialog
@@ -39,17 +51,14 @@ namespace InterfaceProjet.Pages
             var result = await dlg.ShowAsync();
             if (result == ContentDialogResult.Primary)
             {
-                // appel au singleton pour supprimer
                 SingletonEmploye.getInstance().SupprimerEmploye(emp.Matricule);
-
-                // recharger la liste
                 var singleton = SingletonEmploye.getInstance();
                 singleton.getEmployesDisponibles();
                 lvEmployes.ItemsSource = singleton.Liste;
             }
         }
 
-        // MODIFIER
+  
         private async void modifier_Click(object sender, RoutedEventArgs e)
         {
             var fe = sender as FrameworkElement;
@@ -60,12 +69,10 @@ namespace InterfaceProjet.Pages
             {
                 XamlRoot = this.Content.XamlRoot
             };
-
             await dlg.ShowAsync();
-           
         }
 
-        // RECHERCHE
+  
         private void tbRechercheEmploye_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
             var motCle = sender.Text.Trim();

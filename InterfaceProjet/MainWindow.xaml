@@ -64,13 +64,21 @@
                 <MenuFlyoutItem Text="Exporter les projets" Tag="exporter" Click="MenuExporter_Click"/>
                 </MenuBarItem>
             </MenuBar>
-                <NavigationView   PaneDisplayMode="Left" Grid.Row="2"   IsSettingsVisible="False" IsBackButtonVisible="Collapsed" x:Name="navView" ItemInvoked="navView_ItemInvoked" IsPaneToggleButtonVisible="True"   >
+                <NavigationView  PaneDisplayMode="Left" Grid.Row="2"   IsSettingsVisible="False" IsBackButtonVisible="Collapsed" x:Name="navView" ItemInvoked="navView_ItemInvoked" IsPaneToggleButtonVisible="True"   >
             <NavigationView.MenuItems>
                 <NavigationViewItem Content="Accueil" x:Name="iAccueil" Tag="accueil" Icon="Home" />
                 <NavigationViewItem Content="Employés" x:Name="iEmployés" Tag="employe" Icon="People" />
                 <NavigationViewItem Content="Clients" x:Name="iClients"  Tag="clients" Icon="Contact"/>
                 <NavigationViewItem Content="Projets" x:Name="iProjets"  Tag="projets" Icon="Folder" />
                 <NavigationViewItem Content="Connexion" x:Name="iConnexion"  Tag="connexion" Icon="ContactPresence"/>
+                <NavigationViewItem Content="Déconnexion" 
+                    x:Name="iDeconnexion"  
+                    Tag="deconnexion">
+                    <NavigationViewItem.Icon>
+                        <SymbolIcon Symbol="LeaveChat"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
             </NavigationView.MenuItems>
             <NavigationView.FooterMenuItems>
                 <NavigationViewItem Content="Paramètres"

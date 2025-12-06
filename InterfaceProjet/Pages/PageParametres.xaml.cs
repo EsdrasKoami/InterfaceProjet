@@ -1,71 +1,162 @@
-using InterfaceProjet.Singletons;
+using InterfaceAdmin.Singletons;
+using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using System;
-using System.Collections.Generic;
-using Windows.Storage.Pickers;
-using WinRT.Interop;
+using Windows.Storage;
 
 namespace InterfaceProjet.Pages
 {
     public sealed partial class PageParametres : Page
     {
+        
+        private const string KEY_THEME = "AppTheme";
+
         public PageParametres()
         {
-            InitializeComponent();
+            this.InitializeComponent();
+            this.Loaded += PageParametres_Loaded;
+        }
+
+        private void PageParametres_Loaded(object sender, RoutedEventArgs e)
+        {
+           
+            ChargerTheme();
+
+
+            AfficherStatutConnexion();
+        }
+
+        
+        private void ChargerTheme()
+        {
+            var localSettings = ApplicationData.Current.LocalSettings;
+
+            if (localSettings.Values.ContainsKey(KEY_THEME))
+            {
+                string theme = localSettings.Values[KEY_THEME].ToString();
+
+                // Sélectionner le bon RadioButton
+                foreach (RadioButton rb in rbTheme.Items)
+                {
+                    if (rb.Tag?.ToString() == theme)
+                    {
+                        rb.IsChecked = true;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                // Par défaut : utiliser les paramètres système
+                ((RadioButton)rbTheme.Items[2]).IsChecked = true;
+            }
+        }
+
+        
+        private void rbTheme_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (rbTheme.SelectedItem is RadioButton selectedRadio)
+            {
+                string theme = selectedRadio.Tag?.ToString();
+
+                if (!string.IsNullOrEmpty(theme))
+                {
+                    // Sauvegarder le choix
+                    var localSettings = ApplicationData.Current.LocalSettings;
+                    localSettings.Values[KEY_THEME] = theme;
+
+                    
+                    AppliquerTheme(theme);
+                }
+            }
+        }
+
+       
+        private void AppliquerTheme(string theme)
+        {
+            
+            if (this.XamlRoot?.Content is FrameworkElement rootElement)
+            {
+                switch (theme)
+                {
+                    case "Light":
+                        rootElement.RequestedTheme = ElementTheme.Light;
+                        break;
+
+                    case "Dark":
+                        rootElement.RequestedTheme = ElementTheme.Dark;
+                        break;
+
+                    case "Default":
+                    default:
+                        rootElement.RequestedTheme = ElementTheme.Light;
+                        break;
+                }
+            }
         }
 
       
-        // === Exporter les projets en CSV ===
-        private async void BtnExporterProjetsCsv_Click(object sender, RoutedEventArgs e)
+        private void AfficherStatutConnexion()
         {
-            //try
-            //{
-            //    // 1) Création du FileSavePicker (comme dans le PDF)
-            //    var picker = new FileSavePicker();
+            bool estConnecte = SingletonAdmin.getInstance().EstConnecte();
 
-            //    // IMPORTANT : utiliser la fenêtre principale App.fenetrePrincipale
-            //    var hWnd = WindowNative.GetWindowHandle(App.fenetrePrincipale);
-            //    InitializeWithWindow.Initialize(picker, hWnd);
+            if (estConnecte)
+            {
+                var admin = SingletonAdmin.getInstance().AdministrateurConnecte;
+                if (admin != null)
+                {
+                    txtStatut.Text = $"Connecté en tant que : {admin.NomUtilisateur}";
+                    iconStatut.Symbol = Symbol.ContactInfo;
+                    iconStatut.Foreground = new SolidColorBrush(Colors.Green);
+                    btnDeconnexion.Visibility = Visibility.Visible;
+                }
+            }
+            else
+            {
+                txtStatut.Text = "Aucun administrateur connecté";
+                iconStatut.Symbol = Symbol.Contact;
+                iconStatut.Foreground = new SolidColorBrush(Colors.Gray);
+                btnDeconnexion.Visibility = Visibility.Collapsed;
+            }
+        }
 
-            //    picker.SuggestedFileName = "projets";
-            //    picker.FileTypeChoices.Add("Fichier CSV", new List<string>() { ".csv" });
+        
+        private async void btnDeconnexion_Click(object sender, RoutedEventArgs e)
+        {
+            var admin = SingletonAdmin.getInstance().AdministrateurConnecte;
 
-            //    // 2) L'utilisateur choisit l'emplacement
-            //    var fichier = await picker.PickSaveFileAsync();
+            var confirm = new ContentDialog
+            {
+                Title = "Confirmation de déconnexion",
+                Content = $"Voulez-vous vraiment vous déconnecter en tant que {admin.NomUtilisateur} ?",
+                PrimaryButtonText = "Déconnexion",
+                CloseButtonText = "Annuler",
+                DefaultButton = ContentDialogButton.Close,
+                XamlRoot = this.Content.XamlRoot
+            };
 
-            //    if (fichier == null)
-            //        return; // l'utilisateur a annulé
+            var result = await confirm.ShowAsync();
 
-            //    // 3) Appel du singleton pour écrire les projets dans le fichier
-            //    //    On lui passe simplement le chemin complet
-            //    SingletonProjet
-            //        .getInstance()
-            //        .ExporterProjetsCsv(fichier.Path);
+            if (result == ContentDialogResult.Primary)
+            {
+               
+                SingletonAdmin.getInstance().Deconnecter();
 
-            //    // 4) Petit message de confirmation
-            //    var dlg = new ContentDialog
-            //    {
-            //        Title = "Exportation réussie",
-            //        Content = $"Les projets ont été exportés dans :\n{fichier.Path}",
-            //        CloseButtonText = "OK",
-            //        XamlRoot = this.Content.XamlRoot
-            //    };
+                
+                AfficherStatutConnexion();
 
-            //    await dlg.ShowAsync();
-            //}
-            //catch (Exception ex)
-            //{
-            //    var dlgErr = new ContentDialog
-            //    {
-            //        Title = "Erreur d'exportation",
-            //        Content = "Une erreur est survenue lors de l'exportation des projets :\n" + ex.Message,
-            //        CloseButtonText = "OK",
-            //        XamlRoot = this.Content.XamlRoot
-            //    };
-
-            //    await dlgErr.ShowAsync();
-            //}
+         
+                var succes = new ContentDialog
+                {
+                    Title = "Déconnexion réussie",
+                    Content = "Vous avez été déconnecté avec succès.",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.Content.XamlRoot
+                };
+                await succes.ShowAsync();
+            }
         }
     }
 }

@@ -82,7 +82,7 @@
                         <Button Content="Annuler"
                                 Width="140"
                                 Click="ButtonAnnuler_Click"/>
-                        <Button Content="Enregistrer"
+                        <Button x:Name="btnEnregister" Content="Enregistrer"
                                 Width="160"
                                 Click="ButtonEnregistrer_Click"/>
                     </StackPanel>

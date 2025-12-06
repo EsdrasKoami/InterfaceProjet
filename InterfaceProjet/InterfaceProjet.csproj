@@ -48,6 +48,11 @@
     <PackageReference Include="MySql.Data" Version="9.5.0" />
   </ItemGroup>
   <ItemGroup>
+    <Page Update="Pages\PageAdmin.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
     <Page Update="Pages\ModifierEmployeDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

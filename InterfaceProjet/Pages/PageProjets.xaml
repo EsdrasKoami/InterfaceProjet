@@ -9,6 +9,174 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <!-- TEMPLATE POUR ADMIN (avec tous les boutons) -->
+        <DataTemplate x:Key="ProjetTemplateAdmin" x:DataType="local1:Projet">
+            <Border Padding="14"
+                    CornerRadius="14"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource SystemAccentColorDark1}"
+                    BorderThickness="2">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- HEADER -->
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0"
+                                   Text="{x:Bind NumeroProjet}"
+                                   FontWeight="Bold"
+                                   FontSize="16"/>
+
+                        <Border Grid.Column="1"
+                                Background="#1F008000"
+                                CornerRadius="10"
+                                Padding="6,2"
+                                Margin="0,0,8,0"
+                                HorizontalAlignment="Right">
+                            <TextBlock Text="{x:Bind Statut}"
+                                       FontSize="12"
+                                       Foreground="#FF008000"/>
+                        </Border>
+
+                        <!--  Boutons Modifier/Supprimer VISIBLES pour Admin -->
+                        <StackPanel Grid.Column="2"
+                                    Orientation="Horizontal"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    Spacing="4">
+                            <Button Click="ButtonModifier_Click"
+                                    Background="Transparent"
+                                    BorderThickness="0">
+                                <SymbolIcon Symbol="Edit"/>
+                            </Button>
+
+                            <Button Click="ButtonSupprimer_Click"
+                                    Background="Transparent"
+                                    BorderThickness="0">
+                                <SymbolIcon Symbol="Delete"/>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- INFOS -->
+                    <StackPanel Grid.Row="1"
+                                Margin="0,8,0,8"
+                                Spacing="2">
+                        <TextBlock Text="{x:Bind Titre}"
+                                   FontWeight="SemiBold"
+                                   TextWrapping="Wrap"/>
+
+                        <TextBlock Text="{x:Bind NomClient}"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                   TextWrapping="Wrap"/>
+
+                        <TextBlock FontSize="12">
+                            <Run Text="Début : "/>
+                            <Run Text="{x:Bind DateDebutFormater, Mode=OneWay}"/>
+                        </TextBlock>
+
+                        <TextBlock FontSize="12">
+                            <Run Text="Budget : "/>
+                            <Run Text="{x:Bind BudgetAfficher, Mode=OneWay}"/>
+                        </TextBlock>
+                    </StackPanel>
+
+                    <!--  Boutons Terminer/Assigner VISIBLES pour Admin -->
+                    <StackPanel Grid.Row="2"
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Right"
+                                Spacing="8"
+                                Margin="0,4,0,0">
+
+                        <Button Content="Terminer"
+                                Click="Terminer_Click"
+                                Style="{ThemeResource DefaultButtonStyle}"/>
+
+                        <Button Content="Assigner"
+                                HorizontalAlignment="Right"
+                                Style="{ThemeResource AccentButtonStyle}"
+                                Click="assigner_Click"
+                                IsEnabled="{x:Bind EstEnCours(), Mode=OneWay}"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </DataTemplate>
+
+        <!-- TEMPLATE POUR UTILISATEUR (SANS boutons admin) -->
+        <DataTemplate x:Key="ProjetTemplateUser" x:DataType="local1:Projet">
+            <Border Padding="14"
+                    CornerRadius="14"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource SystemAccentColorDark1}"
+                    BorderThickness="2">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- HEADER (sans boutons modifier/supprimer) -->
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0"
+                                   Text="{x:Bind NumeroProjet}"
+                                   FontWeight="Bold"
+                                   FontSize="16"/>
+
+                        <Border Grid.Column="1"
+                                Background="#1F008000"
+                                CornerRadius="10"
+                                Padding="6,2"
+                                HorizontalAlignment="Right">
+                            <TextBlock Text="{x:Bind Statut}"
+                                       FontSize="12"
+                                       Foreground="#FF008000"/>
+                        </Border>
+                    </Grid>
+
+                    <!-- INFOS (identiques) -->
+                    <StackPanel Grid.Row="1"
+                                Margin="0,8,0,8"
+                                Spacing="2">
+                        <TextBlock Text="{x:Bind Titre}"
+                                   FontWeight="SemiBold"
+                                   TextWrapping="Wrap"/>
+
+                        <TextBlock Text="{x:Bind NomClient}"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                   TextWrapping="Wrap"/>
+
+                        <TextBlock FontSize="12">
+                            <Run Text="Début : "/>
+                            <Run Text="{x:Bind DateDebutFormater, Mode=OneWay}"/>
+                        </TextBlock>
+
+                        <TextBlock FontSize="12">
+                            <Run Text="Budget : "/>
+                            <Run Text="{x:Bind BudgetAfficher, Mode=OneWay}"/>
+                        </TextBlock>
+                    </StackPanel>
+
+                  
+                </Grid>
+            </Border>
+        </DataTemplate>
+    </Page.Resources>
+
     <ScrollView>
         <Grid>
             <Grid Padding="40">
@@ -29,7 +197,7 @@
                                FontWeight="SemiBold"/>
                 </StackPanel>
 
-                <!-- RECHERCHE + AJOUTER -->
+             
                 <StackPanel Grid.Row="1"
                             Orientation="Horizontal"
                             Spacing="30">
@@ -43,7 +211,6 @@
                                         TextChanged="tbRechercheProjet_TextChanged_1"/>
                     </StackPanel>
 
-                    <!-- Bouton bleu (Accent) -->
                     <Button x:Name="btnAjouter"
                             Click="btnAjouter_Click"
                             Grid.Row="4"
@@ -57,7 +224,6 @@
                     </Button>
                 </StackPanel>
 
-                <!-- LISTE DES PROJETS -->
                 <GridView x:Name="listeProjets"
                           Grid.Row="2"
                           SelectionChanged="listeProjets_SelectionChanged"
@@ -71,117 +237,6 @@
                             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                         </Style>
                     </GridView.ItemContainerStyle>
-
-                    <GridView.ItemTemplate>
-                        <DataTemplate x:DataType="local1:Projet">
-                            <Border Padding="14"
-                                    CornerRadius="14"
-                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                    BorderBrush="{ThemeResource SystemAccentColorDark1}"
-                                    BorderThickness="2">
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="*"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-
-                                    <!-- HEADER -->
-                                    <Grid Grid.Row="0">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-
-                                        <!-- Numéro -->
-                                        <TextBlock Grid.Column="0"
-                                                   Text="{x:Bind NumeroProjet}"
-                                                   FontWeight="Bold"
-                                                   FontSize="16"/>
-
-                                        <!-- Statut -->
-                                        <Border Grid.Column="1"
-                                                Background="#1F008000"
-                                                CornerRadius="10"
-                                                Padding="6,2"
-                                                Margin="0,0,8,0"
-                                                HorizontalAlignment="Right">
-                                            <TextBlock Text="{x:Bind Statut}"
-                                                       FontSize="12"
-                                                       Foreground="#FF008000"/>
-                                        </Border>
-
-                                        <!-- Icônes modifier / supprimer -->
-                                        <StackPanel Grid.Column="2"
-                                                    Orientation="Horizontal"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Center"
-                                                    Spacing="4">
-                                            <Button Click="ButtonModifier_Click"
-                                                    Background="Transparent"
-                                                    BorderThickness="0">
-                                                <SymbolIcon Symbol="Edit"/>
-                                            </Button>
-
-                                            <Button Click="ButtonSupprimer_Click"
-                                                    Background="Transparent"
-                                                    BorderThickness="0">
-                                                <SymbolIcon Symbol="Delete"/>
-                                            </Button>
-                                        </StackPanel>
-                                    </Grid>
-
-                                    <!-- INFOS -->
-                                    <StackPanel Grid.Row="1"
-                                                Margin="0,8,0,8"
-                                                Spacing="2">
-                                        <TextBlock Text="{x:Bind Titre}"
-                                                   FontWeight="SemiBold"
-                                                   TextWrapping="Wrap"/>
-
-                                        <TextBlock Text="{x:Bind NomClient}"
-                                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                   TextWrapping="Wrap"/>
-
-                                        <TextBlock FontSize="12">
-                                            <Run Text="Début : "/>
-                                            <Run Text="{x:Bind DateDebutFormater, Mode=OneWay}"/>
-                                        </TextBlock>
-
-                                        <TextBlock FontSize="12">
-                                            <Run Text="Budget : "/>
-                                            <Run Text="{x:Bind BudgetAfficher, Mode=OneWay}"/>
-                                        </TextBlock>
-                                    </StackPanel>
-
-                                    <!-- BOUTONS BAS DE CARTE -->
-                                    <StackPanel Grid.Row="2"
-                                                Orientation="Horizontal"
-                                                HorizontalAlignment="Right"
-                                                Spacing="8"
-                                                Margin="0,4,0,0">
-
-                                        <!-- Nouveau bouton TERMINE -->
-                                        <Button Content="Terminer"
-                                                Click="Terminer_Click"
-                                                Style="{ThemeResource DefaultButtonStyle}"/>
-
-                                        <Button Grid.Row="2"
-                                            x:Name="assigner"
-                                            Content="Assigner"
-                                            HorizontalAlignment="Right"
-                                            Margin="0,4,0,0"
-                                            Style="{ThemeResource AccentButtonStyle}"
-                                            Click="assigner_Click"
-                                            IsEnabled="{x:Bind EstEnCours(), Mode=OneWay}"/>
-
-
-                                    </StackPanel>
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </GridView.ItemTemplate>
                 </GridView>
 
             </Grid>

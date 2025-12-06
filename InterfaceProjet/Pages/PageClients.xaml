@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Page
     x:Class="InterfaceProjet.Pages.PageClients"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -7,7 +8,95 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <ScrollViewer HorizontalScrollBarVisibility="Auto" >
+    <Page.Resources>
+        <!-- TEMPLATE POUR ADMIN (avec boutons Modifier/Supprimer) -->
+        <DataTemplate x:Key="ClientTemplateAdmin" x:DataType="local1:Client">
+            <Grid Margin="0,5,0,5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="220"/>
+                    <ColumnDefinition Width="320"/>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="120"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0"
+                           Text="{x:Bind IdClient}"
+                           HorizontalAlignment="Stretch"
+                           TextAlignment="Center"/>
+
+                <TextBlock Grid.Column="1"
+                           Text="{x:Bind Nom}"
+                           HorizontalAlignment="Center"/>
+
+                <TextBlock Grid.Column="2"
+                           Text="{x:Bind Email}"
+                           HorizontalAlignment="Center"
+                           TextTrimming="CharacterEllipsis"/>
+
+                <TextBlock Grid.Column="3"
+                           Text="{x:Bind Telephone}"
+                           HorizontalAlignment="Center"/>
+
+                <StackPanel Grid.Column="4"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            Spacing="8">
+
+                    <Button Click="ButtonModifier_Click"
+                            Background="Transparent"
+                            BorderThickness="0">
+                        <SymbolIcon Symbol="Edit"/>
+                    </Button>
+
+                    <Button Click="ButtonSupprimer_Click"
+                            Background="Transparent"
+                            BorderThickness="0">
+                        <SymbolIcon Symbol="Delete"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+
+       
+        <DataTemplate x:Key="ClientTemplateUser" x:DataType="local1:Client">
+            <Grid Margin="0,5,0,5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="220"/>
+                    <ColumnDefinition Width="320"/>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="120"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0"
+                           Text="{x:Bind IdClient}"
+                           HorizontalAlignment="Stretch"
+                           TextAlignment="Center"/>
+
+                <TextBlock Grid.Column="1"
+                           Text="{x:Bind Nom}"
+                           HorizontalAlignment="Center"/>
+
+                <TextBlock Grid.Column="2"
+                           Text="{x:Bind Email}"
+                           HorizontalAlignment="Center"
+                           TextTrimming="CharacterEllipsis"/>
+
+                <TextBlock Grid.Column="3"
+                           Text="{x:Bind Telephone}"
+                           HorizontalAlignment="Center"/>
+
+               
+                <TextBlock Grid.Column="4"
+                           Text="—"
+                           HorizontalAlignment="Center"
+                           Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+
+    <ScrollViewer HorizontalScrollBarVisibility="Auto">
         <Grid>
             <Grid Padding="40">
                 <Grid.RowDefinitions>
@@ -58,15 +147,10 @@
                         <Grid Margin="0,0,0,5">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="60"/>
-                                <!-- ID -->
                                 <ColumnDefinition Width="220"/>
-                                <!-- Nom -->
                                 <ColumnDefinition Width="320"/>
-                                <!-- Email -->
                                 <ColumnDefinition Width="150"/>
-                                <!-- Téléphone -->
                                 <ColumnDefinition Width="120"/>
-                                <!-- Actions -->
                             </Grid.ColumnDefinitions>
 
                             <TextBlock Grid.Column="0"
@@ -93,57 +177,6 @@
                         </Grid>
                     </ListView.Header>
 
-                    <!-- Lignes de données -->
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="local1:Client">
-                            <Grid Margin="0,5,0,5">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="60"/>
-                                    <ColumnDefinition Width="220"/>
-                                    <ColumnDefinition Width="320"/>
-                                    <ColumnDefinition Width="150"/>
-                                    <ColumnDefinition Width="120"/>
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock Grid.Column="0"
-                                           Text="{x:Bind IdClient}"
-                                           HorizontalAlignment="Stretch"
-                                           TextAlignment="Center"/>
-
-                                <TextBlock Grid.Column="1"
-                                           Text="{x:Bind Nom}"
-                                           HorizontalAlignment="Center"/>
-
-                                <TextBlock Grid.Column="2"
-                                           Text="{x:Bind Email}"
-                                           HorizontalAlignment="Center"
-                                           TextTrimming="CharacterEllipsis"/>
-
-                                <TextBlock Grid.Column="3"
-                                           Text="{x:Bind Telephone}"
-                                           HorizontalAlignment="Center"/>
-
-                                <!-- Actions (Modifier / Supprimer) -->
-                                <StackPanel Grid.Column="4"
-                                            Orientation="Horizontal"
-                                            HorizontalAlignment="Center"
-                                            Spacing="8">
-
-                                    <Button Click="ButtonModifier_Click"
-                                            Background="Transparent"
-                                            BorderThickness="0">
-                                        <SymbolIcon Symbol="Edit"/>
-                                    </Button>
-
-                                    <Button Click="ButtonSupprimer_Click"
-                                            Background="Transparent"
-                                            BorderThickness="0">
-                                        <SymbolIcon Symbol="Delete"/>
-                                    </Button>
-                                </StackPanel>
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
                 </ListView>
 
             </Grid>

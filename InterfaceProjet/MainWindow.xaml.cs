@@ -1,3 +1,4 @@
+using InterfaceAdmin.Singletons;
 using InterfaceProjet.Classes;
 using InterfaceProjet.Pages;
 using InterfaceProjet.Singletons;
@@ -13,6 +14,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -23,31 +25,54 @@ using Windows.Foundation.Collections;
 namespace InterfaceProjet
 {
     /// <summary>
-    /// An empty window that can be used on its own or navigated to within a Frame.
-    /// </summary>
+    // An empty window that can be used on its own or navigated to within a Frame.
+  
     public sealed partial class MainWindow : Window
     {
-        //        this.ExtendsContentIntoTitleBar = true; // Extend the content into the title bar and hide the default titlebar
-        //this.SetTitleBar(titleBar);
+      
         public MainWindow()
         {
             InitializeComponent();
-            mainFrame.Navigate(typeof(PageAccueil));
+     
+            
             var maintenant = DateTime.Now;
 
-            tbDate.Text = maintenant.ToString("dd/MM/yyyy"); // ou "yyyy-MM-dd"
+            tbDate.Text = maintenant.ToString("dd/MM/yyyy");
             tbHeure.Text = maintenant.ToString("HH:mm");
-            this.ExtendsContentIntoTitleBar = true; // Extend the content into the title bar and hide the default titlebar
-            this.SetTitleBar(titlebar); // Set the custom title bar
+            this.ExtendsContentIntoTitleBar = true; 
+            this.SetTitleBar(titlebar);
+            VerifierEtNaviguer();
+        }
+        private void VerifierEtNaviguer()
+        {
+            bool adminExiste = SingletonAdmin.getInstance().AdministrateurExiste();
+
+            if (!adminExiste)
+            {
+                // Pas d'admin ? Afficher seulement la PageAdmin dans mainFrame
+              
+                mainFrame.Navigate(typeof(PageAdmin));
+            }
+            else
+            {
+                // Admin existe ? Afficher le NavigationView + PageAccueil
+                ActiverNavigation();
+            }
         }
 
-        private void navView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
+        public void ActiverNavigation()
+        {
+           
+            mainFrame.Navigate(typeof(PageAccueil));
+        }
+
+        //  MÉTHODE APPELÉE PAR LE XAML
+        private async void navView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
             if (args.InvokedItemContainer is NavigationViewItem item)
             {
                 switch (item.Tag)
                 {
-
                     case "accueil":
                         mainFrame.Navigate(typeof(PageAccueil));
                         break;
@@ -59,6 +84,7 @@ namespace InterfaceProjet
                     case "clients":
                         mainFrame.Navigate(typeof(PageClients));
                         break;
+
                     case "projets":
                         mainFrame.Navigate(typeof(PageProjets));
                         break;
@@ -66,15 +92,20 @@ namespace InterfaceProjet
                     case "connexion":
                         mainFrame.Navigate(typeof(PageConnexion));
                         break;
+
                     case "parametres":
                         mainFrame.Navigate(typeof(PageParametres));
                         break;
+
+                    case "deconnexion":
+                        await GererDeconnexion();
+                        break;
+
                     default:
                         mainFrame.Navigate(typeof(PageAccueil));
                         break;
                 }
             }
-
         }
 
         private void btnAjouter_Click(object sender, RoutedEventArgs e)
@@ -109,5 +140,55 @@ namespace InterfaceProjet
                 
             }  
         }
+        private async System.Threading.Tasks.Task GererDeconnexion()
+        {
+            // Vérifier si un admin est connecté
+            if (!SingletonAdmin.getInstance().EstConnecte())
+            {
+                var dlg = new ContentDialog
+                {
+                    Title = "Aucune connexion active",
+                    Content = "Vous n'êtes pas connecté en tant qu'administrateur.",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.Content.XamlRoot
+                };
+                await dlg.ShowAsync();
+                return;
+            }
+
+            // Demander confirmation
+            var admin = SingletonAdmin.getInstance().AdministrateurConnecte;
+            var confirm = new ContentDialog
+            {
+                Title = "Confirmation de déconnexion",
+                Content = $"Voulez-vous vraiment vous déconnecter en tant que {admin.NomUtilisateur} ?",
+                PrimaryButtonText = "Déconnexion",
+                CloseButtonText = "Annuler",
+                DefaultButton = ContentDialogButton.Close,
+                XamlRoot = this.Content.XamlRoot
+            };
+
+            var result = await confirm.ShowAsync();
+
+            if (result == ContentDialogResult.Primary)
+            {
+                // Déconnecter l'administrateur
+                SingletonAdmin.getInstance().Deconnecter();
+
+                // Message de confirmation
+                var succes = new ContentDialog
+                {
+                    Title = "Déconnexion réussie",
+                    Content = "Vous avez été déconnecté avec succès.",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.Content.XamlRoot
+                };
+                await succes.ShowAsync();
+
+                // Rediriger vers la page d'accueil
+                mainFrame.Navigate(typeof(PageAccueil));
+            }
+        }
+
     }
 }

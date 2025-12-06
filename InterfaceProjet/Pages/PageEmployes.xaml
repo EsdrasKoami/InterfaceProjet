@@ -8,6 +8,135 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <!-- TEMPLATE POUR ADMIN (avec boutons Modifier/Supprimer) -->
+        <DataTemplate x:Key="EmployeTemplateAdmin" x:DataType="local1:Employe">
+            <Border Padding="14"
+                    CornerRadius="12"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                    BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- HEADER : nom + boutons icônes -->
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="{x:Bind Prenom}"
+                                       FontSize="16"
+                                       FontWeight="SemiBold"/>
+                            <TextBlock Text="{x:Bind Nom}"
+                                       FontSize="16"/>
+                            <TextBlock Text="{x:Bind Matricule}"
+                                       FontSize="12"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                        </StackPanel>
+
+                        <!-- ✅ Boutons VISIBLES pour Admin -->
+                        <StackPanel Grid.Column="1"
+                                    Orientation="Horizontal"
+                                    Spacing="4"
+                                    HorizontalAlignment="Right">
+                            <Button Click="modifier_Click"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    VerticalAlignment="Center">
+                                <SymbolIcon Symbol="Edit"/>
+                            </Button>
+
+                            <Button Click="supprimer_Click"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    VerticalAlignment="Center">
+                                <SymbolIcon Symbol="Delete"/>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- INFOS SUPPLÉMENTAIRES -->
+                    <StackPanel Grid.Row="1"
+                                Margin="0,8,0,0"
+                                Spacing="2">
+                        <TextBlock FontSize="12">
+                            <Run Text="Email : "/>
+                            <Run Text="{x:Bind Email, Mode=OneWay}"/>
+                        </TextBlock>
+                        <TextBlock FontSize="12">
+                            <Run Text="Adresse : "/>
+                            <Run Text="{x:Bind Adresse, Mode=OneWay}"/>
+                        </TextBlock>
+                        <TextBlock FontSize="12">
+                            <Run Text="Taux horaire : "/>
+                            <Run Text="{x:Bind TauxHoraireFormate, Mode=OneWay}"/>
+                        </TextBlock>
+                        <TextBlock FontSize="12">
+                            <Run Text="Statut : "/>
+                            <Run Text="{x:Bind Statut, Mode=OneWay}"/>
+                        </TextBlock>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </DataTemplate>
+
+        <!-- TEMPLATE POUR UTILISATEUR (SANS boutons) -->
+        <DataTemplate x:Key="EmployeTemplateUser" x:DataType="local1:Employe">
+            <Border Padding="14"
+                    CornerRadius="12"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                    BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- HEADER : nom SEULEMENT (pas de boutons) -->
+                    <StackPanel Grid.Row="0">
+                        <TextBlock Text="{x:Bind Prenom}"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"/>
+                        <TextBlock Text="{x:Bind Nom}"
+                                   FontSize="16"/>
+                        <TextBlock Text="{x:Bind Matricule}"
+                                   FontSize="12"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                    </StackPanel>
+
+                    <!-- INFOS SUPPLÉMENTAIRES (identiques) -->
+                    <StackPanel Grid.Row="1"
+                                Margin="0,8,0,0"
+                                Spacing="2">
+                        <TextBlock FontSize="12">
+                            <Run Text="Email : "/>
+                            <Run Text="{x:Bind Email, Mode=OneWay}"/>
+                        </TextBlock>
+                        <TextBlock FontSize="12">
+                            <Run Text="Adresse : "/>
+                            <Run Text="{x:Bind Adresse, Mode=OneWay}"/>
+                        </TextBlock>
+                        <TextBlock FontSize="12">
+                            <Run Text="Taux horaire : "/>
+                            <Run Text="{x:Bind TauxHoraireFormate, Mode=OneWay}"/>
+                        </TextBlock>
+                        <TextBlock FontSize="12">
+                            <Run Text="Statut : "/>
+                            <Run Text="{x:Bind Statut, Mode=OneWay}"/>
+                        </TextBlock>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </DataTemplate>
+    </Page.Resources>
+
     <Grid Padding="40">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -39,12 +168,12 @@
         </StackPanel>
 
         <!-- LISTE DES EMPLOYÉS (EN CARTES) -->
+        <!-- ✅ Pas de ItemTemplate défini ici, il sera assigné dans le code-behind -->
         <GridView Grid.Row="2"
                   x:Name="lvEmployes"
                   SelectionMode="Single"
                   IsItemClickEnabled="False">
 
-            <!-- style des items : largeur / marges des cartes -->
             <GridView.ItemContainerStyle>
                 <Style TargetType="GridViewItem">
                     <Setter Property="Margin" Value="0,0,16,16"/>
@@ -53,91 +182,6 @@
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                 </Style>
             </GridView.ItemContainerStyle>
-
-            <!-- TEMPLATE D'UNE CARTE EMPLOYÉ -->
-            <GridView.ItemTemplate>
-                <DataTemplate x:DataType="local1:Employe">
-                    <Border Padding="14"
-                            CornerRadius="12"
-                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                            BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
-                            BorderThickness="1">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <!-- header -->
-                                <RowDefinition Height="*"/>
-                                <!-- infos -->
-                            </Grid.RowDefinitions>
-
-                            <!-- HEADER : nom + boutons icônes -->
-                            <Grid Grid.Row="0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-
-                                <!-- Nom complet + matricule -->
-                                <StackPanel Grid.Column="0">
-                                    <TextBlock Text="{x:Bind Prenom}"
-                                               FontSize="16"
-                                               FontWeight="SemiBold"/>
-                                    <TextBlock Text="{x:Bind Nom}"
-                                               FontSize="16"/>
-                                    <TextBlock Text="{x:Bind Matricule}"
-                                               FontSize="12"
-                                               Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                                </StackPanel>
-
-                                <!-- Icônes Modifier / Supprimer -->
-                                <StackPanel Grid.Column="1"
-                                            Orientation="Horizontal"
-                                            Spacing="4"
-                                            HorizontalAlignment="Right">
-                                    <Button Click="modifier_Click"
-                                             Background="Transparent"
-                                             BorderThickness="0"
-                                             VerticalAlignment="Center">        
-                                        <SymbolIcon Symbol="Edit"/>
-                                    </Button>
-
-                                    <Button Click="supprimer_Click"
-                                            Background="Transparent"
-                                             BorderThickness="0"           
-                                             VerticalAlignment="Center">        
-                                        <SymbolIcon Symbol="Delete"/>
-                                    </Button>
-                                </StackPanel>
-                            </Grid>
-
-                            <!-- INFOS SUPPLÉMENTAIRES -->
-                            <StackPanel Grid.Row="1"
-                                        Margin="0,8,0,0"
-                                        Spacing="2">
-                                <TextBlock FontSize="12">
-                                    <Run Text="Email : "/>
-                                    <Run Text="{x:Bind Email, Mode=OneWay}"/>
-                                </TextBlock>
-                                <TextBlock FontSize="12">
-                                <Run Text="Adresse : "/>
-                                <Run Text="{x:Bind Adresse, Mode=OneWay}"/>       
-                                </TextBlock>
-
-                                <TextBlock FontSize="12">
-                                    <Run Text="Taux horaire : "/>
-                                    <Run Text="{x:Bind TauxHoraireFormate, Mode=OneWay}"/>
-                                </TextBlock>
-
-                                <TextBlock FontSize="12">
-                                    <Run Text="Statut : "/>
-                                    <Run Text="{x:Bind Statut, Mode=OneWay}"/>
-                                </TextBlock>
-                            </StackPanel>
-                        </Grid>
-                    </Border>
-                </DataTemplate>
-            </GridView.ItemTemplate>
         </GridView>
-
     </Grid>
 </Page>

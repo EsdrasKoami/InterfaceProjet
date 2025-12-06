@@ -1,10 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Page
     x:Class="InterfaceProjet.Pages.PageParametres"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid Padding="40">
         <Grid.RowDefinitions>
@@ -12,28 +14,122 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Titre -->
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,0,0,20">
+        <!-- TITRE -->
+        <StackPanel Grid.Row="0" 
+                    Orientation="Horizontal" 
+                    Spacing="10" 
+                    Margin="0,0,0,30">
             <SymbolIcon Symbol="Setting"/>
             <TextBlock Text="Paramètres"
                        FontSize="28"
                        FontWeight="SemiBold"/>
         </StackPanel>
 
-        <!-- Contenu -->
-        <StackPanel Grid.Row="1" Spacing="24">
+        <!-- CONTENU -->
+        <ScrollViewer Grid.Row="1">
+            <StackPanel Spacing="20" MaxWidth="800" HorizontalAlignment="Left">
 
+                <!-- SECTION APPARENCE -->
+                <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="20">
+                    <StackPanel Spacing="16">
 
-            <!-- Exportation des données -->
-            <StackPanel Spacing="8">
-                <TextBlock Text="Exportation des données"
-                           FontSize="20"
-                           FontWeight="SemiBold"/>
-                <Button Content="Exporter les projets en CSV"
-                        Width="250"
-                        Click="BtnExporterProjetsCsv_Click"/>
+                        <!-- Titre de la section -->
+                        <TextBlock Text="Apparence"
+                                   FontSize="20"
+                                   FontWeight="SemiBold"/>
+
+                        <!-- Choix du thème -->
+                        <StackPanel Spacing="12">
+                            <TextBlock Text="Thème de l'application"
+                                       FontWeight="SemiBold"/>
+
+                            <RadioButtons x:Name="rbTheme" 
+                                          SelectionChanged="rbTheme_SelectionChanged">
+                                <RadioButton Content="Clair" Tag="Light"/>
+                                <RadioButton Content="Sombre" Tag="Dark"/>
+                                <RadioButton Content="Utiliser les paramètres système" Tag="Default" IsChecked="True"/>
+                            </RadioButtons>
+
+                            <TextBlock Text="Le thème sera appliqué immédiatement"
+                                       FontSize="12"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                       Margin="0,4,0,0"/>
+                        </StackPanel>
+
+                    </StackPanel>
+                </Border>
+
+                <!-- SECTION ADMINISTRATEUR -->
+                <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="20">
+                    <StackPanel Spacing="16">
+
+                        <TextBlock Text="Administrateur"
+                                   FontSize="20"
+                                   FontWeight="SemiBold"/>
+
+                        <!-- Statut de connexion -->
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="Statut de connexion"
+                                       FontWeight="SemiBold"/>
+
+                            <Border x:Name="borderStatut"
+                                    Background="{ThemeResource LayerFillColorDefaultBrush}"
+                                    CornerRadius="4"
+                                    Padding="12">
+                                <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <SymbolIcon x:Name="iconStatut" Symbol="Contact"/>
+                                    <TextBlock x:Name="txtStatut" 
+                                               Text="Aucun administrateur connecté"
+                                               VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Bouton de déconnexion -->
+                        <Button x:Name="btnDeconnexion"
+                                Content="Se déconnecter"
+                                Click="btnDeconnexion_Click"
+                                Visibility="Collapsed"
+                                Style="{ThemeResource AccentButtonStyle}"/>
+
+                    </StackPanel>
+                </Border>
+
+                <!-- SECTION À PROPOS -->
+                <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="20">
+                    <StackPanel Spacing="12">
+
+                        <TextBlock Text="À propos"
+                                   FontSize="20"
+                                   FontWeight="SemiBold"/>
+
+                        <TextBlock Text="PROMAN - Gestionnaire de projets"
+                                   FontWeight="SemiBold"/>
+
+                        <TextBlock Text="Version 1.0.0"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+
+                        <TextBlock Text="Application de gestion de projets, employés et clients"
+                                   TextWrapping="Wrap"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+
+                    </StackPanel>
+                </Border>
+
             </StackPanel>
+        </ScrollViewer>
 
-        </StackPanel>
     </Grid>
 </Page>
