@@ -21,54 +21,72 @@ using Windows.Foundation.Collections;
 using Windows.Storage;
 using WinRT.Interop;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
-
 namespace InterfaceProjet
 {
-    /// <summary>
-    // An empty window that can be used on its own or navigated to within a Frame.
-  
     public sealed partial class MainWindow : Window
     {
-      
         public MainWindow()
         {
             InitializeComponent();
-     
-            
-            var maintenant = DateTime.Now;
 
+            //  CHARGER LE THÈME SAUVEGARDÉ AU DÉMARRAGE
+            ChargerThemeSauvegarde();
+
+            var maintenant = DateTime.Now;
             tbDate.Text = maintenant.ToString("dd/MM/yyyy");
             tbHeure.Text = maintenant.ToString("HH:mm");
-            this.ExtendsContentIntoTitleBar = true; 
+
+            this.ExtendsContentIntoTitleBar = true;
             this.SetTitleBar(titlebar);
+
             VerifierEtNaviguer();
         }
+
+        //  NOUVELLE MÉTHODE : Charge le thème au démarrage
+        private void ChargerThemeSauvegarde()
+        {
+            var localSettings = ApplicationData.Current.LocalSettings;
+
+            // Récupérer le thème sauvegardé (par défaut "Light")
+            string themeSauvegarde = localSettings.Values["AppTheme"] as string ?? "Dark";
+
+            // Appliquer le thème
+            if (this.Content is FrameworkElement rootElement)
+            {
+                switch (themeSauvegarde)
+                {
+                    case "Dark":
+                        rootElement.RequestedTheme = ElementTheme.Dark;
+                        break;
+                    case "Light":
+                        rootElement.RequestedTheme = ElementTheme.Light;
+                        break;
+                    default:
+                        rootElement.RequestedTheme = ElementTheme.Default;
+                        break;
+                }
+            }
+        }
+
         private void VerifierEtNaviguer()
         {
             bool adminExiste = SingletonAdmin.getInstance().AdministrateurExiste();
 
             if (!adminExiste)
             {
-                // Pas d'admin ? Afficher seulement la PageAdmin dans mainFrame
-              
                 mainFrame.Navigate(typeof(PageAdmin));
             }
             else
             {
-                // Admin existe ? Afficher le NavigationView + PageAccueil
                 ActiverNavigation();
             }
         }
 
         public void ActiverNavigation()
         {
-           
             mainFrame.Navigate(typeof(PageAccueil));
         }
 
-        //  MÉTHODE APPELÉE PAR LE XAML
         private async void navView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
             if (args.InvokedItemContainer is NavigationViewItem item)
@@ -115,10 +133,8 @@ namespace InterfaceProjet
 
         }
 
-
         private async void MenuExporter_Click(object sender, RoutedEventArgs e)
         {
-            // 1) Préparer le FileSavePicker (comme en classe)
             var picker = new Windows.Storage.Pickers.FileSavePicker();
             var hWnd = WindowNative.GetWindowHandle(this);
             InitializeWithWindow.Initialize(picker, hWnd);
@@ -126,26 +142,18 @@ namespace InterfaceProjet
             picker.SuggestedFileName = "projets";
             picker.FileTypeChoices.Add("Fichier CSV", new List<string>() { ".csv" });
 
-            // 2) Choix du fichier
             StorageFile monFichier = await picker.PickSaveFileAsync();
             if (monFichier == null)
-                return; // user a annulé
+                return;
 
-            // 3) Charger les projets via le singleton
             var singleton = SingletonProjet.getInstance();
-            singleton.getAllProjets();                 // va chercher en BD
-            List<Projet> liste = singleton.Liste.ToList(); // On a une List<Projet>
+            singleton.getAllProjets();
+            List<Projet> liste = singleton.Liste.ToList();
 
-            // 4) Construire les lignes : en-tête + ToString() de chaque projet
             var lignes = new List<string>();
-
-            // En-tête CSV (colonnes distinctes)
             lignes.Add("NumeroProjet;Titre;NomClient;DateDebut;Budget;TotalSalaires;Statut");
-
-            // Corps : chaque projet utilise ToString()
             lignes.AddRange(liste.ConvertAll(p => p.ToString()));
 
-            // 5) Écriture dans le fichier CSV (comme l’exemple du prof)
             if (monFichier != null)
             {
                 await FileIO.WriteLinesAsync(
@@ -155,14 +163,12 @@ namespace InterfaceProjet
                 );
             }
 
-            // 6) Message de confirmation
             var dialog = new ContentDialog
             {
                 Title = "Exportation réussie",
                 Content = $"Les projets ont bien été exportés dans :\n{monFichier.Path}",
                 CloseButtonText = "OK",
                 DefaultButton = ContentDialogButton.Primary,
-                // adapte si tu es dans une Page :
                 XamlRoot = this.Content.XamlRoot
             };
 
@@ -171,7 +177,6 @@ namespace InterfaceProjet
 
         private async System.Threading.Tasks.Task GererDeconnexion()
         {
-            // Vérifier si un admin est connecté
             if (!SingletonAdmin.getInstance().EstConnecte())
             {
                 var dlg = new ContentDialog
@@ -185,7 +190,6 @@ namespace InterfaceProjet
                 return;
             }
 
-            // Demander confirmation
             var admin = SingletonAdmin.getInstance().AdministrateurConnecte;
             var confirm = new ContentDialog
             {
@@ -201,10 +205,8 @@ namespace InterfaceProjet
 
             if (result == ContentDialogResult.Primary)
             {
-                // Déconnecter l'administrateur
                 SingletonAdmin.getInstance().Deconnecter();
 
-                // Message de confirmation
                 var succes = new ContentDialog
                 {
                     Title = "Déconnexion réussie",
@@ -214,10 +216,8 @@ namespace InterfaceProjet
                 };
                 await succes.ShowAsync();
 
-                // Rediriger vers la page d'accueil
                 mainFrame.Navigate(typeof(PageAccueil));
             }
         }
-
     }
 }
