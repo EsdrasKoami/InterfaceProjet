@@ -31,22 +31,21 @@ namespace InterfaceEmploye.Singletons
         // ============================================
         // MÉTHODE CORRIGÉE: getEmployesDisponibles
         // ============================================
-        public void getEmployesDisponibles()
+        public void GetEmployesDisponibles()
         {
             listeEmploye.Clear();
 
             try
             {
-                Debug.WriteLine("=== Début getEmployesDisponibles ===");
+              
 
                 using MySqlConnection con = new MySqlConnection(connectionString);
                 using MySqlCommand cmd = con.CreateCommand();
                 cmd.CommandText = "SELECT * FROM vue_employes_disponibles";
 
                 con.Open();
-                Debug.WriteLine("Connexion ouverte");
+            
 
-                // ✅ CORRECTION: Enlever l'accolade en trop
                 using MySqlDataReader r = cmd.ExecuteReader();
 
                 int compteur = 0;
@@ -56,12 +55,12 @@ namespace InterfaceEmploye.Singletons
                         r.GetString("matricule"),
                         r.GetString("nom"),
                         r.GetString("prenom"),
-                        DateTime.MinValue,   // date_naissance non dans la vue
+                        r.GetDateTime("date_naissance"),
                         r.GetString("email"),
-                        "",                  // adresse
-                        DateTime.MinValue,   // date_embauche
+                        r.GetString("adresse"),
+                        r.GetDateTime("date_embauche"),
                         r.GetDecimal("taux_horaire"),
-                        "",                  // photo_url
+                        r.IsDBNull(r.GetOrdinal("photo_url")) ? "" : r.GetString("photo_url"),
                         r.GetString("statut_employe")
                     );
 
@@ -69,14 +68,15 @@ namespace InterfaceEmploye.Singletons
                     compteur++;
                 }
 
-                Debug.WriteLine($"=== Fin getEmployesDisponibles: {compteur} employés chargés ===");
+              
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"❌ ERREUR getEmployesDisponibles: {ex.Message}");
-                Debug.WriteLine($"StackTrace: {ex.StackTrace}");
+                Debug.WriteLine($"ERREUR getEmployesDisponibles: {ex.Message}");
+               
             }
         }
+
 
         // ============================================
         // MÉTHODE CORRIGÉE: getEmployesNonDisponibles
@@ -208,7 +208,7 @@ namespace InterfaceEmploye.Singletons
                 Debug.WriteLine("Employé ajouté avec succès !");
 
                 // Recharger la liste
-                getEmployesDisponibles();
+               GetEmployesDisponibles();
             }
             catch (MySqlException ex)
             {
@@ -251,7 +251,7 @@ namespace InterfaceEmploye.Singletons
                 Debug.WriteLine($"Employé {matricule} modifié avec succès !");
 
                 // Recharger la liste
-                getEmployesDisponibles();
+                GetEmployesDisponibles();
             }
             catch (MySqlException ex)
             {
@@ -279,7 +279,7 @@ namespace InterfaceEmploye.Singletons
                 Debug.WriteLine($"Employé {matricule} supprimé avec succès !");
 
                 // Recharger la liste
-                getEmployesDisponibles();
+               GetEmployesDisponibles  ();
             }
             catch (MySqlException ex)
             {
