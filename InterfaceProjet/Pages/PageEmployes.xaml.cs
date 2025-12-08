@@ -16,7 +16,7 @@ namespace InterfaceProjet.Pages
             var singleton = SingletonEmploye.getInstance();
 
             // Charger les employés AVANT de binder (par sécurité)
-            singleton.getEmployesDisponibles();
+            singleton.GetEmployesDisponibles();
 
             bool estAdmin = SingletonAdmin.getInstance().EstConnecte();
 
@@ -33,6 +33,9 @@ namespace InterfaceProjet.Pages
 
             // Binder la liste à la GridView
             lvEmployes.ItemsSource = singleton.Liste;
+
+            singleton.GetEmployesDisponibles();
+
         }
 
         private async void supprimer_Click(object sender, RoutedEventArgs e)
@@ -55,8 +58,12 @@ namespace InterfaceProjet.Pages
             if (result == ContentDialogResult.Primary)
             {
                 var singleton = SingletonEmploye.getInstance();
+
                 singleton.SupprimerEmploye(emp.Matricule);
-                singleton.getEmployesDisponibles();
+             
+
+                singleton.GetEmployesDisponibles();
+
                 lvEmployes.ItemsSource = singleton.Liste;
             }
         }
@@ -80,7 +87,7 @@ namespace InterfaceProjet.Pages
             var singleton = SingletonEmploye.getInstance();
 
             if (string.IsNullOrWhiteSpace(motCle))
-                singleton.getEmployesDisponibles();
+                singleton.GetEmployesDisponibles();
             else
                 singleton.RechercherEmployesTout(motCle);
 

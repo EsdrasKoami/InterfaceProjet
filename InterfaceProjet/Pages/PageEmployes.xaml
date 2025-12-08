@@ -11,76 +11,175 @@
     <Page.Resources>
         <!-- TEMPLATE POUR ADMIN (avec boutons Modifier/Supprimer) -->
         <DataTemplate x:Key="EmployeTemplateAdmin" x:DataType="local1:Employe">
-            <Border Padding="14"
+            <Border Padding="0"
                     CornerRadius="12"
                     Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                     BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
                     BorderThickness="1">
+
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <!-- HEADER : nom + boutons icônes -->
-                    <Grid Grid.Row="0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-
-                        <StackPanel Grid.Column="0">
-                            <TextBlock Text="{x:Bind Prenom}"
-                                       FontSize="16"
-                                       FontWeight="SemiBold"/>
-                            <TextBlock Text="{x:Bind Nom}"
-                                       FontSize="16"/>
-                            <TextBlock Text="{x:Bind Matricule}"
-                                       FontSize="12"
-                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        </StackPanel>
-
-                        <!-- ✅ Boutons VISIBLES pour Admin -->
-                        <StackPanel Grid.Column="1"
-                                    Orientation="Horizontal"
-                                    Spacing="4"
-                                    HorizontalAlignment="Right">
-                            <Button Click="modifier_Click"
-                                    Background="Transparent"
-                                    BorderThickness="0"
-                                    VerticalAlignment="Center">
-                                <SymbolIcon Symbol="Edit"/>
-                            </Button>
-
-                            <Button Click="supprimer_Click"
-                                    Background="Transparent"
-                                    BorderThickness="0"
-                                    VerticalAlignment="Center">
-                                <SymbolIcon Symbol="Delete"/>
-                            </Button>
-                        </StackPanel>
+                    <!-- EN-TÊTE AVEC PHOTO -->
+                    <Grid Grid.Row="0" 
+                          Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                          Padding="16"
+                          CornerRadius="12,12,0,0">
+                        <Border CornerRadius="60" 
+                                BorderBrush="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderThickness="3"
+                                HorizontalAlignment="Center"
+                                Width="120"
+                                Height="120"
+                                Margin="0,8,0,8">
+                            <Ellipse>
+                                <Ellipse.Fill>
+                                    <ImageBrush ImageSource="{x:Bind PhotoUrl, Mode=OneWay}" 
+                                                Stretch="UniformToFill"/>
+                                </Ellipse.Fill>
+                            </Ellipse>
+                        </Border>
                     </Grid>
 
-                    <!-- INFOS SUPPLÉMENTAIRES -->
-                    <StackPanel Grid.Row="1"
-                                Margin="0,8,0,0"
-                                Spacing="2">
-                        <TextBlock FontSize="12">
-                            <Run Text="Email : "/>
-                            <Run Text="{x:Bind Email, Mode=OneWay}"/>
-                        </TextBlock>
-                        <TextBlock FontSize="12">
-                            <Run Text="Adresse : "/>
-                            <Run Text="{x:Bind Adresse, Mode=OneWay}"/>
-                        </TextBlock>
-                        <TextBlock FontSize="12">
-                            <Run Text="Taux horaire : "/>
-                            <Run Text="{x:Bind TauxHoraireFormate, Mode=OneWay}"/>
-                        </TextBlock>
-                        <TextBlock FontSize="12">
-                            <Run Text="Statut : "/>
-                            <Run Text="{x:Bind Statut, Mode=OneWay}"/>
-                        </TextBlock>
+                    <!-- CONTENU DE LA CARTE -->
+                    <StackPanel Grid.Row="1" 
+                                Padding="16" 
+                                Spacing="12">
+
+                        <!-- NOM ET BOUTONS -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- NOM + MATRICULE -->
+                            <StackPanel Grid.Column="0" 
+                                        VerticalAlignment="Center"
+                                        Spacing="2">
+                                <TextBlock Text="{x:Bind Prenom}" 
+                                           FontSize="18" 
+                                           FontWeight="SemiBold"
+                                           TextTrimming="CharacterEllipsis"/>
+                                <TextBlock Text="{x:Bind Nom}" 
+                                           FontSize="18"
+                                           TextTrimming="CharacterEllipsis"/>
+                                <Border Background="{ThemeResource AccentFillColorDefaultBrush}"
+                                        CornerRadius="4"
+                                        Padding="6,2"
+                                        HorizontalAlignment="Left"
+                                        Margin="0,4,0,0">
+                                    <TextBlock Text="{x:Bind Matricule}" 
+                                               FontSize="10"
+                                               FontWeight="SemiBold"
+                                               Foreground="White"/>
+                                </Border>
+                            </StackPanel>
+
+                            <!-- BOUTONS ADMIN -->
+                            <StackPanel Grid.Column="1"
+                                        Orientation="Horizontal"
+                                        Spacing="4"
+                                        VerticalAlignment="Top">
+                                <Button Click="modifier_Click"
+                                        Width="36"
+                                        Height="36"
+                                        CornerRadius="8"
+                                        Background="{ThemeResource AccentFillColorSecondaryBrush}"
+                                        BorderThickness="0">
+                                    <SymbolIcon Symbol="Edit"/>
+                                </Button>
+                                <Button Click="supprimer_Click"
+                                        Width="36"
+                                        Height="36"
+                                        CornerRadius="8"
+                                        Background="{ThemeResource SystemFillColorCriticalBrush}"
+                                        BorderThickness="0">
+                                    <SymbolIcon Symbol="Delete"/>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- SÉPARATEUR -->
+                        <Border Height="1" 
+                                Background="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                Margin="0,4,0,4"/>
+
+                        <!-- INFORMATIONS -->
+                        <StackPanel Spacing="8">
+                            <!-- Email -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <SymbolIcon Symbol="Mail" 
+                                            Grid.Column="0"
+                                            Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                            Margin="0,0,8,0"/>
+                                <TextBlock Grid.Column="1" 
+                                           Text="{x:Bind Email}" 
+                                           FontSize="13"
+                                           TextTrimming="CharacterEllipsis"
+                                           VerticalAlignment="Center"/>
+                            </Grid>
+
+                            <!-- Adresse -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <SymbolIcon Symbol="Home" 
+                                            Grid.Column="0"
+                                            Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                            Margin="0,0,8,0"/>
+                                <TextBlock Grid.Column="1" 
+                                           Text="{x:Bind Adresse}" 
+                                           FontSize="13"
+                                           TextWrapping="Wrap"
+                                           VerticalAlignment="Center"/>
+                            </Grid>
+
+                            <!-- Taux horaire -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <SymbolIcon Symbol="Calculator" 
+                                            Grid.Column="0"
+                                            Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                            Margin="0,0,8,0"/>
+                                <TextBlock Grid.Column="1" 
+                                           FontSize="13"
+                                           VerticalAlignment="Center">
+                                    <Run Text="Taux : " FontWeight="SemiBold"/>
+                                    <Run Text="{x:Bind TauxHoraireFormate}"/>
+                                </TextBlock>
+                            </Grid>
+
+                            <!-- Statut -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <SymbolIcon Symbol="ContactInfo" 
+                                            Grid.Column="0"
+                                            Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                            Margin="0,0,8,0"/>
+                                <TextBlock Grid.Column="1" 
+                                           Text="{x:Bind Statut}" 
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           VerticalAlignment="Center"/>
+                            </Grid>
+                        </StackPanel>
+
                     </StackPanel>
                 </Grid>
             </Border>
@@ -88,49 +187,145 @@
 
         <!-- TEMPLATE POUR UTILISATEUR (SANS boutons) -->
         <DataTemplate x:Key="EmployeTemplateUser" x:DataType="local1:Employe">
-            <Border Padding="14"
+            <Border Padding="0"
                     CornerRadius="12"
                     Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                     BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
                     BorderThickness="1">
+
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <!-- HEADER : nom SEULEMENT (pas de boutons) -->
-                    <StackPanel Grid.Row="0">
-                        <TextBlock Text="{x:Bind Prenom}"
-                                   FontSize="16"
-                                   FontWeight="SemiBold"/>
-                        <TextBlock Text="{x:Bind Nom}"
-                                   FontSize="16"/>
-                        <TextBlock Text="{x:Bind Matricule}"
-                                   FontSize="12"
-                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                    </StackPanel>
+                    <!-- EN-TÊTE AVEC PHOTO -->
+                    <Grid Grid.Row="0" 
+                          Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                          Padding="16"
+                          CornerRadius="12,12,0,0">
+                        <Border CornerRadius="60" 
+                                BorderBrush="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderThickness="3"
+                                HorizontalAlignment="Center"
+                                Width="120"
+                                Height="120"
+                                Margin="0,8,0,8">
+                            <Ellipse>
+                                <Ellipse.Fill>
+                                    <ImageBrush ImageSource="{x:Bind PhotoUrl, Mode=OneWay}" 
+                                                Stretch="UniformToFill"/>
+                                </Ellipse.Fill>
+                            </Ellipse>
+                        </Border>
+                    </Grid>
 
-                    <!-- INFOS SUPPLÉMENTAIRES (identiques) -->
-                    <StackPanel Grid.Row="1"
-                                Margin="0,8,0,0"
-                                Spacing="2">
-                        <TextBlock FontSize="12">
-                            <Run Text="Email : "/>
-                            <Run Text="{x:Bind Email, Mode=OneWay}"/>
-                        </TextBlock>
-                        <TextBlock FontSize="12">
-                            <Run Text="Adresse : "/>
-                            <Run Text="{x:Bind Adresse, Mode=OneWay}"/>
-                        </TextBlock>
-                        <TextBlock FontSize="12">
-                            <Run Text="Taux horaire : "/>
-                            <Run Text="{x:Bind TauxHoraireFormate, Mode=OneWay}"/>
-                        </TextBlock>
-                        <TextBlock FontSize="12">
-                            <Run Text="Statut : "/>
-                            <Run Text="{x:Bind Statut, Mode=OneWay}"/>
-                        </TextBlock>
+                    <!-- CONTENU DE LA CARTE -->
+                    <StackPanel Grid.Row="1" 
+                                Padding="16" 
+                                Spacing="12">
+
+                        <!-- NOM + MATRICULE -->
+                        <StackPanel Spacing="2" 
+                                    HorizontalAlignment="Center">
+                            <TextBlock Text="{x:Bind Prenom}" 
+                                       FontSize="18" 
+                                       FontWeight="SemiBold"
+                                       TextAlignment="Center"
+                                       TextTrimming="CharacterEllipsis"/>
+                            <TextBlock Text="{x:Bind Nom}" 
+                                       FontSize="18"
+                                       TextAlignment="Center"
+                                       TextTrimming="CharacterEllipsis"/>
+                            <Border Background="{ThemeResource AccentFillColorDefaultBrush}"
+                                    CornerRadius="4"
+                                    Padding="8,3"
+                                    HorizontalAlignment="Center"
+                                    Margin="0,6,0,0">
+                                <TextBlock Text="{x:Bind Matricule}" 
+                                           FontSize="10"
+                                           FontWeight="SemiBold"
+                                           Foreground="White"/>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- SÉPARATEUR -->
+                        <Border Height="1" 
+                                Background="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                Margin="0,4,0,4"/>
+
+                        <!-- INFORMATIONS -->
+                        <StackPanel Spacing="8">
+                            <!-- Email -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <SymbolIcon Symbol="Mail" 
+                                            Grid.Column="0"
+                                            Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                            Margin="0,0,8,0"/>
+                                <TextBlock Grid.Column="1" 
+                                           Text="{x:Bind Email}" 
+                                           FontSize="13"
+                                           TextTrimming="CharacterEllipsis"
+                                           VerticalAlignment="Center"/>
+                            </Grid>
+
+                            <!-- Adresse -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <SymbolIcon Symbol="Home" 
+                                            Grid.Column="0"
+                                            Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                            Margin="0,0,8,0"/>
+                                <TextBlock Grid.Column="1" 
+                                           Text="{x:Bind Adresse}" 
+                                           FontSize="13"
+                                           TextWrapping="Wrap"
+                                           VerticalAlignment="Center"/>
+                            </Grid>
+
+                            <!-- Taux horaire -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <SymbolIcon Symbol="Calculator" 
+                                            Grid.Column="0"
+                                            Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                            Margin="0,0,8,0"/>
+                                <TextBlock Grid.Column="1" 
+                                           FontSize="13"
+                                           VerticalAlignment="Center">
+                                    <Run Text="Taux : " FontWeight="SemiBold"/>
+                                    <Run Text="{x:Bind TauxHoraireFormate}"/>
+                                </TextBlock>
+                            </Grid>
+
+                            <!-- Statut -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <SymbolIcon Symbol="ContactInfo" 
+                                            Grid.Column="0"
+                                            Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                            Margin="0,0,8,0"/>
+                                <TextBlock Grid.Column="1" 
+                                           Text="{x:Bind Statut}" 
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           VerticalAlignment="Center"/>
+                            </Grid>
+                        </StackPanel>
+
                     </StackPanel>
                 </Grid>
             </Border>
@@ -168,7 +363,6 @@
         </StackPanel>
 
         <!-- LISTE DES EMPLOYÉS (EN CARTES) -->
-        <!-- ✅ Pas de ItemTemplate défini ici, il sera assigné dans le code-behind -->
         <GridView Grid.Row="2"
                   x:Name="lvEmployes"
                   SelectionMode="Single"
@@ -177,8 +371,8 @@
             <GridView.ItemContainerStyle>
                 <Style TargetType="GridViewItem">
                     <Setter Property="Margin" Value="0,0,16,16"/>
-                    <Setter Property="MinWidth" Value="260"/>
-                    <Setter Property="MaxWidth" Value="260"/>
+                    <Setter Property="MinWidth" Value="280"/>
+                    <Setter Property="MaxWidth" Value="280"/>
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                 </Style>
             </GridView.ItemContainerStyle>
