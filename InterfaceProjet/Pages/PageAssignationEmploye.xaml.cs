@@ -30,7 +30,7 @@ namespace InterfaceProjet.Pages
 
                 // Charger les employés disponibles
                 var singleton = SingletonEmploye.getInstance();
-                singleton.getEmployesDisponibles();
+                singleton.GetEmployesDisponibles();
                 lvEmployes.ItemsSource = singleton.Liste;
             }
         }
@@ -177,7 +177,7 @@ namespace InterfaceProjet.Pages
 
             if (string.IsNullOrWhiteSpace(motCle))
             {
-                singleton.getEmployesDisponibles();
+                singleton.GetEmployesDisponibles();
             }
             else
             {

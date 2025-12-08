@@ -29,7 +29,7 @@ namespace InterfaceProjet.Pages
 
           
             lvEmployes.ItemsSource = singleton.Liste;
-            singleton.getEmployesDisponibles();
+            singleton.GetEmployesDisponibles();
         }
 
         private async void supprimer_Click(object sender, RoutedEventArgs e)
@@ -53,7 +53,7 @@ namespace InterfaceProjet.Pages
             {
                 SingletonEmploye.getInstance().SupprimerEmploye(emp.Matricule);
                 var singleton = SingletonEmploye.getInstance();
-                singleton.getEmployesDisponibles();
+                singleton.GetEmployesDisponibles();
                 lvEmployes.ItemsSource = singleton.Liste;
             }
         }
@@ -79,7 +79,7 @@ namespace InterfaceProjet.Pages
             var singleton = SingletonEmploye.getInstance();
 
             if (string.IsNullOrWhiteSpace(motCle))
-                singleton.getEmployesDisponibles();
+                singleton.GetEmployesDisponibles();
             else
                 singleton.RechercherEmployesTout(motCle);
 
