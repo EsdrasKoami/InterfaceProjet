@@ -78,6 +78,13 @@ namespace InterfaceProjet.Classes
         
         public bool AUnClient() => IdClient.HasValue && IdClient.Value > 0;
 
-        public override string ToString() => $"{NumeroProjet} - {Titre} ({Statut})";
+        public override string ToString() => $"{NumeroProjet};" +
+           $"{Titre};" +
+           $"{NomClient};" +
+           $"{DateDebutFormater};" +
+           $"{Budget};" +
+           $"{TotalSalaires};" +
+           $"{BudgetRestant};" +
+           $"{Statut}";
     }
 }

@@ -11,34 +11,38 @@
     CloseButtonText="Annuler"
     DefaultButton="Primary"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick">
+
     <ScrollViewer>
-    <StackPanel Padding="20" Spacing="8">
+        <StackPanel Padding="20" Spacing="8">
 
-        <!-- Matricule en lecture seule -->
-        <TextBlock Text="{x:Bind Emp.Matricule, Mode=OneWay}"
-                   FontWeight="SemiBold"
-                   FontSize="16"/>
+            <!-- Matricule en lecture seule -->
+            <TextBlock Text="{x:Bind Emp.Matricule, Mode=OneWay}"
+                       FontWeight="SemiBold"
+                       FontSize="16"/>
 
-        <TextBox x:Name="tbNom" Header="Nom"/>
-        <TextBlock x:Name="tblErrNom" Foreground="Red" FontSize="12"/>
+            <TextBox x:Name="tbNom" Header="Nom"/>
+            <TextBlock x:Name="tblErrNom" Foreground="Red" FontSize="12"/>
 
-        <TextBox x:Name="tbPrenom" Header="Prénom"/>
-        <TextBlock x:Name="tblErrPrenom" Foreground="Red" FontSize="12"/>
+            <TextBox x:Name="tbPrenom" Header="Prénom"/>
+            <TextBlock x:Name="tblErrPrenom" Foreground="Red" FontSize="12"/>
 
-        <TextBox x:Name="tbEmail" Header="Email"/>
-        <TextBlock x:Name="tblErrEmail" Foreground="Red" FontSize="12"/>
+            <TextBox x:Name="tbEmail" Header="Email"/>
+            <TextBlock x:Name="tblErrEmail" Foreground="Red" FontSize="12"/>
 
-        <TextBox x:Name="tbAdresse" Header="Adresse" TextWrapping="Wrap"/>
-        <TextBlock x:Name="tblErrAdresse" Foreground="Red" FontSize="12"/>
+            <TextBox x:Name="tbAdresse" Header="Adresse" TextWrapping="Wrap"/>
+            <TextBlock x:Name="tblErrAdresse" Foreground="Red" FontSize="12"/>
 
-        <NumberBox x:Name="nbTauxHoraire" Header="Taux horaire"/>
-        <TextBlock x:Name="tblErrTaux" Foreground="Red" FontSize="12"/>
+            <NumberBox x:Name="nbTauxHoraire" Header="Taux horaire"/>
+            <TextBlock x:Name="tblErrTaux" Foreground="Red" FontSize="12"/>
 
-        <ToggleSwitch x:Name="tglStatut"
-                      Header="Statut"
-                      OnContent="Permanent"
-                      OffContent="Journalier"/>
+            <TextBox x:Name="tbPhotoUrl" Header="Lien de la photo (URL)"/>
+            <TextBlock x:Name="tblErrPhoto" Foreground="Red" FontSize="12"/>
 
-    </StackPanel>
-        </ScrollViewer>
+            <ToggleSwitch x:Name="tglStatut"
+                          Header="Statut"
+                          OnContent="Permanent"
+                          OffContent="Journalier"/>
+
+        </StackPanel>
+    </ScrollViewer>
 </ContentDialog>

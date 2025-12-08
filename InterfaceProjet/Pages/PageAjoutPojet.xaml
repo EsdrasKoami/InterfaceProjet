@@ -48,6 +48,8 @@
 
                     <StackPanel>
                         <DatePicker x:Name="dpDateDebut"
+                                     Language="fr-CA"
+                                    CalendarIdentifier="GregorianCalendar"
                                     Header="Date de début"/>
                         <TextBlock x:Name="tblErrDateDebut"
                                    Foreground="Red"

@@ -2,12 +2,12 @@
 using InterfaceProjet.Classes;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using System;
 
 namespace InterfaceProjet.Pages
 {
     public sealed partial class ModifierEmployeDialog : ContentDialog
     {
-
         private Employe Emp;
 
         public ModifierEmployeDialog(Employe emp)
@@ -22,6 +22,9 @@ namespace InterfaceProjet.Pages
             tbAdresse.Text = Emp.Adresse;
             nbTauxHoraire.Value = (double)Emp.TauxHoraire;
             tglStatut.IsOn = Emp.Statut == "Permanent";
+
+            // ✅ Pré-remplir aussi l’URL de la photo
+            tbPhotoUrl.Text = Emp.PhotoUrl;
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -32,6 +35,7 @@ namespace InterfaceProjet.Pages
             tblErrEmail.Text = "";
             tblErrAdresse.Text = "";
             tblErrTaux.Text = "";
+            tblErrPhoto.Text = "";
 
             bool valide = true;
 
@@ -40,6 +44,7 @@ namespace InterfaceProjet.Pages
             string email = tbEmail.Text.Trim();
             string adresse = tbAdresse.Text.Trim();
             double tauxDouble = nbTauxHoraire.Value;
+            string photoUrl = tbPhotoUrl.Text.Trim();
 
             // Nom
             if (string.IsNullOrWhiteSpace(nom))
@@ -76,6 +81,21 @@ namespace InterfaceProjet.Pages
                 valide = false;
             }
 
+            // ✅ Validation de l’URL de la photo
+            if (string.IsNullOrWhiteSpace(photoUrl))
+            {
+                tblErrPhoto.Text = "Entrez un lien d'image (URL).";
+                valide = false;
+            }
+            else
+            {
+                if (!Uri.IsWellFormedUriString(tbPhotoUrl.Text, UriKind.Absolute))
+                {
+                    tblErrPhoto.Text = "Lien d'image invalide. Utilisez une URL http ou https.";
+                    valide = false;
+                }
+            }
+
             // Si erreurs → on ne ferme pas le dialog
             if (!valide)
             {
@@ -94,7 +114,7 @@ namespace InterfaceProjet.Pages
                 email,
                 adresse,
                 taux,
-                Emp.PhotoUrl,
+                photoUrl,  // ✅ on envoie le nouveau lien
                 statut
             );
 
@@ -105,6 +125,7 @@ namespace InterfaceProjet.Pages
             Emp.Adresse = adresse;
             Emp.TauxHoraire = taux;
             Emp.Statut = statut;
+            Emp.PhotoUrl = photoUrl;   // ✅ on garde l’URL en mémoire aussi
         }
     }
 }

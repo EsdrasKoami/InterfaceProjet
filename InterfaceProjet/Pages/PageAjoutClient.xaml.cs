@@ -99,13 +99,13 @@ namespace InterfaceProjet.Pages
                 tblErrAdresse.Text = "L'adresse est obligatoire.";
                 valid = false;
             }
-              var regexTel = new Regex(@"^[0-9+\-\s]+$");
-            if (!regexTel.IsMatch(tbxTelephone.Text))
+            var regexTel = new Regex(@"^\d{3}-\d{3}-\d{4}$");
+
+            if (!regexTel.IsMatch(tbxTelephone.Text.Trim()))
             {
-                tblErrNumeroTelephone.Text = "Format de téléphone invalide.";
+                tblErrNumeroTelephone.Text = "Format attendu : 819-555-0101.";
                 valid = false;
             }
-
             string email = tbxEmail.Text.Trim();
             if (string.IsNullOrWhiteSpace(email))
             {

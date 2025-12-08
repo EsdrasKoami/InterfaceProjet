@@ -21,7 +21,7 @@ namespace InterfaceProjet.Pages
             _projetsSingleton = SingletonProjet.getInstance();
             bool estAdmin = SingletonAdmin.getInstance().EstConnecte();
 
-            //  CHOISIR LE BON TEMPLATE selon si Admin ou non
+            // Choisir le bon template selon si Admin ou non
             if (estAdmin)
             {
                 listeProjets.ItemTemplate = (DataTemplate)this.Resources["ProjetTemplateAdmin"];
@@ -32,23 +32,24 @@ namespace InterfaceProjet.Pages
                 btnAjouter.Visibility = Visibility.Collapsed;
             }
 
-            
+            // Lier la GridView à la liste des projets du singleton
             listeProjets.ItemsSource = _projetsSingleton.Liste;
             _projetsSingleton.getAllProjets();
         }
 
-    
+        // Quand on clique sur une carte de projet
         private async void listeProjets_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (listeProjets.SelectedItem is Projet projet)
             {
-                
+                // 1) récupérer les assignations en BD
                 var assignations = SingletonAssignation
                                        .getInstance()
                                        .getAssignationsParProjet(projet.NumeroProjet);
 
                 var listeAssignations = new ObservableCollection<Assignation>(assignations);
 
+                // 2) ouvrir le dialog
                 var dialog = new ProjetDetailsDialog(
                     projet,
                     listeAssignations,
@@ -64,6 +65,7 @@ namespace InterfaceProjet.Pages
             }
         }
 
+        // Recherche
         private void tbRechercheProjet_TextChanged_1(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
             string motCle = sender.Text.Trim();
@@ -76,35 +78,74 @@ namespace InterfaceProjet.Pages
             listeProjets.ItemsSource = _projetsSingleton.Liste;
         }
 
-       
+        // Bouton "Ajouter un projet"
         private void btnAjouter_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(PageAjoutPojet));
         }
 
+        // Bouton "Assigner"
         private async void assigner_Click(object sender, RoutedEventArgs e)
         {
-            var fe = sender as FrameworkElement;
-            Projet projetSelectionne = fe?.DataContext as Projet;
-
-            if (projetSelectionne == null)
-                return;
-
-            if (projetSelectionne.Statut == "Terminé")
+            // 1) récupérer le projet à partir du DataContext
+            if (sender is not FrameworkElement fe || fe.DataContext is not Projet projetSelectionne)
             {
-                var dlg = new ContentDialog
+                await new ContentDialog
+                {
+                    Title = "Erreur",
+                    Content = "Impossible de récupérer le projet sélectionné.",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.Content.XamlRoot
+                }.ShowAsync();
+                return;
+            }
+
+            // 2) bloquer si le projet est terminé
+            if (projetSelectionne.EstTermine() || projetSelectionne.Statut == "Terminé")
+            {
+                await new ContentDialog
                 {
                     Title = "Assignation impossible",
                     Content = "Vous ne pouvez pas assigner un employé à un projet terminé.",
                     CloseButtonText = "OK",
                     XamlRoot = this.Content.XamlRoot
-                };
-                await dlg.ShowAsync();
+                }.ShowAsync();
                 return;
+            }
+
+            // 3) trouver le Frame de navigation
+            Frame frame = this.Frame;
+
+            if (frame == null)
+            {
+                await new ContentDialog
+                {
+                    Title = "Erreur de navigation",
+                    Content = "Impossible de trouver le Frame pour naviguer vers la page d'assignation.",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.Content.XamlRoot
+                }.ShowAsync();
+                return;
+            }
+
+            // 4) navigation vers la page d’assignation
+            try
+            {
+                frame.Navigate(typeof(PageAssignationEmploye), projetSelectionne);
+            }
+            catch (Exception ex)
+            {
+                await new ContentDialog
+                {
+                    Title = "Erreur lors de la navigation",
+                    Content = $"Navigation vers PageAssignationEmploye impossible.\n\nDétails : {ex.Message}",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.Content.XamlRoot
+                }.ShowAsync();
             }
         }
 
-       
+        // Bouton "Modifier"
         private async void ButtonModifier_Click(object sender, RoutedEventArgs e)
         {
             if ((sender as FrameworkElement)?.DataContext is Projet projet)
@@ -114,18 +155,18 @@ namespace InterfaceProjet.Pages
                     XamlRoot = this.Content.XamlRoot
                 };
 
-                
+                // On attend que la boîte de dialogue se ferme
                 await dialog.ShowAsync();
 
-               
+                // Si dans le dialog l’utilisateur a cliqué sur "Changer client"
                 if (dialog.VeutChangerClient)
                 {
-                   
                     Frame.Navigate(typeof(PageAssignationClient), projet);
                 }
             }
         }
 
+        // Bouton "Terminer"
         private async void Terminer_Click(object sender, RoutedEventArgs e)
         {
             var fe = sender as FrameworkElement;
@@ -162,17 +203,17 @@ namespace InterfaceProjet.Pages
             if (result != ContentDialogResult.Primary)
                 return;
 
-          
+            // 1) Appel à la procédure stockée
             SingletonProjet.getInstance().TerminerProjet(projet.NumeroProjet);
 
-            
+            // 2) Libérer les employés de ce projet
             SingletonAssignation.getInstance().LibererEmployesProjet(projet.NumeroProjet);
 
-            
+            // 3) Recharger la liste
             SingletonProjet.getInstance().getAllProjets();
         }
 
-     
+        // Bouton "Supprimer"
         private async void ButtonSupprimer_Click(object sender, RoutedEventArgs e)
         {
             var element = sender as FrameworkElement;

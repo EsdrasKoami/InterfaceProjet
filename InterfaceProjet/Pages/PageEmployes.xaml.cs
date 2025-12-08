@@ -14,6 +14,10 @@ namespace InterfaceProjet.Pages
             InitializeComponent();
 
             var singleton = SingletonEmploye.getInstance();
+
+            // Charger les employés AVANT de binder (par sécurité)
+            singleton.getEmployesDisponibles();
+
             bool estAdmin = SingletonAdmin.getInstance().EstConnecte();
 
             //  CHOISIR LE BON TEMPLATE selon si Admin ou non
@@ -27,9 +31,8 @@ namespace InterfaceProjet.Pages
                 btnAjouter.Visibility = Visibility.Collapsed;
             }
 
-          
+            // Binder la liste à la GridView
             lvEmployes.ItemsSource = singleton.Liste;
-            singleton.getEmployesDisponibles();
         }
 
         private async void supprimer_Click(object sender, RoutedEventArgs e)
@@ -51,14 +54,13 @@ namespace InterfaceProjet.Pages
             var result = await dlg.ShowAsync();
             if (result == ContentDialogResult.Primary)
             {
-                SingletonEmploye.getInstance().SupprimerEmploye(emp.Matricule);
                 var singleton = SingletonEmploye.getInstance();
+                singleton.SupprimerEmploye(emp.Matricule);
                 singleton.getEmployesDisponibles();
                 lvEmployes.ItemsSource = singleton.Liste;
             }
         }
 
-  
         private async void modifier_Click(object sender, RoutedEventArgs e)
         {
             var fe = sender as FrameworkElement;
@@ -72,7 +74,6 @@ namespace InterfaceProjet.Pages
             await dlg.ShowAsync();
         }
 
-  
         private void tbRechercheEmploye_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
             var motCle = sender.Text.Trim();

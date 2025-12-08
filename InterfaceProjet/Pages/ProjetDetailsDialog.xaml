@@ -68,16 +68,16 @@
 
         <!-- =================== LISTE EMPLOYÉS =================== -->
         <Border Grid.Row="2"
-                BorderThickness="1"
-                BorderBrush="#22000000"
-                CornerRadius="8"
-                Padding="8"
-                Background="#0FFFFFFF">
+        BorderThickness="1"
+        BorderBrush="#22000000"
+        CornerRadius="8"
+        Padding="8"
+        Background="#0FFFFFFF">
 
             <ListView x:Name="lvAssignations"
-                      ItemsSource="{x:Bind Assignation}"
-                      SelectionMode="None"
-                      MaxHeight="220">
+              ItemsSource="{x:Bind Assignation}"
+              SelectionMode="None"
+              MaxHeight="220">
 
                 <!-- En-tête du tableau -->
                 <ListView.Header>
@@ -85,29 +85,35 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="2*"/>
                             <!-- Employé -->
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
                             <!-- Taux -->
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
                             <!-- Heures -->
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
                             <!-- Salaire -->
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Text="Employé"
-                                   Grid.Column="0"
-                                   FontWeight="SemiBold"/>
-                        <TextBlock Text="Taux"
-                                   Grid.Column="1"
-                                   FontWeight="SemiBold"
-                                   HorizontalAlignment="Right"/>
-                        <TextBlock Text="Heures"
-                                   Grid.Column="2"
-                                   FontWeight="SemiBold"
-                                   HorizontalAlignment="Right"/>
-                        <TextBlock Text="Salaire"
-                                   Grid.Column="3"
-                                   FontWeight="SemiBold"
-                                   HorizontalAlignment="Right"/>
+                        <TextBlock Grid.Column="0"
+                           Text="Employé"
+                           FontWeight="SemiBold"/>
+
+                        <TextBlock Grid.Column="1"
+                           Text="Taux"
+                           FontWeight="SemiBold"
+                           Margin="16,0,0,0"
+                           TextAlignment="Right"/>
+
+                        <TextBlock Grid.Column="2"
+                           Text="Heures"
+                           FontWeight="SemiBold"
+                           Margin="16,0,0,0"
+                           TextAlignment="Right"/>
+
+                        <TextBlock Grid.Column="3"
+                           Text="Salaire"
+                           FontWeight="SemiBold"
+                           Margin="16,0,0,0"
+                           TextAlignment="Right"/>
                     </Grid>
                 </ListView.Header>
 
@@ -116,31 +122,39 @@
                         <Grid Padding="2">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="2*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock Text="{x:Bind Employe.Nom}"
-                                       Grid.Column="0" />
+                            <!-- Nom employé -->
+                            <TextBlock Grid.Column="0"
+                               Text="{x:Bind Employe.Nom}" />
 
-                            <TextBlock Text="{x:Bind Employe.TauxHoraireFormate}"
-                                       Grid.Column="1"
-                                       HorizontalAlignment="Right"/>
+                            <!-- Taux horaire -->
+                            <TextBlock Grid.Column="1"
+                               Margin="16,0,0,0"
+                               TextAlignment="Right"
+                               Text="{x:Bind Employe.TauxHoraireFormate}" />
 
-                            <TextBlock Text="{x:Bind HeuresTravaillees}"
-                                       Grid.Column="2"
-                                       HorizontalAlignment="Right"/>
+                            <!-- Heures -->
+                            <TextBlock Grid.Column="2"
+                               Margin="16,0,0,0"
+                               TextAlignment="Right"
+                               Text="{x:Bind HeuresTravaillees}" />
 
-                            <TextBlock Text="{x:Bind SalaireAPayer}"
-                                       Grid.Column="3"
-                                       HorizontalAlignment="Right"/>
+                            <!-- Salaire -->
+                            <TextBlock Grid.Column="3"
+                               Margin="16,0,0,0"
+                               TextAlignment="Right"
+                               Text="{x:Bind SalaireAPayer}" />
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
         </Border>
 
+        <!-- =================== TOTAL =================== -->
         <StackPanel Grid.Row="3"
                     Orientation="Horizontal"
                     HorizontalAlignment="Right"

@@ -51,6 +51,7 @@
 
                     <StackPanel>
                         <DatePicker x:Name="dpDateNaissance"
+                                     Language="fr-CA"
                                     Header="Date de naissance"/>
                         <TextBlock x:Name="tblErrDateNaissance"
                                    Foreground="Red"
@@ -79,6 +80,7 @@
 
                     <StackPanel>
                         <DatePicker x:Name="dpDateEmbauche"
+                                     Language="fr-CA"
                                     Header="Date d'embauche"/>
                         <TextBlock x:Name="tblErrDateEmbauche"
                                    Foreground="Red"

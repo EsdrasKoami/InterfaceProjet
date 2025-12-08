@@ -581,7 +581,9 @@ namespace InterfaceProjet.Singletons
                 Debug.WriteLine("Erreur MySQL GetBudgetRestant : " + ex.Message);
                 return 0m;
             }
+
         }
+
 
         // ============================================
         // MÉTHODE: Obtenir le nombre total de projets

@@ -9,7 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-  
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
     <Grid Background="#66000000">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -156,4 +156,5 @@
             </Grid>
         </Border>
     </Grid>
+    </ScrollViewer>
 </Page>

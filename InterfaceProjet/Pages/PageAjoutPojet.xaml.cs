@@ -33,6 +33,7 @@ namespace InterfaceProjet.Pages
             // Si on revient de PageAssignationClient avec un client sélectionné
             if (e.Parameter is Client client)
             {
+                clientSelectionne = client;
                 idClient.Text = client.IdClient.ToString();
             }
         }
@@ -85,13 +86,11 @@ namespace InterfaceProjet.Pages
 
             // Budget
             double budgetDouble = nbxBudget.Value;
-            if (budgetDouble <= 0)
+            if (double.IsNaN(budgetDouble) || budgetDouble <= 0)
             {
                 tblErrBudget.Text = "Entrez un budget positif.";
                 valide = false;
             }
-            decimal budget = (decimal)budgetDouble;
-
 
             // Nombre d'employés
             int nbEmployes = (int)nbrEmploye.Value;
@@ -102,12 +101,13 @@ namespace InterfaceProjet.Pages
             }
 
             // Total des salaires
-            decimal totalSalaires = (decimal)totalSalaire.Value;
-            if (totalSalaires < 0)
+            double totalSalairesDouble = totalSalaire.Value;
+            if (double.IsNaN(totalSalairesDouble) || totalSalairesDouble < 0)
             {
                 tblErrTotalsalaire.Text = "Le total des salaires ne peut pas être négatif.";
                 valide = false;
             }
+
 
             // Client
             if (clientSelectionne == null)
@@ -128,6 +128,8 @@ namespace InterfaceProjet.Pages
                 await dlg.ShowAsync();
                 return;
             }
+            decimal budget = (decimal)budgetDouble;
+            decimal totalSalaires = (decimal)totalSalairesDouble;
 
             try
             {
