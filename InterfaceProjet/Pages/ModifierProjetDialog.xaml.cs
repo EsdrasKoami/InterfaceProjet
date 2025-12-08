@@ -26,7 +26,8 @@ namespace InterfaceProjet.Pages
 
                 dpDateDebut.Date = new DateTimeOffset(projetModifier.DateDebut);
 
-                cbStatut.SelectedItem = projetModifier.Statut;
+                cbStatut.SelectedValue = projetModifier.Statut;
+
 
                 // client actuel
                 if (projetModifier.IdClient > 0)
@@ -65,7 +66,8 @@ namespace InterfaceProjet.Pages
 
             string titre = tbTitre.Text.Trim();
             string description = tbDescription.Text.Trim();
-            string statut = cbStatut.SelectedItem.ToString();
+            string statut = cbStatut.SelectedValue?.ToString();
+
 
             DateTime dateDebut = dpDateDebut.Date.DateTime;
 

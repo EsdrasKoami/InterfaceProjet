@@ -58,7 +58,7 @@
             <StackPanel Spacing="4">
                 <TextBlock Text="Statut"
                            FontWeight="SemiBold"/>
-                <ComboBox x:Name="cbStatut" SelectedIndex="0">
+                <ComboBox x:Name="cbStatut" SelectedValuePath="Content"  SelectedIndex="0">
                     <ComboBoxItem Content="En cours"/>
                     <ComboBoxItem Content="Terminé"/>
                 </ComboBox>

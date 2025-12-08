@@ -397,14 +397,18 @@ namespace InterfaceProjet.Singletons
                 cmd.Parameters.AddWithValue("@description", description);
                 cmd.Parameters.AddWithValue("@budget", budget);
                 cmd.Parameters.AddWithValue("@nb_employes_requis", nbEmployesRequis);
-                cmd.Parameters.AddWithValue("@statut", statut);
+                cmd.Parameters.AddWithValue("@statut", statut.Trim());
+
 
                 con.Open();
+                Debug.WriteLine($"STATUT = '{statut}'");
                 int rows = cmd.ExecuteNonQuery();
 
                 if (rows > 0)
                 {
                     Debug.WriteLine($"Projet {numeroProjet} modifié avec succès.");
+                  
+
                 }
 
                 getAllProjets();

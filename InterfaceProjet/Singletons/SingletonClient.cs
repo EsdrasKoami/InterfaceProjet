@@ -104,7 +104,7 @@ namespace InterfaceClient.Singletons
 
                 cmd.CommandType = CommandType.StoredProcedure;
 
-                // On n'envoie PAS id_client → le trigger va le générer
+                // On n'envoie PAS id_client , le trigger va le générer
                 cmd.Parameters.AddWithValue("@p_nom", nom);
                 cmd.Parameters.AddWithValue("@p_adresse", adresse);
                 cmd.Parameters.AddWithValue("@p_telephone", telephone);
