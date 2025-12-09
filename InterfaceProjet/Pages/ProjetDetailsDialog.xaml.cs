@@ -1,72 +1,76 @@
+using InterfaceAdmin.Singletons;
 using InterfaceProjet.Classes;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
-
-namespace InterfaceProjet.Pages;
-
-public sealed partial class ProjetDetailsDialog : ContentDialog
+namespace InterfaceProjet.Pages
 {
-
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    private void Notify(string propertyName)
-        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    public Projet Projet { get; set; }
-
-    public Employe Employe { get; set; }
-    public ObservableCollection<Assignation> Assignation { get; set; }
-    public ProjetDetailsDialog(Projet projet, ObservableCollection<Assignation> assignations, Employe employe)
+    public sealed partial class ProjetDetailsDialog : ContentDialog, INotifyPropertyChanged
     {
-        this.InitializeComponent();
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        Projet = projet;
-        Assignation = assignations;
-        Employe = employe;
-        this.DataContext = this;
-    }
+        private void Notify(string propertyName)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
- 
-  
-    public decimal TotalSalaires => Assignation?.Sum(a => a.SalaireAPayer) ?? 0;
+        public Projet Projet { get; set; }
+        public Employe Employe { get; set; }
+        public ObservableCollection<Assignation> Assignation { get; set; }
 
-   
-    private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-    {
-        
-    }
-
-    private void Button_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is Button btn && btn.Tag is int idAssignation)
+        public ProjetDetailsDialog(Projet projet, ObservableCollection<Assignation> assignations, Employe employe)
         {
-            // Suppression BD
-            Singletons.SingletonAssignation.getInstance().SupprimerAssignation(idAssignation);
+            this.InitializeComponent();
+            Projet = projet;
+            Assignation = assignations;
+            Employe = employe;
+            this.DataContext = this;
 
-            // Suppression locale
-            var assignation = Assignation.FirstOrDefault(a => a.IdAssignation == idAssignation);
-            if (assignation != null)
-                Assignation.Remove(assignation);
+            // S'abonner aux changements de la collection
+            Assignation.CollectionChanged += Assignation_CollectionChanged;
 
-            // Mise à jour du total
+            // Vérifier si l'utilisateur est admin
+            bool estAdmin = SingletonAdmin.getInstance().EstConnecte();
+
+            // CHOISIR LE BON TEMPLATE selon si Admin ou non
+            if (estAdmin)
+            {
+                lvAssignations.ItemTemplate = (DataTemplate)this.Resources["AssignationTemplateAdmin"];
+            }
+            else
+            {
+                lvAssignations.ItemTemplate = (DataTemplate)this.Resources["AssignationTemplateUser"];
+            }
+        }
+
+        private void Assignation_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            // Notifier le changement du total quand la collection change
             Notify(nameof(TotalSalaires));
         }
-    }
 
+        public decimal TotalSalaires => Assignation?.Sum(a => a.SalaireAPayer) ?? 0;
+
+        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            // Action du bouton Fermer si nécessaire
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is int idAssignation)
+            {
+                // Suppression BD
+                Singletons.SingletonAssignation.getInstance().SupprimerAssignation(idAssignation);
+
+                // Suppression locale (le CollectionChanged se déclenchera automatiquement)
+                var assignation = Assignation.FirstOrDefault(a => a.IdAssignation == idAssignation);
+                if (assignation != null)
+                    Assignation.Remove(assignation);
+            }
+        }
+    }
 }

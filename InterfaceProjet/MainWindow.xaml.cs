@@ -82,8 +82,8 @@ namespace InterfaceProjet
                
                 ContentDialog dlg = new ContentDialog
                 {
-                    Title = "Connexion requise",
-                    Content = "Vous devez créer ou vous connecter avec un administrateur avant d’utiliser le menu.",
+                    Title = "Premiere Connexion",
+                    Content = "Afin de naviguer , vous devez creer un compte Administrateur .",
                     CloseButtonText = "OK",
                     XamlRoot = this.Content.XamlRoot
                 };

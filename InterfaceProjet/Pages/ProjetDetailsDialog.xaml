@@ -10,16 +10,90 @@
     MinWidth="460"
     MaxWidth="520">
 
+    <ContentDialog.Resources>
+        <!-- TEMPLATE POUR ADMIN (avec bouton Retirer) -->
+        <DataTemplate x:Key="AssignationTemplateAdmin" x:DataType="local1:Assignation">
+            <Grid Padding="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Nom employé -->
+                <TextBlock Grid.Column="0"
+                           Text="{x:Bind Employe.Nom}" />
+
+                <!-- Taux horaire -->
+                <TextBlock Grid.Column="1"
+                           Margin="16,0,0,0"
+                           TextAlignment="Right"
+                           Text="{x:Bind Employe.TauxHoraireFormate}" />
+
+                <!-- Heures -->
+                <TextBlock Grid.Column="2"
+                           Margin="16,0,0,0"
+                           TextAlignment="Right"
+                           Text="{x:Bind HeuresTravaillees}" />
+
+                <!-- Salaire -->
+                <TextBlock Grid.Column="3"
+                           Margin="16,0,0,0"
+                           TextAlignment="Right"
+                           Text="{x:Bind SalaireAPayer}" />
+
+                <!-- Bouton Retirer -->
+                <Button Grid.Column="4"
+                        Content="Retirer"
+                        Margin="16,0,0,0"
+                        Click="Button_Click"
+                        Tag="{x:Bind IdAssignation}" />
+            </Grid>
+        </DataTemplate>
+
+        <!-- TEMPLATE POUR UTILISATEUR (SANS bouton Retirer) -->
+        <DataTemplate x:Key="AssignationTemplateUser" x:DataType="local1:Assignation">
+            <Grid Padding="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Nom employé -->
+                <TextBlock Grid.Column="0"
+                           Text="{x:Bind Employe.Nom}" />
+
+                <!-- Taux horaire -->
+                <TextBlock Grid.Column="1"
+                           Margin="16,0,0,0"
+                           TextAlignment="Right"
+                           Text="{x:Bind Employe.TauxHoraireFormate}" />
+
+                <!-- Heures -->
+                <TextBlock Grid.Column="2"
+                           Margin="16,0,0,0"
+                           TextAlignment="Right"
+                           Text="{x:Bind HeuresTravaillees}" />
+
+                <!-- Salaire -->
+                <TextBlock Grid.Column="3"
+                           Margin="16,0,0,0"
+                           TextAlignment="Right"
+                           Text="{x:Bind SalaireAPayer}" />
+            </Grid>
+        </DataTemplate>
+    </ContentDialog.Resources>
+
     <Grid Padding="24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-           
             <RowDefinition Height="Auto"/>
-           
             <RowDefinition Height="*"/>
-            
             <RowDefinition Height="Auto"/>
-
         </Grid.RowDefinitions>
 
         <!-- =================== INFOS PROJET =================== -->
@@ -68,106 +142,62 @@
 
         <!-- =================== LISTE EMPLOYÉS =================== -->
         <Border Grid.Row="2"
-        BorderThickness="1"
-        BorderBrush="#22000000"
-        CornerRadius="8"
-        Padding="8"
-        Background="#0FFFFFFF">
+                BorderThickness="1"
+                BorderBrush="#22000000"
+                CornerRadius="8"
+                Padding="8"
+                Background="#0FFFFFFF">
 
             <ListView x:Name="lvAssignations"
-              ItemsSource="{x:Bind Assignation}"
-              SelectionMode="None"
-              MaxHeight="220">
+                      ItemsSource="{x:Bind Assignation}"
+                      SelectionMode="None"
+                      MaxHeight="220">
 
                 <!-- En-tête du tableau -->
                 <ListView.Header>
                     <Grid Margin="0,0,0,4">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="2*"/>
-                            <!-- Employé -->
                             <ColumnDefinition Width="Auto"/>
-                            <!-- Taux -->
                             <ColumnDefinition Width="Auto"/>
-                            <!-- Heures -->
                             <ColumnDefinition Width="Auto"/>
-                            <!-- Salaire -->
                         </Grid.ColumnDefinitions>
 
                         <TextBlock Grid.Column="0"
-                           Text="Employé"
-                           FontWeight="SemiBold"/>
+                                   Text="Employé"
+                                   FontWeight="SemiBold"/>
 
                         <TextBlock Grid.Column="1"
-                           Text="Taux"
-                           FontWeight="SemiBold"
-                           Margin="16,0,0,0"
-                           TextAlignment="Right"/>
+                                   Text="Taux"
+                                   FontWeight="SemiBold"
+                                   Margin="16,0,0,0"
+                                   TextAlignment="Right"/>
 
                         <TextBlock Grid.Column="2"
-                           Text="Heures"
-                           FontWeight="SemiBold"
-                           Margin="16,0,0,0"
-                           TextAlignment="Right"/>
+                                   Text="Heures"
+                                   FontWeight="SemiBold"
+                                   Margin="16,0,0,0"
+                                   TextAlignment="Right"/>
 
                         <TextBlock Grid.Column="3"
-                           Text="Salaire"
-                           FontWeight="SemiBold"
-                           Margin="16,0,0,0"
-                           TextAlignment="Right"/>
+                                   Text="Salaire"
+                                   FontWeight="SemiBold"
+                                   Margin="16,0,0,0"
+                                   TextAlignment="Right"/>
                     </Grid>
                 </ListView.Header>
 
-                <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="local1:Assignation">
-                        <Grid Padding="2">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="2*"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-
-                            <!-- Nom employé -->
-                            <TextBlock Grid.Column="0"
-                               Text="{x:Bind Employe.Nom}" />
-
-                            <!-- Taux horaire -->
-                            <TextBlock Grid.Column="1"
-                               Margin="16,0,0,0"
-                               TextAlignment="Right"
-                               Text="{x:Bind Employe.TauxHoraireFormate}" />
-
-                            <!-- Heures -->
-                            <TextBlock Grid.Column="2"
-                               Margin="16,0,0,0"
-                               TextAlignment="Right"
-                               Text="{x:Bind HeuresTravaillees}" />
-
-                            <!-- Salaire -->
-                            <TextBlock Grid.Column="3"
-                               Margin="16,0,0,0"
-                               TextAlignment="Right"
-                               Text="{x:Bind SalaireAPayer}" />
-                            <Button Grid.Column="4"
-        Content="Retirer"
-        Margin="16,0,0,0"
-        Click="Button_Click"
-        Tag="{x:Bind IdAssignation}" />
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
             </ListView>
         </Border>
 
-        <!-- =================== TOTAL =================== -->
+     
         <StackPanel Grid.Row="3"
                     Orientation="Horizontal"
                     HorizontalAlignment="Right"
                     Margin="0,16,0,0">
             <TextBlock Text="Total des salaires : "
                        FontWeight="SemiBold" />
-            <TextBlock Text="{x:Bind TotalSalaires}" />
+            <TextBlock Text="{x:Bind TotalSalaires, Mode=OneWay}" />
         </StackPanel>
 
     </Grid>
