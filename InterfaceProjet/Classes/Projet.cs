@@ -84,7 +84,7 @@ namespace InterfaceProjet.Classes
            $"{DateDebutFormater};" +
            $"{Budget};" +
            $"{TotalSalaires};" +
-           $"{BudgetRestant};" +
+          
            $"{Statut}";
     }
 }

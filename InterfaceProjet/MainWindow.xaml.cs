@@ -79,7 +79,7 @@ namespace InterfaceProjet
             
             if (!premiereConnexion.AdministrateurExiste())
             {
-                // On bloque toute navigation
+               
                 ContentDialog dlg = new ContentDialog
                 {
                     Title = "Connexion requise",
