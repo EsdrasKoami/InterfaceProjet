@@ -13,7 +13,7 @@
                     VerticalAlignment="Center"
                     Width="350"
                     Padding="20"
-                    Background="White"
+            
                     CornerRadius="10">
 
             <TextBlock Text="Création du compte administrateur"

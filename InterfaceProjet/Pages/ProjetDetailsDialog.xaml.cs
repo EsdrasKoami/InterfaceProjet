@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -22,6 +23,11 @@ namespace InterfaceProjet.Pages;
 
 public sealed partial class ProjetDetailsDialog : ContentDialog
 {
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    private void Notify(string propertyName)
+        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     public Projet Projet { get; set; }
 
     public Employe Employe { get; set; }
@@ -45,4 +51,22 @@ public sealed partial class ProjetDetailsDialog : ContentDialog
     {
         
     }
+
+    private void Button_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button btn && btn.Tag is int idAssignation)
+        {
+            // Suppression BD
+            Singletons.SingletonAssignation.getInstance().SupprimerAssignation(idAssignation);
+
+            // Suppression locale
+            var assignation = Assignation.FirstOrDefault(a => a.IdAssignation == idAssignation);
+            if (assignation != null)
+                Assignation.Remove(assignation);
+
+            // Mise à jour du total
+            Notify(nameof(TotalSalaires));
+        }
+    }
+
 }

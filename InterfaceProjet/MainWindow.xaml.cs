@@ -74,6 +74,25 @@ namespace InterfaceProjet
 
         private async void navView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
+            var premiereConnexion = SingletonAdmin.getInstance();
+
+            
+            if (!premiereConnexion.AdministrateurExiste())
+            {
+                // On bloque toute navigation
+                ContentDialog dlg = new ContentDialog
+                {
+                    Title = "Connexion requise",
+                    Content = "Vous devez créer ou vous connecter avec un administrateur avant d’utiliser le menu.",
+                    CloseButtonText = "OK",
+                    XamlRoot = this.Content.XamlRoot
+                };
+
+                await dlg.ShowAsync();
+                return;
+            }
+
+         
             if (args.InvokedItemContainer is NavigationViewItem item)
             {
                 switch (item.Tag)

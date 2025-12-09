@@ -125,6 +125,7 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
                             <!-- Nom employé -->
@@ -148,6 +149,11 @@
                                Margin="16,0,0,0"
                                TextAlignment="Right"
                                Text="{x:Bind SalaireAPayer}" />
+                            <Button Grid.Column="4"
+        Content="Retirer"
+        Margin="16,0,0,0"
+        Click="Button_Click"
+        Tag="{x:Bind IdAssignation}" />
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
