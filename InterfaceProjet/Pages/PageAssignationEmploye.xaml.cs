@@ -49,25 +49,29 @@ namespace InterfaceProjet.Pages
                 return;
             }
 
-            // Récupérer l’employé sélectionné
+            // Récupérer l'employé sélectionné
             var employe = lvEmployes.SelectedItem as EmployeModel;
 
-          
             if (employe == null)
             {
                 await ShowMessage("Erreur", "Veuillez sélectionner un employé.");
                 return;
             }
 
-            // Vérifier le nombre max d’employés (5)
-            if (projetCourant.NbEmployesAssignes >= 5)
+            // Recharger le nombre d'employés assignés
+            projetCourant.NbEmployesAssignes = SingletonAssignation
+                .getInstance()
+                .getNombreAssignationsProjet(projetCourant.NumeroProjet);
+            // Vérifier le maximum
+            if (projetCourant.NbEmployesAssignes >= projetCourant.NbEmployesRequis)
             {
                 await ShowMessage("Erreur",
-                    "Maximum de 5 employés atteint pour ce projet.");
+                    $"Maximum de {projetCourant.NbEmployesRequis} employés atteint pour ce projet.");
                 return;
             }
 
-            // Budget restant (on peut utiliser la méthode du SingletonProjet pour être sûr)
+
+            // Budget restant 
             decimal budgetRestant =
                 SingletonProjet.getInstance().GetBudgetRestant(projetCourant.NumeroProjet);
 
@@ -77,11 +81,10 @@ namespace InterfaceProjet.Pages
                 return;
             }
 
-            // Demander le nombre d’heures à l’utilisateur
+            // Demander le nombre d'heures à l'utilisateur
             await DemanderHeures(employe, budgetRestant);
         }
 
-       
         private async Task DemanderHeures(EmployeModel employe, decimal budgetRestant)
         {
             var panel = new StackPanel();
@@ -108,7 +111,7 @@ namespace InterfaceProjet.Pages
                 Content = panel,
                 PrimaryButtonText = "Assigner",
                 CloseButtonText = "Annuler",
-                XamlRoot = this.Content.XamlRoot
+                XamlRoot = this.XamlRoot  
             };
 
             var result = await dialog.ShowAsync();
@@ -136,7 +139,6 @@ namespace InterfaceProjet.Pages
             await Assigner(employe, heures);
         }
 
-        
         private async Task Assigner(EmployeModel employe, decimal heures)
         {
             try
@@ -147,7 +149,7 @@ namespace InterfaceProjet.Pages
                     heures
                 );
 
-            
+                // Mettre à jour le projet
                 projetCourant.NbEmployesAssignes += 1;
                 projetCourant.TotalSalaires += employe.TauxHoraire * heures;
 
@@ -168,12 +170,10 @@ namespace InterfaceProjet.Pages
             }
         }
 
-        
         private void tbRechercheEmploye_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
             var motCle = sender.Text.Trim();
             var singleton = SingletonEmploye.getInstance();
-
 
             if (string.IsNullOrWhiteSpace(motCle))
             {
@@ -187,20 +187,20 @@ namespace InterfaceProjet.Pages
             lvEmployes.ItemsSource = singleton.Liste;
         }
 
-        
+        // Méthode helper pour afficher un dialogue de façon sécuritaire
         private async Task ShowMessage(string title, string content)
         {
+            await System.Threading.Tasks.Task.Delay(100); // Petit délai de sécurité
+
             var dlg = new ContentDialog
             {
                 Title = title,
                 Content = content,
                 CloseButtonText = "OK",
-                XamlRoot = this.Content.XamlRoot
+                XamlRoot = this.XamlRoot  
             };
 
             await dlg.ShowAsync();
         }
-
-}
-
+    }
 }

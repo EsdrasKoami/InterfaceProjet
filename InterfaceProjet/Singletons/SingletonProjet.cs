@@ -316,50 +316,36 @@ namespace InterfaceProjet.Singletons
         }
 
         // ============================================
-        // MÉTHODE: Ajouter un projet (avec ou sans client)
+        // MÉTHODE: Ajouter un projet (avec client obligatoire)
         // ============================================
-        public void ajouterProjetAvecProcedure(string numeroProjet, string titre, DateTime dateDebut,
-                                               string description, decimal budget, int nbEmployesRequis,
-                                               int? idClient = null)
+        public void ajouterProjetAvecProcedure(
+            string titre,
+            DateTime dateDebut,
+            string description,
+            decimal budget,
+            int nbEmployesRequis,
+            int idClient)
         {
             try
             {
                 using MySqlConnection con = new MySqlConnection(connectionString);
-                using MySqlCommand cmd = new MySqlCommand();
-                cmd.Connection = con;
+                using MySqlCommand cmd = new MySqlCommand("AjouterProjet", con);
+                cmd.CommandType = CommandType.StoredProcedure;
 
-                // Si idClient est fourni, utiliser AjouterProjet
-                // Sinon, utiliser CreerProjetSansClient
-                if (idClient.HasValue)
-                {
-                    cmd.CommandText = "AjouterProjet";
-                    cmd.CommandType = CommandType.StoredProcedure;
-
-                    cmd.Parameters.AddWithValue("@p_numero_projet", numeroProjet);
-                    cmd.Parameters.AddWithValue("@p_titre", titre);
-                    cmd.Parameters.AddWithValue("@p_date_debut", dateDebut);
-                    cmd.Parameters.AddWithValue("@p_description", description);
-                    cmd.Parameters.AddWithValue("@p_budget", budget);
-                    cmd.Parameters.AddWithValue("@p_nb_employes_requis", nbEmployesRequis);
-                    cmd.Parameters.AddWithValue("@p_id_client", idClient.Value);
-                }
-                else
-                {
-                    cmd.CommandText = "CreerProjetSansClient";
-                    cmd.CommandType = CommandType.StoredProcedure;
-
-                    cmd.Parameters.AddWithValue("@p_numero_projet", numeroProjet);
-                    cmd.Parameters.AddWithValue("@p_titre", titre);
-                    cmd.Parameters.AddWithValue("@p_date_debut", dateDebut);
-                    cmd.Parameters.AddWithValue("@p_description", description);
-                    cmd.Parameters.AddWithValue("@p_budget", budget);
-                    cmd.Parameters.AddWithValue("@p_nb_employes_requis", nbEmployesRequis);
-                }
+                // Plus de paramètre p_numero_projet, le trigger s'en occupe
+                cmd.Parameters.AddWithValue("p_titre", titre);
+                cmd.Parameters.AddWithValue("p_date_debut", dateDebut);
+                cmd.Parameters.AddWithValue("p_description", description);
+                cmd.Parameters.AddWithValue("p_budget", budget);
+                cmd.Parameters.AddWithValue("p_nb_employes_requis", nbEmployesRequis);
+                cmd.Parameters.AddWithValue("p_id_client", idClient);
 
                 con.Open();
                 cmd.ExecuteNonQuery();
 
-                Debug.WriteLine($"Projet {numeroProjet} créé avec succès.");
+                Debug.WriteLine($"Projet '{titre}' créé avec succès pour le client {idClient}.");
+
+                // Recharger la liste
                 getAllProjets();
             }
             catch (MySqlException ex)

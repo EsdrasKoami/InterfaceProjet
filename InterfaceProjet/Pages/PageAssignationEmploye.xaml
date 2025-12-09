@@ -6,167 +6,163 @@
     xmlns:local1="using:InterfaceProjet.Classes"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <!-- Fond assombri comme un dialog -->
-    <Grid Background="#66000000">
+    <Grid Padding="40">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
+            <!-- Titre -->
+            <RowDefinition Height="Auto"/>
+            <!-- Recherche -->
             <RowDefinition Height="*"/>
+            <!-- Liste -->
+            <RowDefinition Height="Auto"/>
+            <!-- Boutons -->
         </Grid.RowDefinitions>
 
-        <!-- Boîte centrale -->
-        <Border Grid.Row="1"
-                Width="900"
-                Background="White"
-                Padding="24"
-                CornerRadius="12"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <!-- Titre -->
-                    <RowDefinition Height="Auto"/>
-                    <!-- Recherche -->
-                    <RowDefinition Height="*"/>
-                    <!-- Liste -->
-                    <RowDefinition Height="Auto"/>
-                    <!-- Boutons -->
-                </Grid.RowDefinitions>
+        <!-- Titre -->
+        <StackPanel Grid.Row="0"
+                    Orientation="Horizontal"
+                    Spacing="12"
+                    Margin="0,0,0,20">
+            <SymbolIcon Symbol="Contact" VerticalAlignment="Center"/>
+            <TextBlock Text="Assigner un employé au projet"
+                       FontSize="28"
+                       FontWeight="SemiBold"
+                       VerticalAlignment="Center"/>
+        </StackPanel>
 
-                <!-- Titre -->
-                <StackPanel Grid.Row="0"
-                            Orientation="Horizontal"
-                            Spacing="8"
-                            Margin="0,0,0,12">
-                    <SymbolIcon Symbol="Contact"/>
-                    <TextBlock Text="Choisir un employé pour le projet"
-                               FontSize="22"
-                               FontWeight="SemiBold"/>
-                </StackPanel>
+        <!-- Barre de recherche -->
+        <StackPanel Grid.Row="1"
+                    Margin="0,0,0,20">
+            <AutoSuggestBox x:Name="tbRechercheEmploye"
+                            Width="400"
+                            HorizontalAlignment="Left"
+                            PlaceholderText="Rechercher un employé (nom, prénom, matricule...)"
+                            QueryIcon="Find"
+                            TextChanged="tbRechercheEmploye_TextChanged"/>
+        </StackPanel>
 
-                <!-- Barre de recherche -->
-                <StackPanel Grid.Row="1"
-                            Orientation="Horizontal"
-                            Spacing="8"
-                            Margin="0,0,0,12">
-                    <AutoSuggestBox x:Name="tbRechercheEmploye"
-                                    Width="320"
-                                    PlaceholderText="Rechercher un employé (nom, prénom, matricule...)"
-                                    QueryIcon="Find"
-                                    TextChanged="tbRechercheEmploye_TextChanged"/>
-                </StackPanel>
+        <!-- Liste des employés -->
+        <Border Grid.Row="2"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+            <ListView x:Name="lvEmployes"
+                      SelectionMode="Single"
+                      IsItemClickEnabled="False">
 
-                <!-- Liste des employés -->
-                <Border Grid.Row="2"
-                        BorderBrush="#DDDDDD"
-                        BorderThickness="1"
-                        CornerRadius="6">
-                    <ScrollViewer>
-                        <ListView x:Name="lvEmployes"
-                                  SelectionMode="Single"
-                                  IsItemClickEnabled="True">
+                <!-- Style des items -->
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Padding" Value="12,8"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
 
-                            <!-- Pas de padding autour des items -->
-                            <ListView.ItemContainerStyle>
-                                <Style TargetType="ListViewItem">
-                                    <Setter Property="Padding" Value="0"/>
-                                </Style>
-                            </ListView.ItemContainerStyle>
+                <!-- En-tête -->
+                <ListView.Header>
+                    <Grid Padding="12,12,12,8"
+                          Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="140"/>
+                            <!-- Matricule -->
+                            <ColumnDefinition Width="180"/>
+                            <!-- Nom -->
+                            <ColumnDefinition Width="180"/>
+                            <!-- Prénom -->
+                            <ColumnDefinition Width="*"/>
+                            <!-- Email -->
+                            <ColumnDefinition Width="140"/>
+                            <!-- Taux -->
+                            <ColumnDefinition Width="120"/>
+                            <!-- Statut -->
+                        </Grid.ColumnDefinitions>
 
-                            <!-- En-tête -->
-                            <ListView.Header>
-                                <Grid Padding="6,4">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="120"/>
-                                        <!-- Matricule -->
-                                        <ColumnDefinition Width="160"/>
-                                        <!-- Nom -->
-                                        <ColumnDefinition Width="160"/>
-                                        <!-- Prénom -->
-                                        <ColumnDefinition Width="260"/>
-                                        <!-- Email -->
-                                        <ColumnDefinition Width="120"/>
-                                        <!-- Statut -->
-                                    </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0"
+                                   Text="Matricule"
+                                   FontWeight="SemiBold"/>
+                        <TextBlock Grid.Column="1"
+                                   Text="Nom"
+                                   FontWeight="SemiBold"/>
+                        <TextBlock Grid.Column="2"
+                                   Text="Prénom"
+                                   FontWeight="SemiBold"/>
+                        <TextBlock Grid.Column="3"
+                                   Text="Email"
+                                   FontWeight="SemiBold"/>
+                        <TextBlock Grid.Column="4"
+                                   Text="Taux horaire"
+                                   FontWeight="SemiBold"/>
+                        <TextBlock Grid.Column="5"
+                                   Text="Statut"
+                                   FontWeight="SemiBold"/>
+                    </Grid>
+                </ListView.Header>
 
-                                    <TextBlock Grid.Column="0"
-                                               Text="Matricule"
-                                               FontWeight="Bold"
-                                               HorizontalAlignment="Center"/>
-                                    <TextBlock Grid.Column="1"
-                                               Text="Nom"
-                                               FontWeight="Bold"
-                                               HorizontalAlignment="Center"/>
-                                    <TextBlock Grid.Column="2"
-                                               Text="Prénom"
-                                               FontWeight="Bold"
-                                               HorizontalAlignment="Center"/>
-                                    <TextBlock Grid.Column="3"
-                                               Text="Email"
-                                               FontWeight="Bold"
-                                               HorizontalAlignment="Center"/>
-                                    <TextBlock Grid.Column="4"
-                                               Text="Statut"
-                                               FontWeight="Bold"
-                                               HorizontalAlignment="Center"/>
-                                </Grid>
-                            </ListView.Header>
+                <!-- Lignes -->
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="local1:Employe">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="180"/>
+                                <ColumnDefinition Width="180"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="120"/>
+                            </Grid.ColumnDefinitions>
 
-                            <!-- Lignes -->
-                            <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="local1:Employe">
-                                    <Grid Padding="6,4">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="120"/>
-                                            <ColumnDefinition Width="160"/>
-                                            <ColumnDefinition Width="160"/>
-                                            <ColumnDefinition Width="260"/>
-                                            <ColumnDefinition Width="120"/>
-                                        </Grid.ColumnDefinitions>
-
-                                        <TextBlock Grid.Column="0"
-                                                   Text="{x:Bind Matricule}"
-                                                   HorizontalAlignment="Center"/>
-                                        <TextBlock Grid.Column="1"
-                                                   Text="{x:Bind Nom}"
-                                                   HorizontalAlignment="Center"/>
-                                        <TextBlock Grid.Column="2"
-                                                   Text="{x:Bind Prenom}"
-                                                   HorizontalAlignment="Center"/>
-                                        <TextBlock Grid.Column="3"
-                                                   Text="{x:Bind Email}"
-                                                   HorizontalAlignment="Center"
-                                                   TextTrimming="CharacterEllipsis"/>
-                                        <TextBlock Grid.Column="4"
-                                                   Text="{x:Bind Statut}"
-                                                   HorizontalAlignment="Center"/>
-                                    </Grid>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-                    </ScrollViewer>
-                </Border>
-
-                <!-- Boutons -->
-                <StackPanel Grid.Row="3"
-                            Orientation="Horizontal"
-                            HorizontalAlignment="Right"
-                            Spacing="8"
-                            Margin="0,16,0,0">
-                    <Button x:Name="btnAnnuler"
-                            Content="Annuler"
-                            Click="btnAnnuler_Click"/>
-                    <Button x:Name="btnChoisirEmploye"
-                            Content="Choisir cet employé"
-                            Background="#0078D7"
-                            Foreground="White"
-                            Click="btnChoisirEmploye_Click"/>
-                </StackPanel>
-
-            </Grid>
+                            <TextBlock Grid.Column="0"
+                                       Text="{x:Bind Matricule}"
+                                       VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1"
+                                       Text="{x:Bind Nom}"
+                                       VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="2"
+                                       Text="{x:Bind Prenom}"
+                                       VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="3"
+                                       Text="{x:Bind Email}"
+                                       TextTrimming="CharacterEllipsis"
+                                       VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="4"
+                                       Text="{x:Bind TauxHoraireFormate}"
+                                       VerticalAlignment="Center"/>
+                            <Border Grid.Column="5"
+                                    Background="{ThemeResource AccentFillColorDefaultBrush}"
+                                    CornerRadius="4"
+                                    Padding="8,4"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center">
+                                <TextBlock Text="{x:Bind Statut}"
+                                           FontSize="12"
+                                           FontWeight="SemiBold"
+                                           Foreground="White"/>
+                            </Border>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </Border>
+
+        <!-- Boutons -->
+        <StackPanel Grid.Row="3"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Spacing="12"
+                    Margin="0,20,0,0">
+            <Button x:Name="btnAnnuler"
+                    Content="Annuler"
+                    MinWidth="120"
+                    Click="btnAnnuler_Click"/>
+            <Button x:Name="btnChoisirEmploye"
+                    Content="Assigner cet employé"
+                    MinWidth="180"
+                    Style="{StaticResource AccentButtonStyle}"
+                    Click="btnChoisirEmploye_Click"/>
+        </StackPanel>
     </Grid>
 </Page>

@@ -4,20 +4,11 @@ using InterfaceProjet.Pages;
 using InterfaceProjet.Singletons;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
-using Windows.Devices.Enumeration;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Storage;
 using WinRT.Interop;
 
@@ -29,7 +20,7 @@ namespace InterfaceProjet
         {
             InitializeComponent();
 
-            //  CHARGER LE THÈME SAUVEGARDÉ AU DÉMARRAGE
+            // Charger le thème sauvegardé
             ChargerThemeSauvegarde();
 
             var maintenant = DateTime.Now;
@@ -42,15 +33,13 @@ namespace InterfaceProjet
             VerifierEtNaviguer();
         }
 
-        //  NOUVELLE MÉTHODE : Charge le thème au démarrage
+        // Charger le thème sauvegardé
         private void ChargerThemeSauvegarde()
         {
             var localSettings = ApplicationData.Current.LocalSettings;
 
-            // Récupérer le thème sauvegardé (par défaut "Light")
             string themeSauvegarde = localSettings.Values["AppTheme"] as string ?? "Dark";
 
-            // Appliquer le thème
             if (this.Content is FrameworkElement rootElement)
             {
                 switch (themeSauvegarde)
@@ -73,13 +62,9 @@ namespace InterfaceProjet
             bool adminExiste = SingletonAdmin.getInstance().AdministrateurExiste();
 
             if (!adminExiste)
-            {
                 mainFrame.Navigate(typeof(PageAdmin));
-            }
             else
-            {
                 ActiverNavigation();
-            }
         }
 
         public void ActiverNavigation()
@@ -130,7 +115,6 @@ namespace InterfaceProjet
 
         private void btnAjouter_Click(object sender, RoutedEventArgs e)
         {
-
         }
 
         private async void MenuExporter_Click(object sender, RoutedEventArgs e)
@@ -154,43 +138,21 @@ namespace InterfaceProjet
             lignes.Add("NumeroProjet;Titre;NomClient;DateDebut;Budget;TotalSalaires;Statut");
             lignes.AddRange(liste.ConvertAll(p => p.ToString()));
 
-            if (monFichier != null)
-            {
-                await FileIO.WriteLinesAsync(
-                    monFichier,
-                    lignes,
-                    Windows.Storage.Streams.UnicodeEncoding.Utf8
-                );
-            }
+            await FileIO.WriteLinesAsync(monFichier, lignes, Windows.Storage.Streams.UnicodeEncoding.Utf8);
 
-            var dialog = new ContentDialog
-            {
-                Title = "Exportation réussie",
-                Content = $"Les projets ont bien été exportés dans :\n{monFichier.Path}",
-                CloseButtonText = "OK",
-                DefaultButton = ContentDialogButton.Primary,
-                XamlRoot = this.Content.XamlRoot
-            };
-
-            await dialog.ShowAsync();
+            await AfficherDialogue("Exportation réussie", $"Les projets ont été exportés dans :\n{monFichier.Path}");
         }
 
         private async System.Threading.Tasks.Task GererDeconnexion()
         {
             if (!SingletonAdmin.getInstance().EstConnecte())
             {
-                var dlg = new ContentDialog
-                {
-                    Title = "Aucune connexion active",
-                    Content = "Vous n'êtes pas connecté en tant qu'administrateur.",
-                    CloseButtonText = "OK",
-                    XamlRoot = this.Content.XamlRoot
-                };
-                await dlg.ShowAsync();
+                await AfficherDialogue("Aucune connexion active", "Vous n'êtes pas connecté en tant qu'administrateur.");
                 return;
             }
 
             var admin = SingletonAdmin.getInstance().AdministrateurConnecte;
+
             var confirm = new ContentDialog
             {
                 Title = "Confirmation de déconnexion",
@@ -207,17 +169,26 @@ namespace InterfaceProjet
             {
                 SingletonAdmin.getInstance().Deconnecter();
 
-                var succes = new ContentDialog
-                {
-                    Title = "Déconnexion réussie",
-                    Content = "Vous avez été déconnecté avec succès.",
-                    CloseButtonText = "OK",
-                    XamlRoot = this.Content.XamlRoot
-                };
-                await succes.ShowAsync();
+                await AfficherDialogue("Déconnexion réussie", "Vous avez été déconnecté avec succès.");
 
                 mainFrame.Navigate(typeof(PageAccueil));
             }
+        }
+
+        // ? MÉTHODE AJOUTÉE ICI ?
+        private async System.Threading.Tasks.Task AfficherDialogue(string titre, string contenu)
+        {
+            await System.Threading.Tasks.Task.Delay(50); // Petit délai de sécurité
+
+            var dialog = new ContentDialog
+            {
+                Title = titre,
+                Content = contenu,
+                CloseButtonText = "OK",
+                XamlRoot = this.Content.XamlRoot
+            };
+
+            await dialog.ShowAsync();
         }
     }
 }

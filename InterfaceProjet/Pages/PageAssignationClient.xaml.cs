@@ -50,19 +50,29 @@ namespace InterfaceProjet.Pages
 
             if (clientSelectionne == null)
             {
-                var dlg = new ContentDialog
-                {
-                    Title = "Aucun client sélectionné",
-                    Content = "Veuillez sélectionner un client dans la liste.",
-                    CloseButtonText = "OK",
-                    XamlRoot = this.Content.XamlRoot
-                };
-                await dlg.ShowAsync();
+                await AfficherDialogue("Aucun client sélectionné",
+                    "Veuillez sélectionner un client dans la liste.");
                 return;
             }
 
-            // On retourne à la page d’ajout de projet avec le client choisi
+            // On retourne à la page d'ajout de projet avec le client choisi
             Frame.Navigate(typeof(PageAjoutPojet), clientSelectionne);
+        }
+
+        //  Méthode helper pour afficher un dialogue de façon sécuritaire
+        private async System.Threading.Tasks.Task AfficherDialogue(string titre, string contenu)
+        {
+            await System.Threading.Tasks.Task.Delay(100); // Petit délai de sécurité
+
+            var dialog = new ContentDialog
+            {
+                Title = titre,
+                Content = contenu,
+                CloseButtonText = "OK",
+                XamlRoot = this.XamlRoot  
+            };
+
+            await dialog.ShowAsync();
         }
     }
 }

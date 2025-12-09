@@ -15,17 +15,28 @@ using Microsoft.UI.Xaml.Navigation;
 using InterfaceProjet.Singletons;
 using InterfaceProjet.Classes;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
 namespace InterfaceProjet.Pages
 {
     public sealed partial class PageAjoutPojet : Page
     {
         private Client clientSelectionne;
+
+        //  Variables pour sauvegarder l'état du formulaire
+        private string titreTemp = "";
+        private DateTime dateDebutTemp = DateTime.Now;
+        private string descriptionTemp = "";
+        private double budgetTemp = 0;
+        private int nbEmployesTemp = 1;
+        private double totalSalairesTemp = 0;
+
         public PageAjoutPojet()
         {
             InitializeComponent();
+
+            // Activer la mise en cache de la page pour conserver l'état du formulaire
+            this.NavigationCacheMode = NavigationCacheMode.Required;
         }
+
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
@@ -35,20 +46,43 @@ namespace InterfaceProjet.Pages
             {
                 clientSelectionne = client;
                 idClient.Text = client.IdClient.ToString();
+
+                //  Restaurer les valeurs sauvegardées
+                RestaurerFormulaire();
             }
         }
 
+        // Méthode pour sauvegarder l'état du formulaire
+        private void SauvegarderFormulaire()
+        {
+            titreTemp = tbxtitre.Text.Trim();
+            dateDebutTemp = dpDateDebut.Date.DateTime;
+            descriptionTemp = tbxDescription.Text.Trim();
+            budgetTemp = nbxBudget.Value;
+            nbEmployesTemp = (int)nbrEmploye.Value;
+            totalSalairesTemp = totalSalaire.Value;
+        }
+
+        //  Méthode pour restaurer l'état du formulaire
+        private void RestaurerFormulaire()
+        {
+            tbxtitre.Text = titreTemp;
+            dpDateDebut.Date = dateDebutTemp;
+            tbxDescription.Text = descriptionTemp;
+            nbxBudget.Value = budgetTemp;
+            nbrEmploye.Value = nbEmployesTemp;
+            totalSalaire.Value = totalSalairesTemp;
+        }
 
         private void ButtonAnnuler_Click(object sender, RoutedEventArgs e)
         {
-            // Retour à la page précédente si possible
             if (this.Frame != null && this.Frame.CanGoBack)
                 this.Frame.GoBack();
         }
 
         private async void ButtonEnregistrer_Click(object sender, RoutedEventArgs e)
         {
-            // Réinitialiser messages d’erreur
+            // Réinitialiser messages d'erreur
             tblErrTitre.Text = "";
             tblErrDateDebut.Text = "";
             tblErrDescription.Text = "";
@@ -108,7 +142,6 @@ namespace InterfaceProjet.Pages
                 valide = false;
             }
 
-
             // Client
             if (clientSelectionne == null)
             {
@@ -118,29 +151,20 @@ namespace InterfaceProjet.Pages
 
             if (!valide)
             {
-                var dlg = new ContentDialog
-                {
-                    Title = "Formulaire invalide",
-                    Content = "Veuillez corriger les erreurs indiquées en rouge.",
-                    CloseButtonText = "OK",
-                    XamlRoot = this.Content.XamlRoot
-                };
-                await dlg.ShowAsync();
+                await AfficherDialogue("Formulaire invalide",
+                    "Veuillez corriger les erreurs indiquées en rouge.");
                 return;
             }
+
             decimal budget = (decimal)budgetDouble;
             decimal totalSalaires = (decimal)totalSalairesDouble;
 
             try
             {
-                // Génération d’un numéro de projet simple (exemple)
-                // IdClient-01-Année
-                string numeroProjet = $"{clientSelectionne.IdClient}-01-{dateDebut.Year}";
-
+                //  Plus besoin de générer le numéro, le trigger s'en occupe
                 SingletonProjet
                     .getInstance()
                     .ajouterProjetAvecProcedure(
-                        numeroProjet,
                         titre,
                         dateDebut,
                         description,
@@ -149,35 +173,38 @@ namespace InterfaceProjet.Pages
                         clientSelectionne.IdClient
                     );
 
-                var dlgOK = new ContentDialog
-                {
-                    Title = "Succès",
-                    Content = "Le projet a été ajouté avec succès.",
-                    CloseButtonText = "OK",
-                    XamlRoot = this.Content.XamlRoot
-                };
-                await dlgOK.ShowAsync();
-
-                if (Frame.CanGoBack)
-                    Frame.GoBack();
+                await AfficherDialogue("Succès", "Le projet a été ajouté avec succès.");
+                Frame.Navigate(typeof(PageProjets));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                var dlgErr = new ContentDialog
-                {
-                    Title = "Erreur",
-                    Content = "Une erreur est survenue lors de l'ajout du projet.",
-                    CloseButtonText = "OK",
-                    XamlRoot = this.Content.XamlRoot
-                };
-                await dlgErr.ShowAsync();
+                await AfficherDialogue("Erreur",
+                    $"Une erreur est survenue lors de l'ajout du projet : {ex.Message}");
             }
         }
 
-
         private void ButtonAssigner_Click(object sender, RoutedEventArgs e)
         {
+            //  Sauvegarder le formulaire avant de naviguer , les donnees disparaissaient quand on partait sur la page assignation pour assigner le client au projet 
+            SauvegarderFormulaire();
+
             Frame.Navigate(typeof(PageAssignationClient));
+        }
+
+        //  Méthode helper pour afficher un dialogue de façon sécuritaire
+        private async System.Threading.Tasks.Task AfficherDialogue(string titre, string contenu)
+        {
+            await System.Threading.Tasks.Task.Delay(100);
+
+            var dialog = new ContentDialog
+            {
+                Title = titre,
+                Content = contenu,
+                CloseButtonText = "OK",
+                XamlRoot = this.XamlRoot 
+            };
+
+            await dialog.ShowAsync();
         }
     }
 }

@@ -12,11 +12,9 @@ namespace InterfaceProjet.Pages
         public PageClients()
         {
             InitializeComponent();
-
             var singleton = SingletonClient.getInstance();
             bool estAdmin = SingletonAdmin.getInstance().EstConnecte();
 
-            
             if (estAdmin)
             {
                 lvClients.ItemTemplate = (DataTemplate)this.Resources["ClientTemplateAdmin"];
@@ -26,9 +24,8 @@ namespace InterfaceProjet.Pages
                 lvClients.ItemTemplate = (DataTemplate)this.Resources["ClientTemplateUser"];
                 btnAjouterClient.Visibility = Visibility.Collapsed;
             }
-
             lvClients.ItemsSource = singleton.Liste;
-            singleton.getAllClients(); 
+            singleton.getAllClients();
         }
 
         // MODIFIER
@@ -38,14 +35,12 @@ namespace InterfaceProjet.Pages
             var client = fe?.DataContext as Client;
             if (client == null) return;
 
-            
             var dlg = new ModifierClientDialog(client)
             {
-                XamlRoot = this.Content.XamlRoot
+                XamlRoot = this.XamlRoot  
             };
             await dlg.ShowAsync();
 
-           
             var singleton = SingletonClient.getInstance();
             singleton.getAllClients();
             lvClients.ItemsSource = singleton.Liste;
@@ -65,16 +60,28 @@ namespace InterfaceProjet.Pages
                 PrimaryButtonText = "Supprimer",
                 CloseButtonText = "Annuler",
                 DefaultButton = ContentDialogButton.Close,
-                XamlRoot = this.Content.XamlRoot
+                XamlRoot = this.XamlRoot 
             };
 
             var result = await dlg.ShowAsync();
+
             if (result == ContentDialogResult.Primary)
             {
-                SingletonClient.getInstance().SupprimerClient(client.IdClient);
-                var singleton = SingletonClient.getInstance();
-                singleton.getAllClients();
-                lvClients.ItemsSource = singleton.Liste;
+                try
+                {
+                    SingletonClient.getInstance().SupprimerClient(client.IdClient);
+
+                    var singleton = SingletonClient.getInstance();
+                    singleton.getAllClients();
+                    lvClients.ItemsSource = singleton.Liste;
+
+                    // Message de succès
+                    await AfficherDialogue("Succès", $"Le client {client.Nom} a été supprimé avec succès.");
+                }
+                catch (Exception ex)
+                {
+                    await AfficherDialogue("Erreur", $"Une erreur est survenue lors de la suppression : {ex.Message}");
+                }
             }
         }
 
@@ -87,7 +94,7 @@ namespace InterfaceProjet.Pages
             if (string.IsNullOrWhiteSpace(motCle))
                 singleton.getAllClients();
             else
-                singleton.RechercherClients(motCle); 
+                singleton.RechercherClients(motCle);
 
             lvClients.ItemsSource = singleton.Liste;
         }
@@ -95,6 +102,22 @@ namespace InterfaceProjet.Pages
         private void btnAjouterClient_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(PageAjoutClient));
+        }
+
+        //  Méthode helper pour afficher un dialogue de façon sécuritaire
+        private async System.Threading.Tasks.Task AfficherDialogue(string titre, string contenu)
+        {
+            await System.Threading.Tasks.Task.Delay(100); // Petit délai de sécurité
+
+            var dialog = new ContentDialog
+            {
+                Title = titre,
+                Content = contenu,
+                CloseButtonText = "OK",
+                XamlRoot = this.XamlRoot
+            };
+
+            await dialog.ShowAsync();
         }
     }
 }

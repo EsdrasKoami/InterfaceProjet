@@ -49,7 +49,7 @@
             <!-- Budget -->
             <StackPanel Orientation="Horizontal" Spacing="4">
                 <TextBlock Text="Budget : " FontWeight="SemiBold"/>
-                <TextBlock Text="{x:Bind Projet.Budget}" />
+                <TextBlock Text="{x:Bind Projet.BudgetAfficher}" />
             </StackPanel>
 
             <!-- Statut -->

@@ -31,10 +31,11 @@ namespace InterfaceProjet.Singletons
        
         public ObservableCollection<Assignation> Liste { get => listeAssignation; }
 
-   
-        public void AjouterAssignationEmploye(string matriculeEmploye,
-                                              string numeroProjet,
-                                              decimal heuresTravaillees)
+
+        public void AjouterAssignationEmploye(
+      string matriculeEmploye,
+      string numeroProjet,
+      decimal heuresTravaillees)
         {
             try
             {
@@ -42,20 +43,20 @@ namespace InterfaceProjet.Singletons
                 using MySqlCommand cmd = new MySqlCommand("AjouterAssignation", con);
                 cmd.CommandType = CommandType.StoredProcedure;
 
-                cmd.Parameters.AddWithValue("p_matricule_employe", matriculeEmploye);
-                cmd.Parameters.AddWithValue("p_numero_projet", numeroProjet);
-                cmd.Parameters.AddWithValue("p_heures_travaillees", heuresTravaillees);
+                cmd.Parameters.Add("p_matricule_employe", MySqlDbType.VarChar).Value = matriculeEmploye;
+                cmd.Parameters.Add("p_numero_projet", MySqlDbType.VarChar).Value = numeroProjet;
+                cmd.Parameters.Add("p_heures_travaillees", MySqlDbType.Decimal).Value = heuresTravaillees;
 
                 con.Open();
                 cmd.ExecuteNonQuery();
-
             }
             catch (MySqlException ex)
             {
-                Debug.WriteLine($" Erreur MySQL AjouterAssignationEmploye: {ex.Message}");
-                throw; 
+                Debug.WriteLine($"Erreur MySQL AjouterAssignationEmploye: {ex.Message}");
+                throw;
             }
         }
+
 
 
         // Obtenir les assignations d'un projet

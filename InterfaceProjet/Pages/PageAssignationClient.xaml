@@ -7,154 +7,140 @@
     xmlns:models="using:InterfaceProjet.Classes"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-    <Grid Background="#66000000">
+    <Grid Padding="40">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
+            <!-- Titre -->
+            <RowDefinition Height="Auto"/>
+            <!-- Recherche -->
             <RowDefinition Height="*"/>
+            <!-- Liste -->
+            <RowDefinition Height="Auto"/>
+            <!-- Boutons -->
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="1"
-                Width="700"
-                Background="White"
-                Padding="24"
-                CornerRadius="12"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                   
-                    <RowDefinition Height="Auto"/>
-                    
-                    <RowDefinition Height="*"/>
-                   
-                    <RowDefinition Height="Auto"/>
-                  
-                </Grid.RowDefinitions>
+        <!-- Titre -->
+        <StackPanel Grid.Row="0"
+                    Orientation="Horizontal"
+                    Spacing="12"
+                    Margin="0,0,0,20">
+            <SymbolIcon Symbol="Contact" VerticalAlignment="Center"/>
+            <TextBlock Text="Sélectionner un client pour le projet"
+                       FontSize="28"
+                       FontWeight="SemiBold"
+                       VerticalAlignment="Center"/>
+        </StackPanel>
 
-                <StackPanel Grid.Row="0"
-                            Orientation="Horizontal"
-                            Spacing="8"
-                            Margin="0,0,0,12">
-                    <SymbolIcon Symbol="Contact"/>
-                    <TextBlock Text="Choisir un client"
-                               FontSize="22"
-                               FontWeight="SemiBold"/>
-                </StackPanel>
+        <!-- Barre de recherche -->
+        <StackPanel Grid.Row="1"
+                    Margin="0,0,0,20">
+            <AutoSuggestBox x:Name="tbRechercheClient"
+                            Width="400"
+                            HorizontalAlignment="Left"
+                            PlaceholderText="Rechercher un client (nom, email, téléphone)"
+                            QueryIcon="Find"
+                            TextChanged="tbRechercheClient_TextChanged"/>
+        </StackPanel>
 
-               
-                <StackPanel Grid.Row="1"
-                            Orientation="Horizontal"
-                            Spacing="8"
-                            Margin="0,0,0,12">
-                    <AutoSuggestBox x:Name="tbRechercheClient"
-                                    Width="320"
-                                    PlaceholderText="Rechercher un client (nom, email, téléphone)"
-                                    QueryIcon="Find"
-                                    TextChanged="tbRechercheClient_TextChanged"/>
-                </StackPanel>
+        <!-- Liste des clients -->
+        <Border Grid.Row="2"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+            <ListView x:Name="lvClients"
+                      SelectionMode="Single"
+                      IsItemClickEnabled="False">
 
-                
-                <Border Grid.Row="2"
-                        BorderBrush="#DDDDDD"
-                        BorderThickness="1"
-                        CornerRadius="6">
-                    <ListView x:Name="lvClients"
-                              SelectionMode="Single">
+                <!-- Style des items -->
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Padding" Value="12,8"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
 
-                       
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="ListViewItem">
-                                <Setter Property="Padding" Value="0"/>
-                            </Style>
-                        </ListView.ItemContainerStyle>
+                <!-- En-tête -->
+                <ListView.Header>
+                    <Grid Padding="12,12,12,8"
+                          Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="80"/>
+                            <!-- ID -->
+                            <ColumnDefinition Width="*"/>
+                            <!-- Nom -->
+                            <ColumnDefinition Width="*"/>
+                            <!-- Email -->
+                            <ColumnDefinition Width="180"/>
+                            <!-- Téléphone -->
+                        </Grid.ColumnDefinitions>
 
-                      
-                        <ListView.Header>
-                            <Grid Padding="6,4">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="60"/>
-                                  
-                                    <ColumnDefinition Width="220"/>
-                                 
-                                    <ColumnDefinition Width="220"/>
-                                    
-                                    <ColumnDefinition Width="150"/>
-                                    
-                                </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0"
+                                   Text="ID"
+                                   FontWeight="SemiBold"/>
+                        <TextBlock Grid.Column="1"
+                                   Text="Nom"
+                                   FontWeight="SemiBold"/>
+                        <TextBlock Grid.Column="2"
+                                   Text="Email"
+                                   FontWeight="SemiBold"/>
+                        <TextBlock Grid.Column="3"
+                                   Text="Téléphone"
+                                   FontWeight="SemiBold"/>
+                    </Grid>
+                </ListView.Header>
 
-                                <TextBlock Grid.Column="0"
-                                           Text="ID"
-                                           FontWeight="Bold"
-                                           HorizontalAlignment="Center"/>
-                                <TextBlock Grid.Column="1"
-                                           Text="Nom"
-                                           FontWeight="Bold"
-                                           HorizontalAlignment="Center"/>
-                                <TextBlock Grid.Column="2"
-                                           Text="Email"
-                                           FontWeight="Bold"
-                                           HorizontalAlignment="Center"/>
-                                <TextBlock Grid.Column="3"
-                                           Text="Téléphone"
-                                           FontWeight="Bold"
-                                           HorizontalAlignment="Center"/>
-                            </Grid>
-                        </ListView.Header>
+                <!-- Lignes -->
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="models:Client">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="180"/>
+                            </Grid.ColumnDefinitions>
 
-                     
-                        <ListView.ItemTemplate>
-                            <DataTemplate x:DataType="models:Client">
-                                <Grid Padding="6,4">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="60"/>
-                                        <ColumnDefinition Width="220"/>
-                                        <ColumnDefinition Width="220"/>
-                                        <ColumnDefinition Width="150"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock Grid.Column="0"
-                                               Text="{x:Bind IdClient}"
-                                               HorizontalAlignment="Center"/>
-                                    <TextBlock Grid.Column="1"
-                                               Text="{x:Bind Nom}"
-                                               HorizontalAlignment="Center"
-                                               TextTrimming="CharacterEllipsis"/>
-                                    <TextBlock Grid.Column="2"
-                                               Text="{x:Bind Email}"
-                                               HorizontalAlignment="Center"
-                                               TextTrimming="CharacterEllipsis"/>
-                                    <TextBlock Grid.Column="3"
-                                               Text="{x:Bind Telephone}"
-                                               HorizontalAlignment="Center"/>
-                                </Grid>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                </Border>
-
-                
-                <StackPanel Grid.Row="3"
-                            Orientation="Horizontal"
-                            HorizontalAlignment="Right"
-                            Spacing="8"
-                            Margin="0,16,0,0">
-                    <Button x:Name="btnAnnuler"
-                            Content="Annuler"
-                            Click="btnAnnuler_Click"/>
-                    <Button x:Name="btnChoisir"
-                            Content="Choisir ce client"
-                            Background="#0078D7"
-                            Foreground="White"
-                            Click="btnChoisir_Click"/>
-                </StackPanel>
-
-            </Grid>
+                            <TextBlock Grid.Column="0"
+                                       Text="{x:Bind IdClient}"
+                                       VerticalAlignment="Center"
+                                       FontWeight="SemiBold"
+                                       Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"/>
+                            <TextBlock Grid.Column="1"
+                                       Text="{x:Bind Nom}"
+                                       TextTrimming="CharacterEllipsis"
+                                       VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="2"
+                                       Text="{x:Bind Email}"
+                                       TextTrimming="CharacterEllipsis"
+                                       VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="3"
+                                       Text="{x:Bind Telephone}"
+                                       VerticalAlignment="Center"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </Border>
+
+        <!-- Boutons -->
+        <StackPanel Grid.Row="3"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Spacing="12"
+                    Margin="0,20,0,0">
+            <Button x:Name="btnAnnuler"
+                    Content="Annuler"
+                    MinWidth="120"
+                    Click="btnAnnuler_Click"/>
+            <Button x:Name="btnChoisir"
+                    Content="Choisir ce client"
+                    MinWidth="160"
+                    Style="{StaticResource AccentButtonStyle}"
+                    Click="btnChoisir_Click"/>
+        </StackPanel>
     </Grid>
-    </ScrollViewer>
 </Page>
