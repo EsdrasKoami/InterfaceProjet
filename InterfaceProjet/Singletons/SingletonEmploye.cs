@@ -176,15 +176,15 @@ namespace InterfaceEmploye.Singletons
         // MÉTHODE: AjouterEmploye
         // ============================================
         public void AjouterEmploye(
-            string nom,
-            string prenom,
-            DateTime dateNaissance,
-            string email,
-            string adresse,
-            DateTime dateEmbauche,
-            decimal tauxHoraire,
-            string photoUrl,
-            string statut)
+      string nom,
+      string prenom,
+      DateTime dateNaissance,
+      string email,
+      string adresse,
+      DateTime dateEmbauche,
+      decimal tauxHoraire,
+      string photoUrl,
+      string statut)
         {
             try
             {
@@ -192,6 +192,7 @@ namespace InterfaceEmploye.Singletons
                 using MySqlCommand cmd = new MySqlCommand("AjouterEmploye", con);
                 cmd.CommandType = CommandType.StoredProcedure;
 
+               
                 cmd.Parameters.AddWithValue("p_nom", nom);
                 cmd.Parameters.AddWithValue("p_prenom", prenom);
                 cmd.Parameters.AddWithValue("p_date_naissance", dateNaissance);
@@ -206,9 +207,7 @@ namespace InterfaceEmploye.Singletons
                 cmd.ExecuteNonQuery();
 
                 Debug.WriteLine("Employé ajouté avec succès !");
-
-                // Recharger la liste
-               GetEmployesDisponibles();
+                GetEmployesDisponibles();
             }
             catch (MySqlException ex)
             {

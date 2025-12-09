@@ -27,7 +27,6 @@ namespace InterfaceProjet.Pages
                 btnAjouterClient.Visibility = Visibility.Collapsed;
             }
 
-          
             lvClients.ItemsSource = singleton.Liste;
             singleton.getAllClients(); 
         }
