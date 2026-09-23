@@ -1,30 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 
 namespace InterfaceProjet.Classes
 {
     internal class Administrateur
     {
         private int idAdmin;
-        private string nomUtilisateur;
-        private string motDePasseHash;
+        private string nomUtilisateur = string.Empty;
+        private string motDePasseHash = string.Empty;
         private DateTime dateCreation;
         private DateTime? derniereConnexion;
 
         // Constructeur principal
         public Administrateur(string nomUtilisateur, string motDePasseHash)
         {
-            this.NomUtilisateur = nomUtilisateur;
-            this.MotDePasseHash = motDePasseHash;
-            this.DateCreation = DateTime.Now;
-            this.DerniereConnexion = null;
+            this.nomUtilisateur = nomUtilisateur;
+            this.motDePasseHash = motDePasseHash;
+            this.dateCreation = DateTime.Now;
+            this.derniereConnexion = null;
         }
 
-       
-        // Properties
+        // Propriétés
         public int IdAdmin { get => idAdmin; set => idAdmin = value; }
         public string NomUtilisateur { get => nomUtilisateur; set => nomUtilisateur = value; }
         public string MotDePasseHash { get => motDePasseHash; set => motDePasseHash = value; }
@@ -33,7 +28,7 @@ namespace InterfaceProjet.Classes
 
         public override string ToString()
         {
-            return $"Admin: {NomUtilisateur}";
+            return $"Admin : {NomUtilisateur}";
         }
     }
 }

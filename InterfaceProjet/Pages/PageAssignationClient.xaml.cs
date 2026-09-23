@@ -1,4 +1,4 @@
-using InterfaceClient.Singletons;
+ï»¿using InterfaceClient.Singletons;
 using InterfaceProjet.Classes;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -18,7 +18,7 @@ namespace InterfaceProjet.Pages
         {
             base.OnNavigatedTo(e);
 
-            // Toujours charger les clients
+            // Toujours charger la liste des clients
             var s = SingletonClient.getInstance();
             s.getAllClients();
             lvClients.ItemsSource = s.Liste;
@@ -45,24 +45,24 @@ namespace InterfaceProjet.Pages
 
         private async void btnChoisir_Click(object sender, RoutedEventArgs e)
         {
-            // Client sélectionné
+            // Client sÃ©lectionnÃ©
             Client? clientSelectionne = lvClients.SelectedItem as Client;
 
             if (clientSelectionne == null)
             {
-                await AfficherDialogue("Aucun client sélectionné",
-                    "Veuillez sélectionner un client dans la liste.");
+                await AfficherDialogue("Aucun client sÃ©lectionnÃ©",
+                    "Veuillez sÃ©lectionner un client dans la liste.");
                 return;
             }
 
-            // On retourne à la page d'ajout de projet avec le client choisi
+            // Retour Ã  la page d'ajout de projet avec le client sÃ©lectionnÃ©
             Frame.Navigate(typeof(PageAjoutPojet), clientSelectionne);
         }
 
-        //  Méthode helper pour afficher un dialogue de façon sécuritaire
+        // MÃ©thode d'affichage sÃ©curisÃ©e pour boÃ®te de dialogue
         private async System.Threading.Tasks.Task AfficherDialogue(string titre, string contenu)
         {
-            await System.Threading.Tasks.Task.Delay(100); // Petit délai de sécurité
+            await System.Threading.Tasks.Task.Delay(100);
 
             var dialog = new ContentDialog
             {

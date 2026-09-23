@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 
 namespace InterfaceProjet.Classes
 {
     public class Client
     {
-
         private int idClient;
         private string nom;
         private string adresse;
@@ -16,6 +11,7 @@ namespace InterfaceProjet.Classes
         private string email;
         private DateTime dateCreation;
 
+        // Constructeur principal
         public Client(int idClient, string nom, string adresse, string telephone, string email, DateTime dateCreation)
         {
             this.idClient = idClient;
@@ -26,11 +22,7 @@ namespace InterfaceProjet.Classes
             this.dateCreation = dateCreation;
         }
 
-        // Constructeur principal
-
-
-
-        // Properties
+        // Propriétés
         public int IdClient { get => idClient; set => idClient = value; }
         public string Nom { get => nom; set => nom = value; }
         public string Adresse { get => adresse; set => adresse = value; }
@@ -42,6 +34,5 @@ namespace InterfaceProjet.Classes
         {
             return $"{IdClient} - {Nom}";
         }
-
     }
 }

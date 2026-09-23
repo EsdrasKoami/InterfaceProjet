@@ -1,6 +1,5 @@
 ﻿using InterfaceEmploye.Singletons;
 using InterfaceProjet.Classes;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
 
@@ -13,7 +12,7 @@ namespace InterfaceProjet.Pages
         public ModifierEmployeDialog(Employe emp)
         {
             InitializeComponent();
-            Emp = emp;
+            Emp = emp ?? throw new ArgumentNullException(nameof(emp));
 
             // Pré-remplir les champs
             tbNom.Text = Emp.Nom;
@@ -22,8 +21,6 @@ namespace InterfaceProjet.Pages
             tbAdresse.Text = Emp.Adresse;
             nbTauxHoraire.Value = (double)Emp.TauxHoraire;
             tglStatut.IsOn = Emp.Statut == "Permanent";
-
-            // ✅ Pré-remplir aussi l’URL de la photo
             tbPhotoUrl.Text = Emp.PhotoUrl;
         }
 
@@ -60,7 +57,7 @@ namespace InterfaceProjet.Pages
                 valide = false;
             }
 
-            // Email
+            // Courriel
             if (string.IsNullOrWhiteSpace(email) || !email.Contains("@"))
             {
                 tblErrEmail.Text = "Entrez un courriel valide.";
@@ -81,7 +78,7 @@ namespace InterfaceProjet.Pages
                 valide = false;
             }
 
-            // ✅ Validation de l’URL de la photo
+            // Validation de l'URL de la photo
             if (string.IsNullOrWhiteSpace(photoUrl))
             {
                 tblErrPhoto.Text = "Entrez un lien d'image (URL).";
@@ -96,7 +93,6 @@ namespace InterfaceProjet.Pages
                 }
             }
 
-            // Si erreurs → on ne ferme pas le dialog
             if (!valide)
             {
                 args.Cancel = true;
@@ -106,7 +102,7 @@ namespace InterfaceProjet.Pages
             decimal taux = (decimal)tauxDouble;
             string statut = tglStatut.IsOn ? "Permanent" : "Journalier";
 
-            // Mise à jour en BD via le singleton
+            // Mise à jour dans SQLite via le singleton
             SingletonEmploye.getInstance().ModifierEmploye(
                 Emp.Matricule,
                 nom,
@@ -114,18 +110,18 @@ namespace InterfaceProjet.Pages
                 email,
                 adresse,
                 taux,
-                photoUrl,  // ✅ on envoie le nouveau lien
+                photoUrl,
                 statut
             );
 
-            // Mise à jour de l’objet en mémoire
+            // Mise à jour de l'objet en mémoire
             Emp.Nom = nom;
             Emp.Prenom = prenom;
             Emp.Email = email;
             Emp.Adresse = adresse;
             Emp.TauxHoraire = taux;
             Emp.Statut = statut;
-            Emp.PhotoUrl = photoUrl;   // ✅ on garde l’URL en mémoire aussi
+            Emp.PhotoUrl = photoUrl;
         }
     }
 }

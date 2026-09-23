@@ -1,4 +1,4 @@
-using InterfaceAdmin.Singletons;
+ï»¿using InterfaceAdmin.Singletons;
 using InterfaceProjet.Helpers;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
@@ -13,7 +13,7 @@ namespace InterfaceProjet.Pages
     {
         public PageConnexion()
         {
-           InitializeComponent();
+            InitializeComponent();
             this.Loaded += PageConnexion_Loaded;
         }
 
@@ -21,7 +21,7 @@ namespace InterfaceProjet.Pages
         {
             AfficherStatutConnexion();
 
-            // Focus sur le champ username au chargement
+            // Focus sur le champ nom d'utilisateur au chargement
             txtUsername.Focus(FocusState.Programmatic);
         }
 
@@ -32,24 +32,24 @@ namespace InterfaceProjet.Pages
 
             if (estConnecte)
             {
-                // Admin déjà connecté
+                // Administrateur dÃ©jÃ  connectÃ©
                 var admin = SingletonAdmin.getInstance().AdministrateurConnecte;
                 if (admin != null)
                 {
-                    txtStatut.Text = $"Connecté en tant que : {admin.NomUtilisateur}";
+                    txtStatut.Text = $"ConnectÃ© en tant que : {admin.NomUtilisateur}";
                     iconStatut.Symbol = Symbol.ContactInfo;
                     iconStatut.Foreground = new SolidColorBrush(Colors.Green);
 
-                    // Changer les boutons si déjà connecté
-                    btnConnexion.Content = "Déjà connecté";
+                    // Ajuster les boutons en session active
+                    btnConnexion.Content = "DÃ©jÃ  connectÃ©";
                     btnConnexion.IsEnabled = false;
-                    btnAnnuler.Content = "Retour à l'accueil";
+                    btnAnnuler.Content = "Retour Ã  l'accueil";
                 }
             }
             else
             {
-                // Pas d'admin connecté
-                txtStatut.Text = "Aucun administrateur connecté";
+                // Aucun administrateur connectÃ©
+                txtStatut.Text = "Aucun administrateur connectÃ©";
                 iconStatut.Symbol = Symbol.Contact;
                 iconStatut.Foreground = new SolidColorBrush(Colors.Gray);
 
@@ -65,7 +65,7 @@ namespace InterfaceProjet.Pages
             TenterConnexion();
         }
 
-        // Permettre la connexion avec la touche Enter
+        // Permettre la validation par la touche EntrÃ©e
         private void Input_KeyDown(object sender, KeyRoutedEventArgs e)
         {
             if (e.Key == Windows.System.VirtualKey.Enter)
@@ -77,14 +77,12 @@ namespace InterfaceProjet.Pages
 
         private async void TenterConnexion()
         {
-            
             errorBorder.Visibility = Visibility.Collapsed;
             successBorder.Visibility = Visibility.Collapsed;
 
             string username = txtUsername.Text.Trim();
             string password = txtPassword.Password;
 
-          
             if (string.IsNullOrWhiteSpace(username))
             {
                 AfficherErreur("Veuillez entrer un nom d'utilisateur.");
@@ -101,34 +99,31 @@ namespace InterfaceProjet.Pages
 
             try
             {
-                
                 string passwordHash = Cryptage.GenererSHA256(password);
 
-            
                 bool connexionReussie = SingletonAdmin.getInstance().ConnecterAdministrateur(username, passwordHash);
 
                 if (connexionReussie)
                 {
-                    // Succès
                     var admin = SingletonAdmin.getInstance().AdministrateurConnecte;
-                    AfficherSucces($"Connexion réussie ! Bienvenue {admin.NomUtilisateur}.");
+                    string nomAdmin = admin != null ? admin.NomUtilisateur : username;
+                    AfficherSucces($"Connexion rÃ©ussie ! Bienvenue {nomAdmin}.");
 
-                 
                     txtUsername.Text = string.Empty;
                     txtPassword.Password = string.Empty;
 
-                    // Mettre à jour 
+                    // Mettre Ã  jour l'affichage
                     AfficherStatutConnexion();
 
-                    // Attendre 1.5 secondes avant de rediriger
+                    // Temporisation avant redirection
                     await System.Threading.Tasks.Task.Delay(1500);
 
-                    // Rediriger vers la page d'accueil
+                    // Rediriger vers l'accueil
                     Frame.Navigate(typeof(PageAccueil));
                 }
                 else
                 {
-                    // Échec - credentials incorrects
+                    // Ã‰chec d'authentification
                     AfficherErreur("Nom d'utilisateur ou mot de passe incorrect.");
                     txtPassword.Password = string.Empty;
                     txtPassword.Focus(FocusState.Programmatic);
@@ -136,27 +131,23 @@ namespace InterfaceProjet.Pages
             }
             catch (Exception ex)
             {
-                // Erreur technique (BD, etc.)
                 AfficherErreur($"Erreur lors de la connexion : {ex.Message}");
                 txtPassword.Password = string.Empty;
             }
         }
 
-        // Bouton "Annuler" ou "Retour à l'accueil"
+        // Bouton "Annuler" ou "Retour Ã  l'accueil"
         private void btnAnnuler_Click(object sender, RoutedEventArgs e)
         {
-            
             txtUsername.Text = string.Empty;
             txtPassword.Password = string.Empty;
 
-            // Cacher les messages
             errorBorder.Visibility = Visibility.Collapsed;
             successBorder.Visibility = Visibility.Collapsed;
 
             Frame.Navigate(typeof(PageAccueil));
         }
 
-  
         private void AfficherErreur(string message)
         {
             txtError.Text = message;

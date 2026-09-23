@@ -1,16 +1,15 @@
-using InterfaceAdmin.Singletons;
+ï»¿using InterfaceAdmin.Singletons;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using System;
-using Windows.Storage;
+using InterfaceProjet.Helpers;
 
 namespace InterfaceProjet.Pages
 {
     public sealed partial class PageParametres : Page
     {
-        
         private const string KEY_THEME = "AppTheme";
 
         public PageParametres()
@@ -21,23 +20,17 @@ namespace InterfaceProjet.Pages
 
         private void PageParametres_Loaded(object sender, RoutedEventArgs e)
         {
-           
             ChargerTheme();
-
-
             AfficherStatutConnexion();
         }
 
-        
         private void ChargerTheme()
         {
-            var localSettings = ApplicationData.Current.LocalSettings;
-
-            if (localSettings.Values.ContainsKey(KEY_THEME))
+            if (LocalSettingsHelper.ContainsKey(KEY_THEME))
             {
-                string theme = localSettings.Values[KEY_THEME].ToString();
+                string? theme = LocalSettingsHelper.GetValue(KEY_THEME);
 
-                // Sélectionner le bon RadioButton
+                // SÃ©lectionner le bon bouton radio
                 foreach (RadioButton rb in rbTheme.Items)
                 {
                     if (rb.Tag?.ToString() == theme)
@@ -49,34 +42,29 @@ namespace InterfaceProjet.Pages
             }
             else
             {
-                // Par défaut : utiliser les paramètres système
+                // Par dÃ©faut : utiliser le thÃ¨me sombre/systÃ¨me
                 ((RadioButton)rbTheme.Items[2]).IsChecked = true;
             }
         }
 
-        
         private void rbTheme_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (rbTheme.SelectedItem is RadioButton selectedRadio)
             {
-                string theme = selectedRadio.Tag?.ToString();
+                string? theme = selectedRadio.Tag?.ToString();
 
                 if (!string.IsNullOrEmpty(theme))
                 {
                     // Sauvegarder le choix
-                    var localSettings = ApplicationData.Current.LocalSettings;
-                    localSettings.Values[KEY_THEME] = theme;
+                    LocalSettingsHelper.SetValue(KEY_THEME, theme);
 
-                    
                     AppliquerTheme(theme);
                 }
             }
         }
 
-       
         private void AppliquerTheme(string theme)
         {
-            
             if (this.XamlRoot?.Content is FrameworkElement rootElement)
             {
                 switch (theme)
@@ -91,13 +79,12 @@ namespace InterfaceProjet.Pages
 
                     case "Default":
                     default:
-                        rootElement.RequestedTheme = ElementTheme.Light;
+                        rootElement.RequestedTheme = ElementTheme.Default;
                         break;
                 }
             }
         }
 
-      
         private void AfficherStatutConnexion()
         {
             bool estConnecte = SingletonAdmin.getInstance().EstConnecte();
@@ -107,7 +94,7 @@ namespace InterfaceProjet.Pages
                 var admin = SingletonAdmin.getInstance().AdministrateurConnecte;
                 if (admin != null)
                 {
-                    txtStatut.Text = $"Connecté en tant que : {admin.NomUtilisateur}";
+                    txtStatut.Text = $"ConnectÃ© en tant que : {admin.NomUtilisateur}";
                     iconStatut.Symbol = Symbol.ContactInfo;
                     iconStatut.Foreground = new SolidColorBrush(Colors.Green);
                     btnDeconnexion.Visibility = Visibility.Visible;
@@ -115,23 +102,23 @@ namespace InterfaceProjet.Pages
             }
             else
             {
-                txtStatut.Text = "Aucun administrateur connecté";
+                txtStatut.Text = "Aucun administrateur connectÃ©";
                 iconStatut.Symbol = Symbol.Contact;
                 iconStatut.Foreground = new SolidColorBrush(Colors.Gray);
                 btnDeconnexion.Visibility = Visibility.Collapsed;
             }
         }
 
-        
         private async void btnDeconnexion_Click(object sender, RoutedEventArgs e)
         {
             var admin = SingletonAdmin.getInstance().AdministrateurConnecte;
+            string nomAdmin = admin != null ? admin.NomUtilisateur : "l'administrateur";
 
             var confirm = new ContentDialog
             {
-                Title = "Confirmation de déconnexion",
-                Content = $"Voulez-vous vraiment vous déconnecter en tant que {admin.NomUtilisateur} ?",
-                PrimaryButtonText = "Déconnexion",
+                Title = "Confirmation de dÃ©connexion",
+                Content = $"Voulez-vous vraiment vous dÃ©connecter en tant que {nomAdmin} ?",
+                PrimaryButtonText = "DÃ©connexion",
                 CloseButtonText = "Annuler",
                 DefaultButton = ContentDialogButton.Close,
                 XamlRoot = this.Content.XamlRoot
@@ -141,17 +128,13 @@ namespace InterfaceProjet.Pages
 
             if (result == ContentDialogResult.Primary)
             {
-               
                 SingletonAdmin.getInstance().Deconnecter();
-
-                
                 AfficherStatutConnexion();
 
-         
                 var succes = new ContentDialog
                 {
-                    Title = "Déconnexion réussie",
-                    Content = "Vous avez été déconnecté avec succès.",
+                    Title = "DÃ©connexion rÃ©ussie",
+                    Content = "Vous avez Ã©tÃ© dÃ©connectÃ© avec succÃ¨s.",
                     CloseButtonText = "OK",
                     XamlRoot = this.Content.XamlRoot
                 };

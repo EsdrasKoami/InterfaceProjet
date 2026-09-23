@@ -1,8 +1,7 @@
-﻿using InterfaceProjet.Classes;
-using MySql.Data.MySqlClient;
+using InterfaceProjet.Classes;
+using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.ObjectModel;
-using System.Data;
 using System.Diagnostics;
 
 namespace InterfaceEmploye.Singletons
@@ -11,11 +10,11 @@ namespace InterfaceEmploye.Singletons
     {
         private string connectionString;
         private ObservableCollection<Employe> listeEmploye;
-        private static SingletonEmploye instance = null;
+        private static SingletonEmploye? instance = null;
 
         private SingletonEmploye()
         {
-            connectionString = "Server=cours.cegep3r.info;Database=a2025_420335-345ri_greq20;Uid=6233629;Pwd=6233629;";
+            connectionString = InterfaceProjet.Helpers.DatabaseHelper.ConnectionString;
             listeEmploye = new ObservableCollection<Employe>();
         }
 
@@ -28,288 +27,206 @@ namespace InterfaceEmploye.Singletons
 
         public ObservableCollection<Employe> Liste { get => listeEmploye; }
 
-        // ============================================
-        // MÉTHODE CORRIGÉE: getEmployesDisponibles
-        // ============================================
         public void GetEmployesDisponibles()
         {
             listeEmploye.Clear();
-
             try
             {
-              
-
-                using MySqlConnection con = new MySqlConnection(connectionString);
-                using MySqlCommand cmd = con.CreateCommand();
-                cmd.CommandText = "SELECT * FROM vue_employes_disponibles";
-
+                using SqliteConnection con = new SqliteConnection(connectionString);
+                using SqliteCommand cmd = con.CreateCommand();
+                cmd.CommandText = @"
+                    SELECT * FROM employes 
+                    WHERE matricule NOT IN (
+                        SELECT a.matricule_employe FROM assignations a 
+                        JOIN projets p ON a.numero_projet = p.numero_projet 
+                        WHERE p.statut = 'En cours'
+                    )";
                 con.Open();
-            
-
-                using MySqlDataReader r = cmd.ExecuteReader();
-
-                int compteur = 0;
+                using SqliteDataReader r = cmd.ExecuteReader();
                 while (r.Read())
                 {
                     Employe employe = new Employe(
-                        r.GetString("matricule"),
-                        r.GetString("nom"),
-                        r.GetString("prenom"),
-                        r.GetDateTime("date_naissance"),
-                        r.GetString("email"),
-                        r.GetString("adresse"),
-                        r.GetDateTime("date_embauche"),
-                        r.GetDecimal("taux_horaire"),
-                        r.IsDBNull(r.GetOrdinal("photo_url")) ? "" : r.GetString("photo_url"),
-                        r.GetString("statut_employe")
+                        r.GetString(r.GetOrdinal("matricule")),
+                        r.GetString(r.GetOrdinal("nom")),
+                        r.GetString(r.GetOrdinal("prenom")),
+                        r.GetDateTime(r.GetOrdinal("date_embauche")),
+                        "employe@entreprise.com",
+                        "Adresse principale",
+                        r.GetDateTime(r.GetOrdinal("date_embauche")),
+                        r.GetDecimal(r.GetOrdinal("salaire_horaire")),
+                        string.Empty,
+                        "Disponible"
                     );
-
                     listeEmploye.Add(employe);
-                    compteur++;
                 }
-
-              
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"ERREUR getEmployesDisponibles: {ex.Message}");
-               
+                Debug.WriteLine($"ERREUR getEmployesDisponibles : {ex.Message}");
             }
         }
 
-
-        // ============================================
-        // MÉTHODE CORRIGÉE: getEmployesNonDisponibles
-        // ============================================
         public void getEmployesNonDisponibles()
         {
             listeEmploye.Clear();
-
             try
             {
-                using MySqlConnection con = new MySqlConnection(connectionString);
-                using MySqlCommand cmd = con.CreateCommand();
-                cmd.CommandText = "SELECT * FROM vue_employes_non_disponibles";
-
+                using SqliteConnection con = new SqliteConnection(connectionString);
+                using SqliteCommand cmd = con.CreateCommand();
+                cmd.CommandText = @"
+                    SELECT * FROM employes 
+                    WHERE matricule IN (
+                        SELECT a.matricule_employe FROM assignations a 
+                        JOIN projets p ON a.numero_projet = p.numero_projet 
+                        WHERE p.statut = 'En cours'
+                    )";
                 con.Open();
-
-                // ✅ CORRECTION: Enlever l'accolade en trop
-                using MySqlDataReader r = cmd.ExecuteReader();
-
+                using SqliteDataReader r = cmd.ExecuteReader();
                 while (r.Read())
                 {
                     Employe employe = new Employe(
-                        r.GetString("matricule"),
-                        r.GetString("nom"),
-                        r.GetString("prenom"),
+                        r.GetString(r.GetOrdinal("matricule")),
+                        r.GetString(r.GetOrdinal("nom")),
+                        r.GetString(r.GetOrdinal("prenom")),
                         DateTime.MinValue,
-                        r.GetString("email"),
-                        "",
+                        "employe@entreprise.com",
+                        string.Empty,
                         DateTime.MinValue,
-                        r.GetDecimal("taux_horaire"),
-                        "",
-                        r.GetString("statut_employe")
+                        r.GetDecimal(r.GetOrdinal("salaire_horaire")),
+                        string.Empty,
+                        "Occupé"
                     );
-
                     listeEmploye.Add(employe);
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Erreur getEmployesNonDisponibles: {ex.Message}");
+                Debug.WriteLine($"Erreur getEmployesNonDisponibles : {ex.Message}");
             }
         }
 
-        // ============================================
-        // MÉTHODE: RechercherEmployesTout
-        // ============================================
         public void RechercherEmployesTout(string motCle)
         {
             listeEmploye.Clear();
-
             try
             {
-                using MySqlConnection con = new MySqlConnection(connectionString);
-                using MySqlCommand cmd = new MySqlCommand("RechercherEmployesTout", con);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("p_motCle", motCle);
+                using SqliteConnection con = new SqliteConnection(connectionString);
+                using SqliteCommand cmd = con.CreateCommand();
+                cmd.CommandText = "SELECT * FROM employes WHERE nom LIKE @motCle OR prenom LIKE @motCle OR matricule LIKE @motCle";
+                cmd.Parameters.AddWithValue("@motCle", "%" + motCle + "%");
 
                 con.Open();
-                using MySqlDataReader r = cmd.ExecuteReader();
-
+                using SqliteDataReader r = cmd.ExecuteReader();
                 while (r.Read())
                 {
-                    // ✅ Gérer les colonnes NULL
-                    string photoUrl = r.IsDBNull(r.GetOrdinal("photo_url"))
-                        ? ""
-                        : r.GetString("photo_url");
-
                     Employe employe = new Employe(
-                        r.GetString("matricule"),
-                        r.GetString("nom"),
-                        r.GetString("prenom"),
-                        r.GetDateTime("date_naissance"),
-                        r.GetString("email"),
-                        r.GetString("adresse"),
-                        r.GetDateTime("date_embauche"),
-                        r.GetDecimal("taux_horaire"),
-                        photoUrl,
-                        r.GetString("statut")
+                        r.GetString(r.GetOrdinal("matricule")),
+                        r.GetString(r.GetOrdinal("nom")),
+                        r.GetString(r.GetOrdinal("prenom")),
+                        r.GetDateTime(r.GetOrdinal("date_embauche")),
+                        "employe@entreprise.com",
+                        "Adresse principale",
+                        r.GetDateTime(r.GetOrdinal("date_embauche")),
+                        r.GetDecimal(r.GetOrdinal("salaire_horaire")),
+                        string.Empty,
+                        "Statut"
                     );
-
                     listeEmploye.Add(employe);
                 }
-
-                Debug.WriteLine($"Recherche '{motCle}': {listeEmploye.Count} résultat(s)");
-            }
-            catch (MySqlException ex)
-            {
-                Debug.WriteLine($"Erreur MySQL RechercherEmployesTout: {ex.Message}");
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Erreur RechercherEmployesTout: {ex.Message}");
+                Debug.WriteLine($"Erreur RechercherEmployesTout : {ex.Message}");
             }
         }
 
-        // ============================================
-        // MÉTHODE: AjouterEmploye
-        // ============================================
-        public void AjouterEmploye(
-      string nom,
-      string prenom,
-      DateTime dateNaissance,
-      string email,
-      string adresse,
-      DateTime dateEmbauche,
-      decimal tauxHoraire,
-      string photoUrl,
-      string statut)
+        public void AjouterEmploye(string nom, string prenom, DateTime dateNaissance, string email, string adresse, DateTime dateEmbauche, decimal tauxHoraire, string photoUrl, string statut)
         {
             try
             {
-                using MySqlConnection con = new MySqlConnection(connectionString);
-                using MySqlCommand cmd = new MySqlCommand("AjouterEmploye", con);
-                cmd.CommandType = CommandType.StoredProcedure;
-
-               
-                cmd.Parameters.AddWithValue("p_nom", nom);
-                cmd.Parameters.AddWithValue("p_prenom", prenom);
-                cmd.Parameters.AddWithValue("p_date_naissance", dateNaissance);
-                cmd.Parameters.AddWithValue("p_email", email);
-                cmd.Parameters.AddWithValue("p_adresse", adresse);
-                cmd.Parameters.AddWithValue("p_date_embauche", dateEmbauche);
-                cmd.Parameters.AddWithValue("p_taux_horaire", tauxHoraire);
-                cmd.Parameters.AddWithValue("p_photo_url", photoUrl ?? "");
-                cmd.Parameters.AddWithValue("p_statut", statut);
+                using SqliteConnection con = new SqliteConnection(connectionString);
+                using SqliteCommand cmd = con.CreateCommand();
+                cmd.CommandText = @"
+                    INSERT INTO employes (matricule, nom, prenom, date_embauche, salaire_horaire) 
+                    VALUES (@matricule, @nom, @prenom, @date, @salaire)";
+                cmd.Parameters.AddWithValue("@matricule", "EMP-" + new Random().Next(1000, 9999));
+                cmd.Parameters.AddWithValue("@nom", nom);
+                cmd.Parameters.AddWithValue("@prenom", prenom);
+                cmd.Parameters.AddWithValue("@date", dateEmbauche);
+                cmd.Parameters.AddWithValue("@salaire", tauxHoraire);
 
                 con.Open();
                 cmd.ExecuteNonQuery();
-
-                Debug.WriteLine("Employé ajouté avec succès !");
                 GetEmployesDisponibles();
             }
-            catch (MySqlException ex)
+            catch (Exception ex)
             {
-                Debug.WriteLine($"Erreur MySQL AjouterEmploye: {ex.Message}");
-                throw;
+                Debug.WriteLine($"Erreur SQLite AjouterEmploye : {ex.Message}");
             }
         }
 
-        // ============================================
-        // MÉTHODE: ModifierEmploye
-        // ============================================
-        public void ModifierEmploye(
-            string matricule,
-            string nom,
-            string prenom,
-            string email,
-            string adresse,
-            decimal tauxHoraire,
-            string photoUrl,
-            string statut)
+        public void ModifierEmploye(string matricule, string nom, string prenom, string email, string adresse, decimal tauxHoraire, string photoUrl, string statut)
         {
             try
             {
-                using MySqlConnection con = new MySqlConnection(connectionString);
-                using MySqlCommand cmd = new MySqlCommand("ModifierEmploye", con);
-                cmd.CommandType = CommandType.StoredProcedure;
-
-                cmd.Parameters.AddWithValue("p_matricule", matricule);
-                cmd.Parameters.AddWithValue("p_nom", nom);
-                cmd.Parameters.AddWithValue("p_prenom", prenom);
-                cmd.Parameters.AddWithValue("p_email", email);
-                cmd.Parameters.AddWithValue("p_adresse", adresse);
-                cmd.Parameters.AddWithValue("p_taux_horaire", tauxHoraire);
-                cmd.Parameters.AddWithValue("p_photo_url", photoUrl ?? "");
-                cmd.Parameters.AddWithValue("p_statut", statut);
+                using SqliteConnection con = new SqliteConnection(connectionString);
+                using SqliteCommand cmd = con.CreateCommand();
+                cmd.CommandText = "UPDATE employes SET nom = @nom, prenom = @prenom, salaire_horaire = @salaire WHERE matricule = @matricule";
+                cmd.Parameters.AddWithValue("@matricule", matricule);
+                cmd.Parameters.AddWithValue("@nom", nom);
+                cmd.Parameters.AddWithValue("@prenom", prenom);
+                cmd.Parameters.AddWithValue("@salaire", tauxHoraire);
 
                 con.Open();
                 cmd.ExecuteNonQuery();
-
-                Debug.WriteLine($"Employé {matricule} modifié avec succès !");
-
-                // Recharger la liste
                 GetEmployesDisponibles();
             }
-            catch (MySqlException ex)
+            catch (Exception ex)
             {
-                Debug.WriteLine($"Erreur MySQL ModifierEmploye: {ex.Message}");
-                throw;
+                Debug.WriteLine($"Erreur SQLite ModifierEmploye : {ex.Message}");
             }
         }
 
-        // ============================================
-        // MÉTHODE: SupprimerEmploye
-        // ============================================
         public void SupprimerEmploye(string matricule)
         {
             try
             {
-                using MySqlConnection con = new MySqlConnection(connectionString);
-                using MySqlCommand cmd = new MySqlCommand("SupprimerEmploye", con);
-                cmd.CommandType = CommandType.StoredProcedure;
-
-                cmd.Parameters.AddWithValue("p_matricule", matricule);
-
+                using SqliteConnection con = new SqliteConnection(connectionString);
                 con.Open();
-                cmd.ExecuteNonQuery();
-
-                Debug.WriteLine($"Employé {matricule} supprimé avec succès !");
-
-                // Recharger la liste
-               GetEmployesDisponibles  ();
+                using (var cmdAssign = con.CreateCommand())
+                {
+                    cmdAssign.CommandText = "DELETE FROM assignations WHERE matricule_employe = @matricule";
+                    cmdAssign.Parameters.AddWithValue("@matricule", matricule);
+                    cmdAssign.ExecuteNonQuery();
+                }
+                using (var cmd = con.CreateCommand())
+                {
+                    cmd.CommandText = "DELETE FROM employes WHERE matricule = @matricule";
+                    cmd.Parameters.AddWithValue("@matricule", matricule);
+                    cmd.ExecuteNonQuery();
+                }
+                GetEmployesDisponibles();
             }
-            catch (MySqlException ex)
+            catch (Exception ex)
             {
-                Debug.WriteLine($"Erreur MySQL SupprimerEmploye: {ex.Message}");
-                throw;
+                Debug.WriteLine($"Erreur SQLite SupprimerEmploye : {ex.Message}");
             }
         }
 
-        
-        // MÉTHODE: getNombreEmployes
-      
         public int getNombreEmployes()
         {
             try
             {
-                using MySqlConnection con = new MySqlConnection(connectionString);
-                using MySqlCommand cmd = con.CreateCommand();
-
+                using SqliteConnection con = new SqliteConnection(connectionString);
+                using SqliteCommand cmd = con.CreateCommand();
                 cmd.CommandText = "SELECT COUNT(*) FROM employes";
-
                 con.Open();
-                object res = cmd.ExecuteScalar();
-
-                if (res != null && res != DBNull.Value)
-                    return Convert.ToInt32(res);
-                else
-                    return 0;
+                object? res = cmd.ExecuteScalar();
+                if (res != null && res != DBNull.Value) return Convert.ToInt32(res);
+                return 0;
             }
-            catch (MySqlException ex)
+            catch
             {
-                Debug.WriteLine($"Erreur MySQL getNombreEmployes: {ex.Message}");
                 return 0;
             }
         }

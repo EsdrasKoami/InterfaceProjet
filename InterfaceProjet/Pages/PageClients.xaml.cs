@@ -1,4 +1,4 @@
-using InterfaceAdmin.Singletons;
+ï»¿using InterfaceAdmin.Singletons;
 using InterfaceClient.Singletons;
 using InterfaceProjet.Classes;
 using Microsoft.UI.Xaml;
@@ -28,7 +28,7 @@ namespace InterfaceProjet.Pages
             singleton.getAllClients();
         }
 
-        // MODIFIER
+        // Modification d'un client
         private async void ButtonModifier_Click(object sender, RoutedEventArgs e)
         {
             var fe = sender as FrameworkElement;
@@ -46,7 +46,7 @@ namespace InterfaceProjet.Pages
             lvClients.ItemsSource = singleton.Liste;
         }
 
-        // SUPPRIMER
+        // Suppression d'un client
         private async void ButtonSupprimer_Click(object sender, RoutedEventArgs e)
         {
             var fe = sender as FrameworkElement;
@@ -56,7 +56,7 @@ namespace InterfaceProjet.Pages
             var dlg = new ContentDialog
             {
                 Title = "Supprimer le client",
-                Content = $"Voulez-vous vraiment supprimer {client.Nom} (ID: {client.IdClient}) ?",
+                Content = $"Voulez-vous vraiment supprimer {client.Nom} (ID : {client.IdClient}) ?",
                 PrimaryButtonText = "Supprimer",
                 CloseButtonText = "Annuler",
                 DefaultButton = ContentDialogButton.Close,
@@ -75,8 +75,7 @@ namespace InterfaceProjet.Pages
                     singleton.getAllClients();
                     lvClients.ItemsSource = singleton.Liste;
 
-                    // Message de succès
-                    await AfficherDialogue("Succès", $"Le client {client.Nom} a été supprimé avec succès.");
+                    await AfficherDialogue("SuccÃ¨s", $"Le client {client.Nom} a Ã©tÃ© supprimÃ© avec succÃ¨s.");
                 }
                 catch (Exception ex)
                 {
@@ -85,7 +84,7 @@ namespace InterfaceProjet.Pages
             }
         }
 
-        // RECHERCHE
+        // Recherche dynamique
         private void tbRechercheClient_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
             var motCle = sender.Text.Trim();
@@ -104,10 +103,10 @@ namespace InterfaceProjet.Pages
             Frame.Navigate(typeof(PageAjoutClient));
         }
 
-        //  Méthode helper pour afficher un dialogue de façon sécuritaire
+        // MÃ©thode d'affichage sÃ©curisÃ©e pour boÃ®te de dialogue
         private async System.Threading.Tasks.Task AfficherDialogue(string titre, string contenu)
         {
-            await System.Threading.Tasks.Task.Delay(100); // Petit délai de sécurité
+            await System.Threading.Tasks.Task.Delay(100);
 
             var dialog = new ContentDialog
             {

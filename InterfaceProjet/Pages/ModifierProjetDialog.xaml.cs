@@ -1,4 +1,4 @@
-using InterfaceProjet.Classes;
+ï»¿using InterfaceProjet.Classes;
 using InterfaceProjet.Singletons;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -9,34 +9,29 @@ namespace InterfaceProjet.Pages
     public sealed partial class ModifierProjetDialog : ContentDialog
     {
         private Projet projetModifier;
-        public bool VeutChangerClient  = false;
+        public bool VeutChangerClient = false;
 
         public ModifierProjetDialog(Projet projet)
         {
             this.InitializeComponent();
 
-            projetModifier = projet;
+            projetModifier = projet ?? throw new ArgumentNullException(nameof(projet));
 
-            if (projetModifier != null)
-            {
-                tbTitre.Text = projetModifier.Titre;
-                tbDescription.Text = projetModifier.Description;
-                NbBudget.Text = projetModifier.Budget.ToString();
-                NbEmployes.Text = projetModifier.NbEmployesRequis.ToString();
+            tbTitre.Text = projetModifier.Titre;
+            tbDescription.Text = projetModifier.Description;
+            NbBudget.Text = projetModifier.Budget.ToString();
+            NbEmployes.Text = projetModifier.NbEmployesRequis.ToString();
 
-                dpDateDebut.Date = new DateTimeOffset(projetModifier.DateDebut);
+            dpDateDebut.Date = new DateTimeOffset(projetModifier.DateDebut);
 
-                cbStatut.SelectedValue = projetModifier.Statut;
+            cbStatut.SelectedValue = projetModifier.Statut;
 
-
-                // client actuel
-                if (projetModifier.IdClient > 0)
-                    tbClient.Text = $"{projetModifier.IdClient} - {projetModifier.NomClient}";
-                else
-                    tbClient.Text = "Aucun client assigné";
-            }
+            // Client actuel
+            if (projetModifier.IdClient > 0)
+                tbClient.Text = $"{projetModifier.IdClient} - {projetModifier.NomClient}";
+            else
+                tbClient.Text = "Aucun client assignÃ©";
         }
-
 
         private void ResetErreurs()
         {
@@ -66,14 +61,12 @@ namespace InterfaceProjet.Pages
 
             string titre = tbTitre.Text.Trim();
             string description = tbDescription.Text.Trim();
-            string statut = cbStatut.SelectedValue?.ToString();
-
+            string statut = cbStatut.SelectedValue?.ToString() ?? "En cours";
 
             DateTime dateDebut = dpDateDebut.Date.DateTime;
 
             decimal budget = (decimal)NbBudget.Value;
             int nbEmployes = (int)NbEmployes.Value;
-
 
             if (string.IsNullOrWhiteSpace(titre))
             {
@@ -98,11 +91,10 @@ namespace InterfaceProjet.Pages
 
             if (nbEmployes < 1 || nbEmployes > 5)
             {
-                tbNbEmployesErreur.Text = "Le nombre d'employés doit être entre 1 et 5.";
+                tbNbEmployesErreur.Text = "Le nombre d'employÃ©s doit Ãªtre entre 1 et 5.";
                 tbNbEmployesErreur.Visibility = Visibility.Visible;
                 valide = false;
             }
-
 
             if (string.IsNullOrWhiteSpace(description))
             {
@@ -110,7 +102,6 @@ namespace InterfaceProjet.Pages
                 tbDescriptionErreur.Visibility = Visibility.Visible;
                 valide = false;
             }
-
 
             if (!valide)
             {
@@ -138,15 +129,12 @@ namespace InterfaceProjet.Pages
 
         private void ContentDialog_Closing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
-
         }
+
         private void BtnChangerClient_Click(object sender, RoutedEventArgs e)
         {
             VeutChangerClient = true;
-
-            // On ferme la boîte de dialogue
             this.Hide();
         }
-
     }
 }

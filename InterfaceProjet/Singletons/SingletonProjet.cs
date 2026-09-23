@@ -1,12 +1,9 @@
-﻿using InterfaceProjet.Classes;
-using MySql.Data.MySqlClient;
+using InterfaceProjet.Classes;
+using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data;
 using System.Diagnostics;
-using System.IO;
-using System.Text;
 using Windows.Storage;
 
 namespace InterfaceProjet.Singletons
@@ -15,20 +12,14 @@ namespace InterfaceProjet.Singletons
     {
         private string connectionString;
         private ObservableCollection<Projet> listeProjet;
-        private static SingletonProjet instance = null;
+        private static SingletonProjet? instance = null;
 
-        // ============================================
-        // Constructeur privé (Singleton)
-        // ============================================
         private SingletonProjet()
         {
-            connectionString = "Server=cours.cegep3r.info;Database=a2025_420335-345ri_greq20;Uid=6233629;Pwd=6233629;";
+            connectionString = Helpers.DatabaseHelper.ConnectionString;
             listeProjet = new ObservableCollection<Projet>();
         }
 
-        // ============================================
-        // Instance du Singleton
-        // ============================================
         public static SingletonProjet getInstance()
         {
             if (instance == null)
@@ -36,345 +27,121 @@ namespace InterfaceProjet.Singletons
             return instance;
         }
 
-        // ============================================
-        // Propriété: Liste des projets
-        // ============================================
         public ObservableCollection<Projet> Liste { get => listeProjet; }
 
-        // ============================================
-        // MÉTHODE: Obtenir tous les projets en cours
-        // ============================================
-        public void getProjetsEnCours()
+        private string GetBaseQuery(string condition = "")
+        {
+            return $@"
+                SELECT 
+                    p.numero_projet, p.titre, p.date_debut, p.description, p.budget, p.nb_employes_requis, p.statut, p.date_creation,
+                    p.id_client, c.nom as nom_client, c.telephone as telephone_client,
+                    (SELECT COUNT(*) FROM assignations a WHERE a.numero_projet = p.numero_projet) as nb_employes_assignes,
+                    (SELECT COALESCE(SUM(e.salaire_horaire * 40), 0) FROM assignations a JOIN employes e ON a.matricule_employe = e.matricule WHERE a.numero_projet = p.numero_projet) as total_salaires
+                FROM projets p
+                LEFT JOIN clients c ON p.id_client = c.id_client
+                {condition}
+            ";
+        }
+
+        private void ExecuteLoadQuery(string query, Action<SqliteCommand>? bindParameters = null)
         {
             listeProjet.Clear();
-
             try
             {
-                using MySqlConnection con = new MySqlConnection(connectionString);
-                using MySqlCommand cmd = con.CreateCommand();
-                cmd.CommandText = "SELECT * FROM vue_projets_en_cours";
+                using SqliteConnection con = new SqliteConnection(connectionString);
+                using SqliteCommand cmd = con.CreateCommand();
+                cmd.CommandText = query;
+                bindParameters?.Invoke(cmd);
 
                 con.Open();
-                using MySqlDataReader r = cmd.ExecuteReader();
+                using SqliteDataReader r = cmd.ExecuteReader();
 
                 while (r.Read())
                 {
-                    // Gestion du NULL pour id_client
-                    int? idClient = null;
-                    if (!r.IsDBNull(r.GetOrdinal("id_client")))
-                    {
-                        idClient = r.GetInt32("id_client");
-                    }
-
-                    // Gestion du NULL pour nom_client
-                    string nomClient = "Aucun client";
-                    if (!r.IsDBNull(r.GetOrdinal("nom_client")))
-                    {
-                        nomClient = r.GetString("nom_client");
-                    }
-
-                    // Gestion du NULL pour telephone_client
-                    string telClient = "N/A";
-                    if (!r.IsDBNull(r.GetOrdinal("telephone_client")))
-                    {
-                        telClient = r.GetString("telephone_client");
-                    }
-
+                    int? idClient = r.IsDBNull(r.GetOrdinal("id_client")) ? (int?)null : r.GetInt32(r.GetOrdinal("id_client"));
+                    string nomClient = r.IsDBNull(r.GetOrdinal("nom_client")) ? "Aucun client" : r.GetString(r.GetOrdinal("nom_client"));
+                    string telClient = r.IsDBNull(r.GetOrdinal("telephone_client")) ? "N/A" : r.GetString(r.GetOrdinal("telephone_client"));
+                    
                     Projet projet = new Projet(
-                        numeroProjet: r.GetString("numero_projet"),
-                        titre: r.GetString("titre"),
-                        dateDebut: r.GetDateTime("date_debut"),
-                        description: r.GetString("description"),
-                        budget: r.GetDecimal("budget"),
-                        nbEmployesRequis: r.GetInt32("nb_employes_requis"),
-                        totalSalaires: r.GetDecimal("total_salaires"),
+                        numeroProjet: r.GetString(r.GetOrdinal("numero_projet")),
+                        titre: r.GetString(r.GetOrdinal("titre")),
+                        dateDebut: r.GetDateTime(r.GetOrdinal("date_debut")),
+                        description: r.GetString(r.GetOrdinal("description")),
+                        budget: r.GetDecimal(r.GetOrdinal("budget")),
+                        nbEmployesRequis: r.GetInt32(r.GetOrdinal("nb_employes_requis")),
+                        totalSalaires: r.GetDecimal(r.GetOrdinal("total_salaires")),
                         idClient: idClient,
                         nomClient: nomClient,
-                        statut: r.GetString("statut"),
-                        dateCreation: r.GetDateTime("date_creation")
+                        statut: r.GetString(r.GetOrdinal("statut")),
+                        dateCreation: r.GetDateTime(r.GetOrdinal("date_creation"))
                     );
 
-                    projet.NbEmployesAssignes = r.GetInt32("nb_employes_assignes");
+                    projet.NbEmployesAssignes = r.GetInt32(r.GetOrdinal("nb_employes_assignes"));
                     projet.TelephoneClient = telClient;
 
                     listeProjet.Add(projet);
                 }
             }
-            catch (MySqlException ex)
+            catch (Exception ex)
             {
-                Debug.WriteLine("Erreur MySQL getProjetsEnCours : " + ex.Message);
+                Debug.WriteLine("Erreur SQLite chargement projets : " + ex.Message);
             }
         }
 
-        // ============================================
-        // MÉTHODE: Obtenir tous les projets
-        // ============================================
-        public void getAllProjets()
-        {
-            listeProjet.Clear();
+        public void getProjetsEnCours() => ExecuteLoadQuery(GetBaseQuery("WHERE p.statut = 'En cours'"));
+        public void getAllProjets() => ExecuteLoadQuery(GetBaseQuery());
+        public void getProjetsTermines() => ExecuteLoadQuery(GetBaseQuery("WHERE p.statut = 'Terminé'"));
 
-            try
-            {
-                using MySqlConnection con = new MySqlConnection(connectionString);
-                using MySqlCommand cmd = con.CreateCommand();
-                cmd.CommandText = "SELECT * FROM vue_tous_projets";
-
-                con.Open();
-                using MySqlDataReader r = cmd.ExecuteReader();
-
-                while (r.Read())
-                {
-                    // ✅ Gestion sécurisée: vérifier si la colonne existe d'abord
-                    int? idClient = null; 
-                    try
-                    {
-                        int ordinal = r.GetOrdinal("id_client");
-                        if (!r.IsDBNull(ordinal))
-                        {
-                            idClient = r.GetInt32(ordinal);
-                        }
-                    }
-                    catch (IndexOutOfRangeException)
-                    {
-                        // La colonne id_client n'existe pas dans la vue
-                        Debug.WriteLine("Colonne 'id_client' introuvable dans vue_tous_projets");
-                    }
-
-                    string nomClient = "Aucun client";
-                    try
-                    {
-                        int ordinal = r.GetOrdinal("nom_client");
-                        if (!r.IsDBNull(ordinal))
-                        {
-                            nomClient = r.GetString(ordinal);
-                        }
-                    }
-                    catch (IndexOutOfRangeException)
-                    {
-                        Debug.WriteLine("Colonne 'nom_client' introuvable dans vue_tous_projets");
-                    }
-
-                    Projet projet = new Projet(
-                        r.GetString("numero_projet"),
-                        r.GetString("titre"),
-                        r.GetDateTime("date_debut"),
-                        r.GetString("description"),
-                        r.GetDecimal("budget"),
-                        r.GetInt32("nb_employes_requis"),
-                        r.GetDecimal("total_salaires"),
-                        idClient,
-                        nomClient,
-                        r.GetString("statut"),
-                        r.GetDateTime("date_creation")
-                    );
-
-                    listeProjet.Add(projet);
-                }
-            }
-            catch (MySqlException ex)
-            {
-                Debug.WriteLine("Erreur MySQL getAllProjets : " + ex.Message);
-            }
-        }
-
-        // ============================================
-        // MÉTHODE: Obtenir tous les projets terminés
-        // ============================================
-        public void getProjetsTermines()
-        {
-            listeProjet.Clear();
-
-            try
-            {
-                using MySqlConnection con = new MySqlConnection(connectionString);
-                using MySqlCommand cmd = con.CreateCommand();
-                cmd.CommandText = "SELECT * FROM vue_projets_termines";
-
-                con.Open();
-                using MySqlDataReader r = cmd.ExecuteReader();
-
-                while (r.Read())
-                {
-                    int? idClient = null;
-                    if (!r.IsDBNull(r.GetOrdinal("id_client")))
-                    {
-                        idClient = r.GetInt32("id_client");
-                    }
-
-                    string nomClient = "Aucun client";
-                    if (!r.IsDBNull(r.GetOrdinal("nom_client")))
-                    {
-                        nomClient = r.GetString("nom_client");
-                    }
-
-                    string telClient = "N/A";
-                    if (!r.IsDBNull(r.GetOrdinal("telephone_client")))
-                    {
-                        telClient = r.GetString("telephone_client");
-                    }
-
-                    Projet projet = new Projet(
-                        numeroProjet: r.GetString("numero_projet"),
-                        titre: r.GetString("titre"),
-                        dateDebut: r.GetDateTime("date_debut"),
-                        description: r.GetString("description"),
-                        budget: r.GetDecimal("budget"),
-                        nbEmployesRequis: r.GetInt32("nb_employes_requis"),
-                        totalSalaires: r.GetDecimal("total_salaires"),
-                        idClient: idClient,
-                        nomClient: nomClient,
-                        statut: r.GetString("statut"),
-                        dateCreation: r.GetDateTime("date_creation")
-                    );
-
-                    projet.NbEmployesAssignes = r.GetInt32("nb_employes_assignes");
-                    projet.TelephoneClient = telClient;
-
-                    listeProjet.Add(projet);
-                }
-            }
-            catch (MySqlException ex)
-            {
-                Debug.WriteLine("Erreur MySQL getProjetsTermines : " + ex.Message);
-            }
-        }
-
-        // ============================================
-        // MÉTHODE: Rechercher des projets
-        // ============================================
         public void rechercherProjets(string motCle)
         {
-            listeProjet.Clear();
-
-            try
-            {
-                using MySqlConnection con = new MySqlConnection(connectionString);
-                using MySqlCommand cmd = con.CreateCommand();
-
-                cmd.CommandText = @"SELECT * FROM vue_tous_projets 
-                                    WHERE numero_projet LIKE @motCle 
-                                       OR titre LIKE @motCle 
-                                       OR nom_client LIKE @motCle";
-
+            string condition = "WHERE p.numero_projet LIKE @motCle OR p.titre LIKE @motCle OR c.nom LIKE @motCle";
+            ExecuteLoadQuery(GetBaseQuery(condition), cmd => {
                 cmd.Parameters.AddWithValue("@motCle", "%" + motCle + "%");
-
-                con.Open();
-                using MySqlDataReader r = cmd.ExecuteReader();
-
-                while (r.Read())
-                {
-                    // Gestion sécurisée des colonnes optionnelles
-                    int? idClient = null;
-                    try
-                    {
-                        int ordinal = r.GetOrdinal("id_client");
-                        if (!r.IsDBNull(ordinal))
-                        {
-                            idClient = r.GetInt32(ordinal);
-                        }
-                    }
-                    catch (IndexOutOfRangeException)
-                    {
-                        Debug.WriteLine("Colonne 'id_client' introuvable");
-                    }
-
-                    string nomClient = "Aucun client";
-                    try
-                    {
-                        int ordinal = r.GetOrdinal("nom_client");
-                        if (!r.IsDBNull(ordinal))
-                        {
-                            nomClient = r.GetString(ordinal);
-                        }
-                    }
-                    catch (IndexOutOfRangeException)
-                    {
-                        Debug.WriteLine("Colonne 'nom_client' introuvable");
-                    }
-
-                    Projet projet = new Projet(
-                        r.GetString("numero_projet"),
-                        r.GetString("titre"),
-                        r.GetDateTime("date_debut"),
-                        r.GetString("description"),
-                        r.GetDecimal("budget"),
-                        r.GetInt32("nb_employes_requis"),
-                        r.GetDecimal("total_salaires"),
-                        idClient,
-                        nomClient,
-                        r.GetString("statut"),
-                        r.GetDateTime("date_creation")
-                    );
-
-                    listeProjet.Add(projet);
-                }
-            }
-            catch (MySqlException ex)
-            {
-                Debug.WriteLine("Erreur MySQL rechercherProjets : " + ex.Message);
-            }
+            });
         }
 
-        // ============================================
-        // MÉTHODE: Ajouter un projet (avec client obligatoire)
-        // ============================================
-        public void ajouterProjetAvecProcedure(
-            string titre,
-            DateTime dateDebut,
-            string description,
-            decimal budget,
-            int nbEmployesRequis,
-            int idClient)
+        public void ajouterProjetAvecProcedure(string titre, DateTime dateDebut, string description, decimal budget, int nbEmployesRequis, int idClient)
         {
             try
             {
-                using MySqlConnection con = new MySqlConnection(connectionString);
-                using MySqlCommand cmd = new MySqlCommand("AjouterProjet", con);
-                cmd.CommandType = CommandType.StoredProcedure;
-
-                // Plus de paramètre p_numero_projet, le trigger s'en occupe
-                cmd.Parameters.AddWithValue("p_titre", titre);
-                cmd.Parameters.AddWithValue("p_date_debut", dateDebut);
-                cmd.Parameters.AddWithValue("p_description", description);
-                cmd.Parameters.AddWithValue("p_budget", budget);
-                cmd.Parameters.AddWithValue("p_nb_employes_requis", nbEmployesRequis);
-                cmd.Parameters.AddWithValue("p_id_client", idClient);
+                // Génération d'un identifiant unique de projet
+                string numProjet = "PRJ-" + new Random().Next(1000, 9999);
+                
+                using SqliteConnection con = new SqliteConnection(connectionString);
+                using SqliteCommand cmd = con.CreateCommand();
+                cmd.CommandText = @"
+                    INSERT INTO projets (numero_projet, titre, date_debut, description, budget, nb_employes_requis, id_client)
+                    VALUES (@num, @titre, @date_debut, @description, @budget, @nb_employes_requis, @id_client)";
+                
+                cmd.Parameters.AddWithValue("@num", numProjet);
+                cmd.Parameters.AddWithValue("@titre", titre);
+                cmd.Parameters.AddWithValue("@date_debut", dateDebut);
+                cmd.Parameters.AddWithValue("@description", description);
+                cmd.Parameters.AddWithValue("@budget", budget);
+                cmd.Parameters.AddWithValue("@nb_employes_requis", nbEmployesRequis);
+                cmd.Parameters.AddWithValue("@id_client", idClient);
 
                 con.Open();
                 cmd.ExecuteNonQuery();
-
-                Debug.WriteLine($"Projet '{titre}' créé avec succès pour le client {idClient}.");
-
-                // Recharger la liste
                 getAllProjets();
             }
-            catch (MySqlException ex)
+            catch (Exception ex)
             {
-                Debug.WriteLine("Erreur MySQL ajouterProjetAvecProcedure : " + ex.Message);
+                Debug.WriteLine("Erreur SQLite ajouterProjet : " + ex.Message);
                 throw;
             }
         }
 
-        // ============================================
-        // MÉTHODE: Modifier un projet (SANS toucher au client)
-        // ============================================
-        public void modifierProjetSansClient(string numeroProjet, string titre, DateTime dateDebut,
-                                             string description, decimal budget, int nbEmployesRequis,
-                                             string statut)
+        public void modifierProjetSansClient(string numeroProjet, string titre, DateTime dateDebut, string description, decimal budget, int nbEmployesRequis, string statut)
         {
             try
             {
-                using MySqlConnection con = new MySqlConnection(connectionString);
-                using MySqlCommand cmd = con.CreateCommand();
-
+                using SqliteConnection con = new SqliteConnection(connectionString);
+                using SqliteCommand cmd = con.CreateCommand();
                 cmd.CommandText = @"
                     UPDATE projets 
-                    SET titre = @titre,
-                        date_debut = @date_debut,
-                        description = @description,
-                        budget = @budget,
-                        nb_employes_requis = @nb_employes_requis,
-                        statut = @statut
+                    SET titre = @titre, date_debut = @date_debut, description = @description, 
+                        budget = @budget, nb_employes_requis = @nb_employes_requis, statut = @statut
                     WHERE numero_projet = @numero_projet";
 
                 cmd.Parameters.AddWithValue("@numero_projet", numeroProjet);
@@ -385,75 +152,63 @@ namespace InterfaceProjet.Singletons
                 cmd.Parameters.AddWithValue("@nb_employes_requis", nbEmployesRequis);
                 cmd.Parameters.AddWithValue("@statut", statut.Trim());
 
-
                 con.Open();
-                Debug.WriteLine($"STATUT = '{statut}'");
-                int rows = cmd.ExecuteNonQuery();
-
-                if (rows > 0)
-                {
-                    Debug.WriteLine($"Projet {numeroProjet} modifié avec succès.");
-                  
-
-                }
-
+                cmd.ExecuteNonQuery();
                 getAllProjets();
             }
-            catch (MySqlException ex)
+            catch (Exception ex)
             {
-                Debug.WriteLine("Erreur MySQL modifierProjetSansClient : " + ex.Message);
+                Debug.WriteLine("Erreur SQLite modifierProjet : " + ex.Message);
                 throw;
             }
         }
 
-        // ============================================
-        // MÉTHODE: Supprimer un projet
-        // ============================================
         public void supprimerProjet(string numeroProjet)
         {
             try
             {
-                using MySqlConnection con = new MySqlConnection(connectionString);
-                using MySqlCommand cmd = new MySqlCommand("SupprimerProjet", con);
-                cmd.CommandType = CommandType.StoredProcedure;
-
-                cmd.Parameters.AddWithValue("@p_numero_projet", numeroProjet);
-
+                using SqliteConnection con = new SqliteConnection(connectionString);
                 con.Open();
-                cmd.ExecuteNonQuery();
+                
+                // Suppression préalable des assignations liées pour préserver l'intégrité
+                using (var cmdAssign = con.CreateCommand())
+                {
+                    cmdAssign.CommandText = "DELETE FROM assignations WHERE numero_projet = @num";
+                    cmdAssign.Parameters.AddWithValue("@num", numeroProjet);
+                    cmdAssign.ExecuteNonQuery();
+                }
 
-                Debug.WriteLine($"Projet {numeroProjet} supprimé avec succès.");
+                using (var cmd = con.CreateCommand())
+                {
+                    cmd.CommandText = "DELETE FROM projets WHERE numero_projet = @num";
+                    cmd.Parameters.AddWithValue("@num", numeroProjet);
+                    cmd.ExecuteNonQuery();
+                }
+                
                 getAllProjets();
             }
-            catch (MySqlException ex)
+            catch (Exception ex)
             {
-                Debug.WriteLine("Erreur MySQL supprimerProjet : " + ex.Message);
+                Debug.WriteLine("Erreur SQLite supprimerProjet : " + ex.Message);
                 throw;
             }
         }
 
-        // ============================================
-        // MÉTHODE: Terminer un projet
-        // ============================================
         public void TerminerProjet(string numeroProjet)
         {
             try
             {
-                using MySqlConnection con = new MySqlConnection(connectionString);
-                using MySqlCommand cmd = con.CreateCommand();
-
-                cmd.CommandText = "TerminerProjet";
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("p_numero_projet", numeroProjet);
+                using SqliteConnection con = new SqliteConnection(connectionString);
+                using SqliteCommand cmd = con.CreateCommand();
+                cmd.CommandText = "UPDATE projets SET statut = 'Terminé' WHERE numero_projet = @num";
+                cmd.Parameters.AddWithValue("@num", numeroProjet);
 
                 con.Open();
                 cmd.ExecuteNonQuery();
-
-                Debug.WriteLine($"Projet {numeroProjet} terminé avec succès.");
             }
-            catch (MySqlException ex)
+            catch (Exception ex)
             {
-                Debug.WriteLine("Erreur MySQL TerminerProjet : " + ex.Message);
+                Debug.WriteLine("Erreur SQLite TerminerProjet : " + ex.Message);
                 throw;
             }
             finally
@@ -462,142 +217,80 @@ namespace InterfaceProjet.Singletons
             }
         }
 
-        // ============================================
-        // MÉTHODE: Associer un client à un projet
-        // ============================================
         public void AssocierClientAuProjet(string numeroProjet, int idClient)
         {
             try
             {
-                using MySqlConnection con = new MySqlConnection(connectionString);
-                using MySqlCommand cmd = new MySqlCommand("AssocierClientAuProjet", con);
-                cmd.CommandType = CommandType.StoredProcedure;
-
-                cmd.Parameters.AddWithValue("p_numero_projet", numeroProjet);
-                cmd.Parameters.AddWithValue("p_id_client", idClient);
+                using SqliteConnection con = new SqliteConnection(connectionString);
+                using SqliteCommand cmd = con.CreateCommand();
+                cmd.CommandText = "UPDATE projets SET id_client = @id WHERE numero_projet = @num";
+                cmd.Parameters.AddWithValue("@num", numeroProjet);
+                cmd.Parameters.AddWithValue("@id", idClient);
 
                 con.Open();
                 cmd.ExecuteNonQuery();
-
-                Debug.WriteLine($"Client {idClient} associé au projet {numeroProjet} avec succès.");
-
-                // Recharger la liste
                 getAllProjets();
             }
-            catch (MySqlException ex)
+            catch (Exception ex)
             {
-                Debug.WriteLine("Erreur MySQL AssocierClientAuProjet : " + ex.Message);
+                Debug.WriteLine("Erreur SQLite AssocierClientAuProjet : " + ex.Message);
                 throw; 
             }
         }
 
-        // ============================================
-        // MÉTHODE: Exporter les projets en CSV
-        // ============================================
         public List<Projet> ExporterProjetsCsv(StorageFile cheminFichier)
         {
-            try
-            {
-                using MySqlConnection con = new MySqlConnection(connectionString);
-                using MySqlCommand cmd = con.CreateCommand();
-
-                cmd.CommandText = @"
-                    SELECT 
-                        numero_projet,
-                        titre,
-                        IFNULL(nom_client, 'Aucun client') AS nom_client,
-                        date_debut,
-                        budget,
-                        total_salaires,
-                        statut
-                    FROM vue_tous_projets
-                    ORDER BY date_debut;";
-
-                con.Open();
-                using MySqlDataReader r = cmd.ExecuteReader();
-          
-
-                while (r.Read())
-                {
-                    string numero = r.GetString("numero_projet");
-                    string titre = r.GetString("titre");
-                    string nomClient = r.GetString("nom_client");
-                    DateTime dateDebut = r.GetDateTime("date_debut");
-                    decimal budget = r.GetDecimal("budget");
-                    decimal totalSalaires = r.GetDecimal("total_salaires");
-                    string statut = r.GetString("statut");
-
-                    decimal budgetRestant = budget - totalSalaires;
-
-
-                 
-                }
-
-                return new List<Projet>(listeProjet);
-
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("Erreur export CSV : " + ex.Message);
-                throw;
-            }
+            // Retourne la collection de projets en mémoire pour l'exportation
+            return new List<Projet>(listeProjet);
         }
 
-        
-
-        // ============================================
-        // MÉTHODE: Obtenir le budget restant d'un projet
-        // ============================================
         public decimal GetBudgetRestant(string numeroProjet)
         {
             try
             {
-                using MySqlConnection con = new MySqlConnection(connectionString);
-                using MySqlCommand cmd = con.CreateCommand();
-
-                cmd.CommandText = "SELECT BudgetRestant(@num)";
+                using SqliteConnection con = new SqliteConnection(connectionString);
+                using SqliteCommand cmd = con.CreateCommand();
+                cmd.CommandText = @"
+                    SELECT p.budget - COALESCE(SUM(e.salaire_horaire * 40), 0)
+                    FROM projets p
+                    LEFT JOIN assignations a ON p.numero_projet = a.numero_projet
+                    LEFT JOIN employes e ON a.matricule_employe = e.matricule
+                    WHERE p.numero_projet = @num";
+                
                 cmd.Parameters.AddWithValue("@num", numeroProjet);
 
                 con.Open();
-                object res = cmd.ExecuteScalar();
-
+                object? res = cmd.ExecuteScalar();
                 if (res != null && res != DBNull.Value)
                     return Convert.ToDecimal(res);
-                else
-                    return 0m;
-            }
-            catch (MySqlException ex)
-            {
-                Debug.WriteLine("Erreur MySQL GetBudgetRestant : " + ex.Message);
                 return 0m;
             }
-
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Erreur SQLite GetBudgetRestant : " + ex.Message);
+                return 0m;
+            }
         }
 
-
-        // ============================================
-        // MÉTHODE: Obtenir le nombre total de projets
-        // ============================================
         public int getNombreProjets()
         {
             try
             {
-                using MySqlConnection con = new MySqlConnection(connectionString);
-                using MySqlCommand cmd = con.CreateCommand();
-
+                using SqliteConnection con = new SqliteConnection(connectionString);
+                using SqliteCommand cmd = con.CreateCommand();
                 cmd.CommandText = "SELECT COUNT(*) FROM projets";
 
                 con.Open();
-                object res = cmd.ExecuteScalar();
+                object? res = cmd.ExecuteScalar();
 
                 if (res != null && res != DBNull.Value)
                     return Convert.ToInt32(res);
                 else
                     return 0;
             }
-            catch (MySqlException ex)
+            catch (Exception ex)
             {
-                Debug.WriteLine("Erreur MySQL getNombreProjets : " + ex.Message);
+                Debug.WriteLine("Erreur SQLite getNombreProjets : " + ex.Message);
                 return 0;
             }
         }

@@ -1,4 +1,4 @@
-using InterfaceEmploye.Singletons;
+ï»¿using InterfaceEmploye.Singletons;
 using InterfaceProjet.Classes;
 using InterfaceProjet.Singletons;
 using Microsoft.UI.Xaml;
@@ -13,7 +13,7 @@ namespace InterfaceProjet.Pages
 {
     public sealed partial class PageAssignationEmploye : Page
     {
-        private Projet projetCourant;
+        private Projet? projetCourant;
 
         public PageAssignationEmploye()
         {
@@ -28,7 +28,7 @@ namespace InterfaceProjet.Pages
             {
                 projetCourant = p;
 
-                // Charger les employés disponibles
+                // Charger les employÃ©s disponibles
                 var singleton = SingletonEmploye.getInstance();
                 singleton.GetEmployesDisponibles();
                 lvEmployes.ItemsSource = singleton.Liste;
@@ -42,46 +42,46 @@ namespace InterfaceProjet.Pages
 
         private async void btnChoisirEmploye_Click(object sender, RoutedEventArgs e)
         {
-            // Sécurité : projet présent ?
+            // VÃ©rification : projet prÃ©sent ?
             if (projetCourant == null)
             {
-                await ShowMessage("Erreur", "Aucun projet en contexte.");
+                await AfficherMessage("Erreur", "Aucun projet en contexte.");
                 return;
             }
 
-            // Récupérer l'employé sélectionné
+            // RÃ©cupÃ©rer l'employÃ© sÃ©lectionnÃ©
             var employe = lvEmployes.SelectedItem as EmployeModel;
 
             if (employe == null)
             {
-                await ShowMessage("Erreur", "Veuillez sélectionner un employé.");
+                await AfficherMessage("Erreur", "Veuillez sÃ©lectionner un employÃ©.");
                 return;
             }
 
-            // Recharger le nombre d'employés assignés
+            // Recharger le nombre d'employÃ©s assignÃ©s
             projetCourant.NbEmployesAssignes = SingletonAssignation
                 .getInstance()
                 .getNombreAssignationsProjet(projetCourant.NumeroProjet);
-            // Vérifier le maximum
+
+            // VÃ©rifier le maximum requis
             if (projetCourant.NbEmployesAssignes >= projetCourant.NbEmployesRequis)
             {
-                await ShowMessage("Erreur",
-                    $"Maximum de {projetCourant.NbEmployesRequis} employés atteint pour ce projet.");
+                await AfficherMessage("Erreur",
+                    $"Maximum de {projetCourant.NbEmployesRequis} employÃ©s atteint pour ce projet.");
                 return;
             }
 
-
-            // Budget restant 
+            // VÃ©rification du budget restant 
             decimal budgetRestant =
                 SingletonProjet.getInstance().GetBudgetRestant(projetCourant.NumeroProjet);
 
             if (budgetRestant <= 0)
             {
-                await ShowMessage("Erreur", "Budget épuisé pour ce projet.");
+                await AfficherMessage("Erreur", "Budget Ã©puisÃ© pour ce projet.");
                 return;
             }
 
-            // Demander le nombre d'heures à l'utilisateur
+            // Demander le nombre d'heures Ã  l'utilisateur
             await DemanderHeures(employe, budgetRestant);
         }
 
@@ -91,7 +91,7 @@ namespace InterfaceProjet.Pages
 
             var info = new TextBlock
             {
-                Text = $"Employé : {employe.Prenom} {employe.Nom}\n" +
+                Text = $"EmployÃ© : {employe.Prenom} {employe.Nom}\n" +
                        $"Taux : {employe.TauxHoraire:F2} $/h\n" +
                        $"Budget restant : {budgetRestant:C}",
                 Margin = new Thickness(0, 0, 0, 10)
@@ -121,7 +121,7 @@ namespace InterfaceProjet.Pages
 
             if (!decimal.TryParse(tbHeures.Text, out var heures) || heures <= 0)
             {
-                await ShowMessage("Erreur", "Nombre d'heures invalide.");
+                await AfficherMessage("Erreur", "Nombre d'heures invalide.");
                 return;
             }
 
@@ -129,7 +129,7 @@ namespace InterfaceProjet.Pages
 
             if (salaire > budgetRestant)
             {
-                await ShowMessage(
+                await AfficherMessage(
                     "Erreur",
                     $"Budget insuffisant !\nSalaire : {salaire:C}\nBudget restant : {budgetRestant:C}"
                 );
@@ -141,6 +141,8 @@ namespace InterfaceProjet.Pages
 
         private async Task Assigner(EmployeModel employe, decimal heures)
         {
+            if (projetCourant == null) return;
+
             try
             {
                 SingletonAssignation.getInstance().AjouterAssignationEmploye(
@@ -149,24 +151,20 @@ namespace InterfaceProjet.Pages
                     heures
                 );
 
-                // Mettre à jour le projet
+                // Mettre Ã  jour le projet
                 projetCourant.NbEmployesAssignes += 1;
                 projetCourant.TotalSalaires += employe.TauxHoraire * heures;
 
-                await ShowMessage(
-                    "Succès",
-                    $"{employe.Prenom} {employe.Nom} a été assigné au projet {projetCourant.NumeroProjet}."
+                await AfficherMessage(
+                    "SuccÃ¨s",
+                    $"{employe.Prenom} {employe.Nom} a Ã©tÃ© assignÃ© au projet {projetCourant.NumeroProjet}."
                 );
 
                 Frame.GoBack();
             }
-            catch (MySql.Data.MySqlClient.MySqlException ex)
-            {
-                await ShowMessage("Erreur SQL", ex.Message);
-            }
             catch (Exception ex)
             {
-                await ShowMessage("Erreur", ex.Message);
+                await AfficherMessage("Erreur", ex.Message);
             }
         }
 
@@ -187,10 +185,10 @@ namespace InterfaceProjet.Pages
             lvEmployes.ItemsSource = singleton.Liste;
         }
 
-        // Méthode helper pour afficher un dialogue de façon sécuritaire
-        private async Task ShowMessage(string title, string content)
+        // MÃ©thode d'affichage sÃ©curisÃ©e pour boÃ®te de dialogue
+        private async Task AfficherMessage(string title, string content)
         {
-            await System.Threading.Tasks.Task.Delay(100); // Petit délai de sécurité
+            await System.Threading.Tasks.Task.Delay(100);
 
             var dlg = new ContentDialog
             {

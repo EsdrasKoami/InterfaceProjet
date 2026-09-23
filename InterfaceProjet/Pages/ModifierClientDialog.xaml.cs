@@ -1,35 +1,25 @@
-using InterfaceClient.Singletons;
+ï»¿using InterfaceClient.Singletons;
 using InterfaceProjet.Classes;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.RegularExpressions;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
 namespace InterfaceProjet.Pages
 {
+    /// <summary>
+    /// BoÃ®te de dialogue permettant la modification des coordonnÃ©es d'un client.
+    /// </summary>
     public sealed partial class ModifierClientDialog : ContentDialog
     {
-        private Client _client;   // client à modifier
+        private Client _client;
 
         public ModifierClientDialog(Client client)
         {
             this.InitializeComponent();
-            _client = client;
+            _client = client ?? throw new ArgumentNullException(nameof(client));
 
-            // Pré-remplir les champs
+            // PrÃ©-remplir les champs
             tbNom.Text = _client.Nom;
             tbAdresse.Text = _client.Adresse;
             tbTelephone.Text = _client.Telephone;
@@ -75,16 +65,16 @@ namespace InterfaceProjet.Pages
                 valide = false;
             }
 
-            // Téléphone (validation simple, comme dans la page d'ajout)
+            // TÃ©lÃ©phone
             var regexTel = new Regex(@"^[0-9+\-\s]+$");
             if (string.IsNullOrWhiteSpace(telephone) || !regexTel.IsMatch(telephone))
             {
-                tblErrTelephone.Text = "Format de téléphone invalide.";
+                tblErrTelephone.Text = "Format de tÃ©lÃ©phone invalide.";
                 tblErrTelephone.Visibility = Visibility.Visible;
                 valide = false;
             }
 
-            // Email
+            // Courriel
             if (string.IsNullOrWhiteSpace(email))
             {
                 tblErrEmail.Text = "L'email est obligatoire.";
@@ -104,18 +94,15 @@ namespace InterfaceProjet.Pages
 
             if (!valide)
             {
-                // Empêche la fermeture si les données sont invalides
                 args.Cancel = true;
                 return;
             }
 
-            // --- Mise à jour en BD via le singleton ---
-            // Adapte le nom de la méthode à ton SingletonClient
-            // Exemple : ModifierClientAvecProcedure(int id, string nom, string adresse, string tel, string email)
+            // Mise Ã  jour dans SQLite via le singleton
             SingletonClient.getInstance()
                            .ModifierClientAvecProcedure(_client.IdClient, nom, adresse, telephone, email);
 
-            // --- Mise à jour de l'objet en mémoire pour rafraîchir la liste ---
+            // Mise Ã  jour de l'objet en mÃ©moire
             _client.Nom = nom;
             _client.Adresse = adresse;
             _client.Telephone = telephone;

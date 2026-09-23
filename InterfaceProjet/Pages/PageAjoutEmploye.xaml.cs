@@ -1,9 +1,6 @@
-using InterfaceEmploye.Singletons;
-using InterfaceProjet.Classes;
-using InterfaceProjet.Singletons;
+ï»¿using InterfaceEmploye.Singletons;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Navigation;
 using System;
 
 namespace InterfaceProjet.Pages
@@ -21,13 +18,12 @@ namespace InterfaceProjet.Pages
                 Frame.GoBack();
         }
 
-        //  UNE SEULE méthode ButtonEnregistrer_Click
         private async void ButtonEnregistrer_Click(object sender, RoutedEventArgs e)
         {
             if (!Validation())
             {
                 await AfficherDialogue("Formulaire incomplet",
-                    "Veuillez corriger les erreurs indiquées en rouge.");
+                    "Veuillez corriger les erreurs indiquÃ©es en rouge.");
                 return;
             }
 
@@ -48,7 +44,7 @@ namespace InterfaceProjet.Pages
                     dateEmbauche, tauxHoraire, photoUrl, statut
                 );
 
-                await AfficherDialogue("Succès", "L'employé a été ajouté avec succès.");
+                await AfficherDialogue("SuccÃ¨s", "L'employÃ© a Ã©tÃ© ajoutÃ© avec succÃ¨s.");
 
                 if (Frame.CanGoBack)
                     Frame.GoBack();
@@ -59,10 +55,10 @@ namespace InterfaceProjet.Pages
             }
         }
 
-        //  Méthode helper pour afficher un dialogue de façon sécuritaire
+        // MÃ©thode d'affichage sÃ©curisÃ©e pour boÃ®te de dialogue
         private async System.Threading.Tasks.Task AfficherDialogue(string titre, string contenu)
         {
-            await System.Threading.Tasks.Task.Delay(100); // Petit délai de sécurité
+            await System.Threading.Tasks.Task.Delay(100);
 
             var dialog = new ContentDialog
             {
@@ -89,32 +85,32 @@ namespace InterfaceProjet.Pages
             tblErrTauxHoraire.Text = "";
             tblErrPhotoIdentite.Text = "";
 
-            // NOM
+            // Nom
             if (string.IsNullOrWhiteSpace(tbxNom.Text))
             {
                 tblErrNom.Text = "Le nom est obligatoire.";
                 valid = false;
             }
 
-            // PRÉNOM
+            // PrÃ©nom
             if (string.IsNullOrWhiteSpace(tbxPrenom.Text))
             {
-                tblErrPOrenom.Text = "Le prénom est obligatoire.";
+                tblErrPOrenom.Text = "Le prÃ©nom est obligatoire.";
                 valid = false;
             }
 
-            // DATE DE NAISSANCE
+            // Date de naissance
             DateTime dateNaissance = dpDateNaissance.Date.DateTime;
             int age = DateTime.Now.Year - dateNaissance.Year;
             if (dateNaissance.Date > DateTime.Now.AddYears(-age)) age--;
 
             if (age < 18 || age > 65)
             {
-                tblErrDateNaissance.Text = "L'employé doit avoir entre 18 et 65 ans.";
+                tblErrDateNaissance.Text = "L'employÃ© doit avoir entre 18 et 65 ans.";
                 valid = false;
             }
 
-            // EMAIL
+            // Courriel
             string email = tbxEmail.Text.Trim();
             if (string.IsNullOrWhiteSpace(email) || !email.Contains("@"))
             {
@@ -122,30 +118,30 @@ namespace InterfaceProjet.Pages
                 valid = false;
             }
 
-            // ADRESSE
+            // Adresse
             if (string.IsNullOrWhiteSpace(tbxAdresse.Text))
             {
                 tblErrAdresse.Text = "L'adresse est obligatoire.";
                 valid = false;
             }
 
-            // DATE D'EMBAUCHE
+            // Date d'embauche
             DateTime dateEmbauche = dpDateEmbauche.Date.DateTime;
             if (dateEmbauche > DateTime.Now.Date.AddYears(1))
             {
-                tblErrDateEmbauche.Text = "La date d'embauche ne peut pas être dans le futur.";
+                tblErrDateEmbauche.Text = "La date d'embauche ne peut pas Ãªtre dans le futur.";
                 valid = false;
             }
 
-            // TAUX HORAIRE
+            // Taux horaire
             double tauxDouble = nbrTauxHoraire.Value;
             if (tauxDouble < 15)
             {
-                tblErrTauxHoraire.Text = "Le taux horaire doit être d'au moins 15$.";
+                tblErrTauxHoraire.Text = "Le taux horaire doit Ãªtre d'au moins 15$.";
                 valid = false;
             }
 
-            // PHOTO IDENTITÉ
+            // Photo d'identitÃ©
             string photoUrl = photoIdentite.Text.Trim();
             if (string.IsNullOrWhiteSpace(photoUrl) ||
                 !Uri.IsWellFormedUriString(photoUrl, UriKind.Absolute))

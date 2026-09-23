@@ -1,14 +1,13 @@
-using InterfaceAdmin.Singletons;
+ï»¿using InterfaceAdmin.Singletons;
 using InterfaceProjet.Classes;
 using InterfaceProjet.Pages;
 using InterfaceProjet.Singletons;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using InterfaceProjet.Helpers;
 using Windows.Storage;
 using WinRT.Interop;
 
@@ -20,7 +19,7 @@ namespace InterfaceProjet
         {
             InitializeComponent();
 
-            // Charger le thème sauvegardé
+            // Charger le thÃ¨me sauvegardÃ©
             ChargerThemeSauvegarde();
 
             var maintenant = DateTime.Now;
@@ -33,12 +32,10 @@ namespace InterfaceProjet
             VerifierEtNaviguer();
         }
 
-        // Charger le thème sauvegardé
+        // Charger le thÃ¨me sauvegardÃ©
         private void ChargerThemeSauvegarde()
         {
-            var localSettings = ApplicationData.Current.LocalSettings;
-
-            string themeSauvegarde = localSettings.Values["AppTheme"] as string ?? "Dark";
+            string themeSauvegarde = LocalSettingsHelper.GetValue("AppTheme", "Dark") ?? "Dark";
 
             if (this.Content is FrameworkElement rootElement)
             {
@@ -76,14 +73,12 @@ namespace InterfaceProjet
         {
             var premiereConnexion = SingletonAdmin.getInstance();
 
-            
             if (!premiereConnexion.AdministrateurExiste())
             {
-               
                 ContentDialog dlg = new ContentDialog
                 {
-                    Title = "Premiere Connexion",
-                    Content = "Afin de naviguer , vous devez creer un compte Administrateur .",
+                    Title = "PremiÃ¨re Connexion",
+                    Content = "Afin de naviguer, vous devez crÃ©er un compte Administrateur.",
                     CloseButtonText = "OK",
                     XamlRoot = this.Content.XamlRoot
                 };
@@ -92,7 +87,6 @@ namespace InterfaceProjet
                 return;
             }
 
-         
             if (args.InvokedItemContainer is NavigationViewItem item)
             {
                 switch (item.Tag)
@@ -159,24 +153,25 @@ namespace InterfaceProjet
 
             await FileIO.WriteLinesAsync(monFichier, lignes, Windows.Storage.Streams.UnicodeEncoding.Utf8);
 
-            await AfficherDialogue("Exportation réussie", $"Les projets ont été exportés dans :\n{monFichier.Path}");
+            await AfficherDialogue("Exportation rÃ©ussie", $"Les projets ont Ã©tÃ© exportÃ©s dans :\n{monFichier.Path}");
         }
 
         private async System.Threading.Tasks.Task GererDeconnexion()
         {
             if (!SingletonAdmin.getInstance().EstConnecte())
             {
-                await AfficherDialogue("Aucune connexion active", "Vous n'êtes pas connecté en tant qu'administrateur.");
+                await AfficherDialogue("Aucune connexion active", "Vous n'Ãªtes pas connectÃ© en tant qu'administrateur.");
                 return;
             }
 
             var admin = SingletonAdmin.getInstance().AdministrateurConnecte;
+            string nomAdmin = admin != null ? admin.NomUtilisateur : "l'administrateur";
 
             var confirm = new ContentDialog
             {
-                Title = "Confirmation de déconnexion",
-                Content = $"Voulez-vous vraiment vous déconnecter en tant que {admin.NomUtilisateur} ?",
-                PrimaryButtonText = "Déconnexion",
+                Title = "Confirmation de dÃ©connexion",
+                Content = $"Voulez-vous vraiment vous dÃ©connecter en tant que {nomAdmin} ?",
+                PrimaryButtonText = "DÃ©connexion",
                 CloseButtonText = "Annuler",
                 DefaultButton = ContentDialogButton.Close,
                 XamlRoot = this.Content.XamlRoot
@@ -188,16 +183,15 @@ namespace InterfaceProjet
             {
                 SingletonAdmin.getInstance().Deconnecter();
 
-                await AfficherDialogue("Déconnexion réussie", "Vous avez été déconnecté avec succès.");
+                await AfficherDialogue("DÃ©connexion rÃ©ussie", "Vous avez Ã©tÃ© dÃ©connectÃ© avec succÃ¨s.");
 
                 mainFrame.Navigate(typeof(PageAccueil));
             }
         }
 
-        // ? MÉTHODE AJOUTÉE ICI ?
         private async System.Threading.Tasks.Task AfficherDialogue(string titre, string contenu)
         {
-            await System.Threading.Tasks.Task.Delay(50); // Petit délai de sécurité
+            await System.Threading.Tasks.Task.Delay(50);
 
             var dialog = new ContentDialog
             {

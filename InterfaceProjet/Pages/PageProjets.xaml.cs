@@ -1,12 +1,10 @@
-using InterfaceAdmin.Singletons;
+Ôªøusing InterfaceAdmin.Singletons;
 using InterfaceProjet.Classes;
 using InterfaceProjet.Singletons;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 
 namespace InterfaceProjet.Pages
 {
@@ -21,7 +19,7 @@ namespace InterfaceProjet.Pages
             _projetsSingleton = SingletonProjet.getInstance();
             bool estAdmin = SingletonAdmin.getInstance().EstConnecte();
 
-            // Choisir le bon template selon si Admin ou non
+            // Choisir le mod√®le d'affichage selon le r√¥le administrateur
             if (estAdmin)
             {
                 listeProjets.ItemTemplate = (DataTemplate)this.Resources["ProjetTemplateAdmin"];
@@ -32,24 +30,24 @@ namespace InterfaceProjet.Pages
                 btnAjouter.Visibility = Visibility.Collapsed;
             }
 
-            // Lier la GridView ‡ la liste des projets du singleton
+            // Lier la liste √† la collection du singleton
             listeProjets.ItemsSource = _projetsSingleton.Liste;
             _projetsSingleton.getAllProjets();
         }
 
-        // Quand on clique sur une carte de projet
+        // Clic sur une carte de projet
         private async void listeProjets_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (listeProjets.SelectedItem is Projet projet)
             {
-                // 1) rÈcupÈrer les assignations en BD
+                // 1) R√©cup√©rer les assignations
                 var assignations = SingletonAssignation
                                        .getInstance()
                                        .getAssignationsParProjet(projet.NumeroProjet);
 
                 var listeAssignations = new ObservableCollection<Assignation>(assignations);
 
-                // 2) ouvrir le dialog
+                // 2) Ouvrir la bo√Æte de dialogue de d√©tails
                 var dialog = new ProjetDetailsDialog(
                     projet,
                     listeAssignations,
@@ -65,7 +63,7 @@ namespace InterfaceProjet.Pages
             }
         }
 
-        // Recherche
+        // Recherche dynamique
         private void tbRechercheProjet_TextChanged_1(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
             string motCle = sender.Text.Trim();
@@ -87,33 +85,33 @@ namespace InterfaceProjet.Pages
         // Bouton "Assigner"
         private async void assigner_Click(object sender, RoutedEventArgs e)
         {
-            // 1) rÈcupÈrer le projet ‡ partir du DataContext
+            // 1) R√©cup√©rer le projet √† partir du DataContext
             if (sender is not FrameworkElement fe || fe.DataContext is not Projet projetSelectionne)
             {
                 await new ContentDialog
                 {
                     Title = "Erreur",
-                    Content = "Impossible de rÈcupÈrer le projet sÈlectionnÈ.",
+                    Content = "Impossible de r√©cup√©rer le projet s√©lectionn√©.",
                     CloseButtonText = "OK",
                     XamlRoot = this.Content.XamlRoot
                 }.ShowAsync();
                 return;
             }
 
-            // 2) bloquer si le projet est terminÈ
-            if (projetSelectionne.EstTermine() || projetSelectionne.Statut == "TerminÈ")
+            // 2) Bloquer si le projet est d√©j√† termin√©
+            if (projetSelectionne.EstTermine() || projetSelectionne.Statut == "Termin√©")
             {
                 await new ContentDialog
                 {
                     Title = "Assignation impossible",
-                    Content = "Vous ne pouvez pas assigner un employÈ ‡ un projet terminÈ.",
+                    Content = "Vous ne pouvez pas assigner un employ√© √† un projet termin√©.",
                     CloseButtonText = "OK",
                     XamlRoot = this.Content.XamlRoot
                 }.ShowAsync();
                 return;
             }
 
-            // 3) trouver le Frame de navigation
+            // 3) V√©rifier le Frame de navigation
             Frame frame = this.Frame;
 
             if (frame == null)
@@ -128,7 +126,7 @@ namespace InterfaceProjet.Pages
                 return;
             }
 
-            // 4) navigation vers la page díassignation
+            // 4) Navigation vers la page d'assignation
             try
             {
                 frame.Navigate(typeof(PageAssignationEmploye), projetSelectionne);
@@ -138,7 +136,7 @@ namespace InterfaceProjet.Pages
                 await new ContentDialog
                 {
                     Title = "Erreur lors de la navigation",
-                    Content = $"Navigation vers PageAssignationEmploye impossible.\n\nDÈtails : {ex.Message}",
+                    Content = $"Navigation vers la page d'assignation impossible.\n\nD√©tails : {ex.Message}",
                     CloseButtonText = "OK",
                     XamlRoot = this.Content.XamlRoot
                 }.ShowAsync();
@@ -155,10 +153,9 @@ namespace InterfaceProjet.Pages
                     XamlRoot = this.Content.XamlRoot
                 };
 
-                // On attend que la boÓte de dialogue se ferme
                 await dialog.ShowAsync();
 
-                // Si dans le dialog líutilisateur a cliquÈ sur "Changer client"
+                // Si l'utilisateur souhaite r√©assigner le client
                 if (dialog.VeutChangerClient)
                 {
                     Frame.Navigate(typeof(PageAssignationClient), projet);
@@ -170,7 +167,7 @@ namespace InterfaceProjet.Pages
         private async void Terminer_Click(object sender, RoutedEventArgs e)
         {
             var fe = sender as FrameworkElement;
-            Projet projet = fe?.DataContext as Projet;
+            Projet? projet = fe?.DataContext as Projet;
 
             if (projet == null)
                 return;
@@ -179,8 +176,8 @@ namespace InterfaceProjet.Pages
             {
                 var deja = new ContentDialog
                 {
-                    Title = "Projet dÈj‡ terminÈ",
-                    Content = $"Le projet {projet.NumeroProjet} est dÈj‡ terminÈ.",
+                    Title = "Projet d√©j√† termin√©",
+                    Content = $"Le projet {projet.NumeroProjet} est d√©j√† termin√©.",
                     CloseButtonText = "OK",
                     XamlRoot = this.Content.XamlRoot
                 };
@@ -191,8 +188,8 @@ namespace InterfaceProjet.Pages
             var confirm = new ContentDialog
             {
                 Title = "Terminer le projet",
-                Content = $"Voulez-vous vraiment marquer le projet {projet.NumeroProjet} comme terminÈ ?\n" +
-                          "Les employÈs assignÈs seront libÈrÈs.",
+                Content = $"Voulez-vous vraiment marquer le projet {projet.NumeroProjet} comme termin√© ?\n" +
+                          "Les employ√©s assign√©s seront lib√©r√©s.",
                 PrimaryButtonText = "Terminer",
                 CloseButtonText = "Annuler",
                 DefaultButton = ContentDialogButton.Close,
@@ -203,10 +200,10 @@ namespace InterfaceProjet.Pages
             if (result != ContentDialogResult.Primary)
                 return;
 
-            // 1) Appel ‡ la procÈdure stockÈe
+            // 1) Mise √† jour du statut du projet
             SingletonProjet.getInstance().TerminerProjet(projet.NumeroProjet);
 
-            // 2) LibÈrer les employÈs de ce projet
+            // 2) Lib√©rer les employ√©s associ√©s
             SingletonAssignation.getInstance().LibererEmployesProjet(projet.NumeroProjet);
 
             // 3) Recharger la liste
@@ -217,7 +214,7 @@ namespace InterfaceProjet.Pages
         private async void ButtonSupprimer_Click(object sender, RoutedEventArgs e)
         {
             var element = sender as FrameworkElement;
-            Projet projet = element?.DataContext as Projet;
+            Projet? projet = element?.DataContext as Projet;
 
             if (projet == null)
                 return;
@@ -237,7 +234,6 @@ namespace InterfaceProjet.Pages
             if (result == ContentDialogResult.Primary)
             {
                 _projetsSingleton.supprimerProjet(projet.NumeroProjet);
-                // La liste est rechargÈe dans supprimerProjet
             }
         }
     }

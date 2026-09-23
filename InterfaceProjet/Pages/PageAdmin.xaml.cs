@@ -1,27 +1,12 @@
-using InterfaceAdmin.Singletons;
+ï»¿using InterfaceAdmin.Singletons;
 using InterfaceProjet.Helpers;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace InterfaceProjet.Pages
 {
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// Page d'initialisation et de crÃ©ation du compte administrateur principal.
     /// </summary>
     public sealed partial class PageAdmin : Page
     {
@@ -30,7 +15,7 @@ namespace InterfaceProjet.Pages
             InitializeComponent();
         }
     
-     private void Button_Click(object sender, RoutedEventArgs e)
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
             string username = UsernameBox.Text.Trim();
             string pass = PasswordBox.Password;
@@ -38,7 +23,7 @@ namespace InterfaceProjet.Pages
 
             ErrorText.Text = string.Empty;
 
-            // 1. Champs vides
+            // 1. VÃ©rification des champs obligatoires
             if (string.IsNullOrWhiteSpace(username) ||
                 string.IsNullOrWhiteSpace(pass) ||
                 string.IsNullOrWhiteSpace(confirm))
@@ -47,19 +32,19 @@ namespace InterfaceProjet.Pages
                 return;
             }
 
-            // 2. Confirmation mot de passe
+            // 2. VÃ©rification de confirmation du mot de passe
             if (pass != confirm)
             {
                 ErrorText.Text = "Les mots de passe ne correspondent pas.";
                 return;
             }
 
-            // 3. Hash SHA256 du mot de passe
+            // 3. Hachage SHA-256 du mot de passe
             string hash = Cryptage.GenererSHA256(pass);
 
             try
             {
-                // 4. Enregistrer + connecter l'admin
+                // 4. Enregistrement et connexion de l'administrateur
                 SingletonAdmin.getInstance().CreerAdministrateur(username, hash);
                 bool ok = SingletonAdmin.getInstance().ConnecterAdministrateur(username, hash);
 
@@ -69,14 +54,13 @@ namespace InterfaceProjet.Pages
                     return;
                 }
 
-                // 5. Succès ? activer la navigation dans la fenêtre principale
+                // 5. Activation de la navigation sur la fenÃªtre principale
                 if (App.fenetrePrincipale is MainWindow mw)
                 {
                     mw.ActiverNavigation();
                 }
                 else
                 {
-                    // Plan B : revenir à l'accueil via le Frame local (normalement pas nécessaire)
                     Frame.Navigate(typeof(PageAccueil));
                 }
             }

@@ -1,19 +1,19 @@
-﻿using System;
+using System;
 
 namespace InterfaceProjet.Classes
 {
     public class Employe
     {
-        private string matricule;
-        private string nom;
-        private string prenom;
+        private string matricule = string.Empty;
+        private string nom = string.Empty;
+        private string prenom = string.Empty;
         private DateTime dateNaissance;
-        private string email;
-        private string adresse;
+        private string email = string.Empty;
+        private string adresse = string.Empty;
         private DateTime dateEmbauche;
         private decimal tauxHoraire;
-        private string photoUrl;
-        private string statut;
+        private string photoUrl = string.Empty;
+        private string statut = string.Empty;
         private DateTime dateCreation;
 
         // Constructeur
@@ -21,20 +21,20 @@ namespace InterfaceProjet.Classes
                        string email, string adresse, DateTime dateEmbauche, decimal tauxHoraire,
                        string photoUrl, string statut)
         {
-            this.Matricule = matricule;
-            this.Nom = nom;
-            this.Prenom = prenom;
-            this.DateNaissance = dateNaissance;
-            this.Email = email;
-            this.Adresse = adresse;
-            this.DateEmbauche = dateEmbauche;
-            this.TauxHoraire = tauxHoraire;
-            this.PhotoUrl = photoUrl ?? ""; 
-            this.Statut = statut;
-            this.DateCreation = DateTime.Now;
+            this.matricule = matricule;
+            this.nom = nom;
+            this.prenom = prenom;
+            this.dateNaissance = dateNaissance;
+            this.email = email;
+            this.adresse = adresse;
+            this.dateEmbauche = dateEmbauche;
+            this.tauxHoraire = tauxHoraire;
+            this.photoUrl = photoUrl ?? string.Empty; 
+            this.statut = statut;
+            this.dateCreation = DateTime.Now;
         }
 
-        // Properties de base
+        // Propriétés de base
         public string Matricule { get => matricule; set => matricule = value; }
         public string Nom { get => nom; set => nom = value; }
         public string Prenom { get => prenom; set => prenom = value; }
@@ -47,7 +47,7 @@ namespace InterfaceProjet.Classes
         public string Statut { get => statut; set => statut = value; }
         public DateTime DateCreation { get => dateCreation; set => dateCreation = value; }
 
-        // ✅ PROPRIÉTÉS FORMATÉES pour le XAML (pas des méthodes!)
+        // Propriétés formatées pour la liaison de données XAML
         public string DateNaissanceFormatee => DateNaissance != DateTime.MinValue
             ? DateNaissance.ToString("dd/MM/yyyy")
             : "N/A";
@@ -63,14 +63,14 @@ namespace InterfaceProjet.Classes
             ? $"{CalculerAge()} ans"
             : "N/A";
 
-        // Méthode utile pour calculer l'âge
+        // Méthode de calcul de l'âge
         public int CalculerAge()
         {
             if (DateNaissance == DateTime.MinValue) return 0;
 
-            var today = DateTime.Today;
-            var age = today.Year - DateNaissance.Year;
-            if (DateNaissance.Date > today.AddYears(-age)) age--;
+            var aujourdHui = DateTime.Today;
+            var age = aujourdHui.Year - DateNaissance.Year;
+            if (DateNaissance.Date > aujourdHui.AddYears(-age)) age--;
             return age;
         }
 

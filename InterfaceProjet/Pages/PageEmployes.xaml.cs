@@ -1,4 +1,4 @@
-using InterfaceAdmin.Singletons;
+ï»¿using InterfaceAdmin.Singletons;
 using InterfaceEmploye.Singletons;
 using InterfaceProjet.Classes;
 using Microsoft.UI.Xaml;
@@ -14,13 +14,11 @@ namespace InterfaceProjet.Pages
             InitializeComponent();
 
             var singleton = SingletonEmploye.getInstance();
-
-            // Charger les employés AVANT de binder (par sécurité)
             singleton.GetEmployesDisponibles();
 
             bool estAdmin = SingletonAdmin.getInstance().EstConnecte();
 
-            //  CHOISIR LE BON TEMPLATE selon si Admin ou non
+            // Choisir le modÃ¨le d'affichage selon le rÃ´le administrateur
             if (estAdmin)
             {
                 lvEmployes.ItemTemplate = (DataTemplate)this.Resources["EmployeTemplateAdmin"];
@@ -31,11 +29,7 @@ namespace InterfaceProjet.Pages
                 btnAjouter.Visibility = Visibility.Collapsed;
             }
 
-            // Binder la liste à la GridView
             lvEmployes.ItemsSource = singleton.Liste;
-
-            singleton.GetEmployesDisponibles();
-
         }
 
         private async void supprimer_Click(object sender, RoutedEventArgs e)
@@ -46,7 +40,7 @@ namespace InterfaceProjet.Pages
 
             var dlg = new ContentDialog
             {
-                Title = "Supprimer l'employé",
+                Title = "Supprimer l'employÃ©",
                 Content = $"Voulez-vous vraiment supprimer {emp.Prenom} {emp.Nom} ({emp.Matricule}) ?",
                 PrimaryButtonText = "Supprimer",
                 CloseButtonText = "Annuler",
@@ -58,12 +52,8 @@ namespace InterfaceProjet.Pages
             if (result == ContentDialogResult.Primary)
             {
                 var singleton = SingletonEmploye.getInstance();
-
                 singleton.SupprimerEmploye(emp.Matricule);
-             
-
                 singleton.GetEmployesDisponibles();
-
                 lvEmployes.ItemsSource = singleton.Liste;
             }
         }

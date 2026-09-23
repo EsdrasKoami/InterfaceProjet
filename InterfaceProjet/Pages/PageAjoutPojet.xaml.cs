@@ -1,16 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using InterfaceProjet.Singletons;
 using InterfaceProjet.Classes;
@@ -19,9 +9,9 @@ namespace InterfaceProjet.Pages
 {
     public sealed partial class PageAjoutPojet : Page
     {
-        private Client clientSelectionne;
+        private Client? clientSelectionne;
 
-        //  Variables pour sauvegarder l'état du formulaire
+        // Variables pour sauvegarder l'état du formulaire
         private string titreTemp = "";
         private DateTime dateDebutTemp = DateTime.Now;
         private string descriptionTemp = "";
@@ -47,7 +37,7 @@ namespace InterfaceProjet.Pages
                 clientSelectionne = client;
                 idClient.Text = client.IdClient.ToString();
 
-                //  Restaurer les valeurs sauvegardées
+                // Restaurer les valeurs sauvegardées
                 RestaurerFormulaire();
             }
         }
@@ -63,7 +53,7 @@ namespace InterfaceProjet.Pages
             totalSalairesTemp = totalSalaire.Value;
         }
 
-        //  Méthode pour restaurer l'état du formulaire
+        // Méthode pour restaurer l'état du formulaire
         private void RestaurerFormulaire()
         {
             tbxtitre.Text = titreTemp;
@@ -82,7 +72,7 @@ namespace InterfaceProjet.Pages
 
         private async void ButtonEnregistrer_Click(object sender, RoutedEventArgs e)
         {
-            // Réinitialiser messages d'erreur
+            // Réinitialiser les messages d'erreur
             tblErrTitre.Text = "";
             tblErrDateDebut.Text = "";
             tblErrDescription.Text = "";
@@ -157,11 +147,9 @@ namespace InterfaceProjet.Pages
             }
 
             decimal budget = (decimal)budgetDouble;
-            decimal totalSalaires = (decimal)totalSalairesDouble;
 
             try
             {
-                //  Plus besoin de générer le numéro, le trigger s'en occupe
                 SingletonProjet
                     .getInstance()
                     .ajouterProjetAvecProcedure(
@@ -170,7 +158,7 @@ namespace InterfaceProjet.Pages
                         description,
                         budget,
                         nbEmployes,
-                        clientSelectionne.IdClient
+                        clientSelectionne!.IdClient
                     );
 
                 await AfficherDialogue("Succès", "Le projet a été ajouté avec succès.");
@@ -185,13 +173,13 @@ namespace InterfaceProjet.Pages
 
         private void ButtonAssigner_Click(object sender, RoutedEventArgs e)
         {
-            //  Sauvegarder le formulaire avant de naviguer , les donnees disparaissaient quand on partait sur la page assignation pour assigner le client au projet 
+            // Sauvegarder le formulaire avant la navigation
             SauvegarderFormulaire();
 
             Frame.Navigate(typeof(PageAssignationClient));
         }
 
-        //  Méthode helper pour afficher un dialogue de façon sécuritaire
+        // Méthode utilitaire pour afficher un dialogue
         private async System.Threading.Tasks.Task AfficherDialogue(string titre, string contenu)
         {
             await System.Threading.Tasks.Task.Delay(100);
